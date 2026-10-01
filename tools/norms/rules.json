@@ -1,0 +1,254 @@
+{
+  "_meta": {
+    "description": "Machine-checkable subset of Chilean building norms. Each rule cites the article it enforces. Values transcribed from the cited article; 'source' records where the number came from. A rule with source 'UNVERIFIED' must be confirmed against the official text before its verdict is trusted.",
+    "units": "metres, square metres, persons",
+    "last_reviewed": "2026-09-18"
+  },
+  "rules": [
+    {
+      "id": "OGUC-4.1.2-ceiling-height",
+      "norm": "OGUC",
+      "article": "Art. 4.1.2",
+      "scope": "room",
+      "applies_to": [
+        "habitable"
+      ],
+      "check": "min_value",
+      "field": "clear_height",
+      "threshold": 2.3,
+      "message": "Clear height of habitable rooms must be at least 2.30 m.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.2-min-area-bedroom",
+      "norm": "OGUC",
+      "article": "Art. 4.1.2",
+      "scope": "room",
+      "applies_to": [
+        "dormitorio_principal"
+      ],
+      "check": "min_value",
+      "field": "area",
+      "threshold": 7.0,
+      "message": "Principal bedroom minimum floor area.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.2-min-width",
+      "norm": "OGUC",
+      "article": "Art. 4.1.2",
+      "scope": "room",
+      "applies_to": [
+        "habitable"
+      ],
+      "check": "min_value",
+      "field": "min_width",
+      "threshold": 2.1,
+      "message": "Minimum clear width of a habitable room.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.1-corridor-width",
+      "norm": "OGUC",
+      "article": "Art. 4.1.1",
+      "scope": "circulation",
+      "applies_to": [
+        "corridor"
+      ],
+      "check": "min_value",
+      "field": "min_width",
+      "threshold": 0.9,
+      "message": "Minimum clear width of an interior circulation corridor in a dwelling.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.7-accessible-door",
+      "norm": "OGUC",
+      "article": "Art. 4.1.7",
+      "scope": "opening",
+      "applies_to": [
+        "door_accessible_route"
+      ],
+      "check": "min_value",
+      "field": "clear_width",
+      "threshold": 0.8,
+      "message": "Clear passage width of a door on an accessible route (Ley 20.422).",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.7-turning-circle",
+      "norm": "OGUC",
+      "article": "Art. 4.1.7",
+      "scope": "room",
+      "applies_to": [
+        "accessible_bathroom"
+      ],
+      "check": "min_value",
+      "field": "turning_circle_diameter",
+      "threshold": 1.5,
+      "message": "Wheelchair turning circle diameter in an accessible bathroom.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.2.x-stair-riser-max",
+      "norm": "OGUC",
+      "article": "Art. 4.2 (stairs)",
+      "scope": "stair",
+      "applies_to": [
+        "stair"
+      ],
+      "check": "max_value",
+      "field": "riser",
+      "threshold": 0.18,
+      "message": "Maximum riser height.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.2.x-stair-tread-min",
+      "norm": "OGUC",
+      "article": "Art. 4.2 (stairs)",
+      "scope": "stair",
+      "applies_to": [
+        "stair"
+      ],
+      "check": "min_value",
+      "field": "tread",
+      "threshold": 0.28,
+      "message": "Minimum tread depth.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.10-envelope-U",
+      "norm": "OGUC / NCh 853",
+      "article": "Art. 4.1.10",
+      "scope": "envelope",
+      "applies_to": [
+        "wall",
+        "roof",
+        "floor",
+        "window"
+      ],
+      "check": "max_value_by_zone",
+      "field": "U_value",
+      "threshold_table": "thermal_zones",
+      "message": "Envelope element U-value must not exceed the maximum for the project thermal zone (NCh 1079).",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "SITE-PRC-occupancy",
+      "norm": "PRC comunal",
+      "article": "per-comuna",
+      "scope": "site",
+      "applies_to": [
+        "site"
+      ],
+      "check": "max_value",
+      "field": "occupancy_ratio",
+      "threshold": null,
+      "message": "Ground occupancy ratio must not exceed the PRC limit for the zone. Threshold is project-specific: set it in the project's site.json from the PRC certificate.",
+      "source": "PROJECT"
+    },
+    {
+      "id": "SITE-PRC-far",
+      "norm": "PRC comunal",
+      "article": "per-comuna",
+      "scope": "site",
+      "applies_to": [
+        "site"
+      ],
+      "check": "max_value",
+      "field": "far",
+      "threshold": null,
+      "message": "Floor area ratio (constructibilidad) must not exceed the PRC limit. Project-specific.",
+      "source": "PROJECT"
+    },
+    {
+      "id": "OGUC-4.2.11-stair-rise-reaches",
+      "norm": "Geometria (no normativo)",
+      "article": "verificacion de consistencia",
+      "scope": "stair",
+      "applies_to": [
+        "stair"
+      ],
+      "check": "max_value",
+      "field": "rise_deficit",
+      "threshold": 0.005,
+      "message": "La suma de contrahuellas debe alcanzar la altura de entrepiso. Un deficit positivo significa que la escalera no llega al nivel superior.",
+      "source": "consistencia geometrica: no depende de ninguna norma, es aritmetica del modelo"
+    },
+    {
+      "id": "OGUC-4.2.11-stair-width",
+      "norm": "OGUC",
+      "article": "Art. 4.2.11",
+      "scope": "stair",
+      "applies_to": [
+        "stair"
+      ],
+      "check": "min_value",
+      "field": "min_width",
+      "threshold": null,
+      "message": "Ancho libre minimo de escalera en vivienda unifamiliar.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "OGUC-4.1.1-altura-local",
+      "norm": "OGUC",
+      "article": "Art. 4.1.1",
+      "scope": "space",
+      "applies_to": [
+        "habitable"
+      ],
+      "check": "min_value",
+      "field": "clear_height",
+      "threshold": null,
+      "message": "Altura minima piso a cielo de locales habitables.",
+      "source": "UNVERIFIED"
+    }
+  ],
+  "thermal_zones": {
+    "_note": "NCh 1079 zones A-G / OGUC Art. 4.1.10 maximum U-values in W/m2K. TRANSCRIBE FROM THE OFFICIAL TABLE BEFORE USE.",
+    "_status": "UNVERIFIED",
+    "A": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "B": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "C": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "D": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "E": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "F": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    },
+    "G": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null
+    }
+  }
+}

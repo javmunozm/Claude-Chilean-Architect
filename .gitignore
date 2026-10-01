@@ -1,0 +1,22 @@
+# Rejected/exploratory work: recorded in the project README, never committed.
+# See docs/attempts.md.
+projects/*/attempts/
+projects/*/*/attempts/
+
+# FreeCAD backups and lock files
+*.FCStd1
+*.FCBak
+*~
+
+# Blender backups
+*.blend1
+*.blend2
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+Thumbs.db
+desktop.ini
+.DS_Store

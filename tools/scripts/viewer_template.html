@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modelo 3D</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#dcdcd6;
+ font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;color:#161a1d}
+#c{position:fixed;inset:0;display:block;cursor:grab}
+#c:active{cursor:grabbing}
+.panel{position:fixed;background:rgba(255,255,255,.93);border:1px solid #c9c9c4;
+ backdrop-filter:blur(6px)}
+#hud{top:16px;left:16px;padding:14px 16px;max-width:270px}
+#hud h1{font-size:14px;letter-spacing:.02em;margin-bottom:2px}
+#hud p{font-size:11px;color:#7b8489;line-height:1.45}
+#hud .k{display:flex;gap:14px;margin-top:10px;padding-top:10px;
+ border-top:1px solid #e4e4de}
+#hud .k div b{display:block;font-size:8px;letter-spacing:.12em;color:#8b9299;
+ text-transform:uppercase}
+#hud .k div span{font-size:15px;font-variant-numeric:tabular-nums}
+#ui{bottom:16px;left:16px;padding:12px 14px;width:242px}
+#ui .grp{margin-bottom:12px}
+#ui .grp:last-child{margin-bottom:0}
+#ui b{display:block;font-size:8px;letter-spacing:.13em;color:#8b9299;
+ text-transform:uppercase;margin-bottom:7px}
+button{font:inherit;font-size:11px;padding:6px 9px;border:1px solid #c9c9c4;
+ background:#fff;cursor:pointer;letter-spacing:.02em}
+button:hover{background:#f0efe9}
+button.on{background:#161a1d;color:#fff;border-color:#161a1d}
+.row{display:flex;flex-wrap:wrap;gap:5px}
+#tip{position:fixed;bottom:16px;right:16px;padding:9px 12px;font-size:10.5px;
+ color:#5c6469;line-height:1.6}
+#err{position:fixed;inset:0;display:none;place-items:center;padding:40px;
+ text-align:center;font-size:14px;line-height:1.6;color:#3d4448}
+kbd{font:inherit;font-size:10px;background:#eceae4;padding:1px 5px;
+ border:1px solid #d4d4cf}
+@media(max-width:640px){#hud{max-width:190px;padding:10px 12px}
+ #ui{width:auto;right:16px}#tip{display:none}}
+</style></head><body>
+<canvas id="c"></canvas>
+<div class="panel" id="hud"><h1 id="t1">Modelo 3D</h1><p id="t2"></p>
+ <div class="k" id="kpi"></div></div>
+<div class="panel" id="ui">
+ <div class="grp"><b>Vistas</b><div class="row">
+  <button data-v="axo">Axonométrica</button><button data-v="sur">Frontal</button>
+  <button data-v="norte">Posterior</button><button data-v="aerea">Aérea</button>
+  <button data-v="patio">Patio</button></div></div>
+ <div class="grp"><b>Capas</b><div class="row">
+  <button data-l="cubierta" class="on">Cubierta</button>
+  <button data-l="p2" class="on">2º piso</button>
+  <button data-l="vidrio" class="on">Vidrios</button>
+  <button data-l="terreno" class="on">Terreno</button></div></div>
+ <div class="grp"><b>Sol</b><div class="row">
+  <button data-s="9">9 h</button><button data-s="13" class="on">13 h</button>
+  <button data-s="18">18 h</button></div></div>
+</div>
+<div class="panel" id="tip">Arrastrar: girar · Rueda: zoom · <kbd>Shift</kbd>+arrastrar: desplazar</div>
+<div id="err"><div><b>No se pudo cargar la librería 3D.</b><br>
+El visor necesita conexión a internet la primera vez para descargar three.js.<br>
+Con el archivo <code>.obj</code> puedes abrir el modelo sin conexión en Blender,
+SketchUp o el visor 3D de Windows.</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const DATA = __DATA__;
+if (typeof THREE === "undefined") {
+  document.getElementById("err").style.display = "grid";
+  document.getElementById("c").style.display = "none";
+} else {
+(function () {
+  const cv = document.getElementById("c");
+  const renderer = new THREE.WebGLRenderer({canvas: cv, antialias: true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xdcdcd6);
+  scene.fog = new THREE.Fog(0xdcdcd6, 60, 160);
+
+  const bb = DATA.bbox, cx = (bb[0] + bb[2]) / 2, cz = (bb[1] + bb[3]) / 2;
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 500);
+  const target = new THREE.Vector3(cx, 2.2, cz);
+
+  const hemi = new THREE.HemisphereLight(0xdfe8f2, 0x8a8a7a, 0.85);
+  scene.add(hemi);
+  const sun = new THREE.DirectionalLight(0xfff3e0, 1.15);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(2048, 2048);
+  const d = 26;
+  Object.assign(sun.shadow.camera, {left: -d, right: d, top: d, bottom: -d, near: 1, far: 120});
+  sun.shadow.camera.updateProjectionMatrix();
+  scene.add(sun, sun.target);
+  sun.target.position.set(cx, 0, cz);
+
+  const layers = {};
+  for (const [name, arr] of Object.entries(DATA.groups)) {
+    const m = DATA.mats[name] || {c: "#cccccc", o: 1};
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(arr, 3));
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshLambertMaterial({
+      color: new THREE.Color(m.c), side: THREE.DoubleSide,
+      transparent: m.o < 1, opacity: m.o
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.castShadow = m.o >= 1;
+    mesh.receiveShadow = true;
+    mesh.name = name;
+    scene.add(mesh);
+    layers[name] = mesh;
+  }
+
+  // ---- planos de recorte para ocultar el 2º piso -------------------------
+  const P2 = new THREE.Plane(new THREE.Vector3(0, -1, 0), 2.85);
+  let cutP2 = false;
+  function applyCut() {
+    renderer.localClippingEnabled = cutP2;
+    for (const [n, mesh] of Object.entries(layers)) {
+      mesh.material.clippingPlanes = (cutP2 && n !== "terreno" && n !== "pavimento")
+        ? [P2] : null;
+      mesh.material.needsUpdate = true;
+    }
+  }
+
+  // ---- órbita ------------------------------------------------------------
+  let az = -0.75, el = 0.42, dist = 34, drag = null;
+  function place() {
+    el = Math.max(-0.15, Math.min(1.45, el));
+    dist = Math.max(6, Math.min(120, dist));
+    camera.position.set(
+      target.x + dist * Math.cos(el) * Math.sin(az),
+      target.y + dist * Math.sin(el),
+      target.z + dist * Math.cos(el) * Math.cos(az));
+    camera.lookAt(target);
+  }
+  cv.addEventListener("pointerdown", e => {
+    drag = {x: e.clientX, y: e.clientY, pan: e.shiftKey || e.button === 2};
+    cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener("pointermove", e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    drag.x = e.clientX; drag.y = e.clientY;
+    if (drag.pan) {
+      const s = dist * 0.0016;
+      target.x -= (Math.cos(az) * dx - Math.sin(az) * dy * Math.sin(el)) * s;
+      target.z += (Math.sin(az) * dx + Math.cos(az) * dy * Math.sin(el)) * s;
+      target.y += dy * s * Math.cos(el);
+    } else { az -= dx * 0.006; el += dy * 0.006; }
+    place();
+  });
+  cv.addEventListener("pointerup", () => drag = null);
+  cv.addEventListener("contextmenu", e => e.preventDefault());
+  cv.addEventListener("wheel", e => {
+    e.preventDefault(); dist *= Math.exp(e.deltaY * 0.0011); place();
+  }, {passive: false});
+
+  const VIEWS = {
+    axo:   [-0.75, 0.42, 34, 2.2],
+    sur:   [0.0,  0.13, 30, 3.0],
+    norte: [Math.PI, 0.13, 30, 3.0],
+    aerea: [-0.6, 1.15, 38, 0.0],
+    patio: [-2.3, 0.30, 15, 2.0]
+  };
+  document.querySelectorAll("[data-v]").forEach(b => b.onclick = () => {
+    const v = VIEWS[b.dataset.v];
+    az = v[0]; el = v[1]; dist = v[2];
+    target.set(cx, v[3], cz); place();
+  });
+  document.querySelectorAll("[data-l]").forEach(b => b.onclick = () => {
+    const k = b.dataset.l;
+    b.classList.toggle("on");
+    const on = b.classList.contains("on");
+    if (k === "p2") { cutP2 = !on; applyCut(); }
+    else if (k === "terreno") { ["terreno","pavimento"].forEach(q => { if (layers[q]) layers[q].visible = on; }); }
+    else if (layers[k]) layers[k].visible = on;
+  });
+  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => {
+    document.querySelectorAll("[data-s]").forEach(o => o.classList.remove("on"));
+    b.classList.add("on");
+    const h = +b.dataset.s;
+    const a = (h - 6) / 12 * Math.PI;
+    sun.position.set(cx + 40 * Math.cos(a), 8 + 34 * Math.sin(a), cz + 22);
+    sun.intensity = h === 18 ? 0.85 : 1.15;
+    sun.color.set(h === 18 ? 0xffd9a8 : 0xfff3e0);
+  });
+
+  const meta = DATA.meta || {};
+  document.getElementById("t1").textContent = meta.titulo || "Modelo 3D";
+  document.getElementById("t2").textContent = meta.subtitulo || "";
+  document.getElementById("kpi").innerHTML = (meta.kpi || [])
+    .map(k => "<div><b>" + k[0] + "</b><span>" + k[1] + "</span></div>").join("");
+
+  function resize() {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  addEventListener("resize", resize);
+  resize();
+  sun.position.set(cx + 24, 38, cz + 22);
+  place();
+  (function loop() { requestAnimationFrame(loop); renderer.render(scene, camera); })();
+})();
+}
+</script></body></html>

@@ -1,0 +1,67 @@
+{
+  "_instructions": [
+    "Filled by site-analyst from the site's Certificado de Informaciones Previas",
+    "and the PRC ordenanza. tools/norm_check.py READS THIS FILE, so a wrong value",
+    "here produces a wrong compliance verdict.",
+    "",
+    "Leave a value null when you do not have a source for it. A null makes the",
+    "dependent rule report SKIP or UNVERIFIED, which is correct. A guessed value",
+    "makes it report PASS, which is a fabricated verdict.",
+    "",
+    "Never copy prc_limits from another project: they vary by comuna AND by zone",
+    "within a comuna."
+  ],
+
+  "project": "<ProjectName>",
+  "address": null,
+  "rol": null,
+  "comuna": null,
+
+  "prc": {
+    "zone": null,
+    "permitted_uses": [],
+    "source_document": null,
+    "source_date": null
+  },
+
+  "prc_limits": {
+    "_note": "Numeric ceilings from the PRC. occupancy_ratio and far feed norm_check.py directly.",
+    "occupancy_ratio": null,
+    "far": null,
+    "max_height_m": null,
+    "setback_front_m": null,
+    "setback_side_m": null,
+    "setback_rear_m": null
+  },
+
+  "thermal_zone": null,
+  "_thermal_zone_note": "NCh 1079 zone A-G for the comuna. Selects the entire U-value limit table; without it no thermal verdict is possible.",
+
+  "seismic": {
+    "zone": null,
+    "soil_type": null,
+    "_note": "NCh 433 seismic zone and soil classification. Both change the design spectrum."
+  },
+
+  "terrain": {
+    "area_m2": null,
+    "slope_percent": null,
+    "orientation": null,
+    "topography_source": null
+  },
+
+  "risk_designations": {
+    "flood": null,
+    "landslide": null,
+    "tsunami": null,
+    "wildfire": null
+  },
+
+  "sources": [
+    {
+      "document": "<e.g. Certificado de Informaciones Previas>",
+      "date": "<YYYY-MM-DD>",
+      "path": "sources/<subject>/<file>"
+    }
+  ]
+}

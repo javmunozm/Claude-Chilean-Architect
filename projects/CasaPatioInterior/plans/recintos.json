@@ -1,0 +1,296 @@
+{
+  "_nota": [
+    "Rotulos de recinto para las plantas: NOMBRE y PUNTO DE ROTULADO.",
+    "",
+    "IMPORTANTE - que es y que no es este archivo:",
+    "  * 'punto' es donde va el texto en el plano. Es una ubicacion aproximada,",
+    "    deducida cruzando los ejes de muro del modelo con el cuadro de",
+    "    superficies del documento rev. G.",
+    "  * 'area_doc' es la superficie QUE DECLARA EL DOCUMENTO. No esta medida",
+    "    desde la geometria.",
+    "",
+    "NO se incluyen poligonos de recinto. Un intento previo de deducirlos dio",
+    "18 de 26 recintos con diferencias superiores a 1,5 m2 frente al cuadro del",
+    "documento, ademas de solapes: la delimitacion real no es reconstruible",
+    "desde los datos disponibles. Publicar esos poligonos habria producido un",
+    "cuadro de superficies falso.",
+    "",
+    "Para cerrar esto hace falta el plano original acotado o la delimitacion",
+    "del proyectista. Mientras tanto el cuadro de superficies es un dato",
+    "declarado, no verificado."
+  ],
+  "unidades": "m, m2",
+  "niveles": {
+    "p1": {
+      "cota": 0.0,
+      "recintos": [
+        {
+          "nombre": "Escalera",
+          "tipo": "circulacion",
+          "punto": [
+            1.17,
+            2.09
+          ],
+          "area_doc_m2": 9.24,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Baño 2",
+          "tipo": "wet",
+          "punto": [
+            3.45,
+            1.15
+          ],
+          "area_doc_m2": 4.62,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Vestíbulo escalera",
+          "tipo": "circulacion",
+          "punto": [
+            3.45,
+            3.0
+          ],
+          "area_doc_m2": 4.62,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Hall de acceso",
+          "tipo": "circulacion",
+          "punto": [
+            5.6,
+            1.15
+          ],
+          "area_doc_m2": 6.48,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Logia",
+          "tipo": "servicio",
+          "punto": [
+            7.95,
+            1.15
+          ],
+          "area_doc_m2": 9.24,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Dormitorio 1",
+          "tipo": "habitable",
+          "punto": [
+            11.0,
+            2.05
+          ],
+          "area_doc_m2": 18.24,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Baño 1",
+          "tipo": "wet",
+          "punto": [
+            11.0,
+            4.65
+          ],
+          "area_doc_m2": 6.76,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Cocina",
+          "tipo": "wet",
+          "punto": [
+            5.65,
+            3.75
+          ],
+          "area_doc_m2": 15.6,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Comedor",
+          "tipo": "habitable",
+          "punto": [
+            2.05,
+            4.8
+          ],
+          "area_doc_m2": 14.8,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Living",
+          "tipo": "habitable",
+          "punto": [
+            3.8,
+            11.5
+          ],
+          "area_doc_m2": 25.6,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Clóset",
+          "tipo": "servicio",
+          "punto": [
+            1.2,
+            3.72
+          ],
+          "area_doc_m2": 3.12,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Galería poniente",
+          "tipo": "circulacion",
+          "punto": [
+            2.05,
+            7.2
+          ],
+          "area_doc_m2": 6.0,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Galería sur",
+          "tipo": "circulacion",
+          "punto": [
+            11.0,
+            7.2
+          ],
+          "area_doc_m2": 6.12,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Galería norte",
+          "tipo": "circulacion",
+          "punto": [
+            11.0,
+            11.5
+          ],
+          "area_doc_m2": 4.2,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Patio interior",
+          "tipo": "exterior",
+          "computa": false,
+          "punto": [
+            6.45,
+            7.2
+          ],
+          "area_doc_m2": 12.96,
+          "_area_verificada": false
+        }
+      ]
+    },
+    "p2": {
+      "cota": 2.85,
+      "recintos": [
+        {
+          "nombre": "Escalera",
+          "tipo": "circulacion",
+          "punto": [
+            1.17,
+            2.09
+          ],
+          "area_doc_m2": 9.24,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Baño 3",
+          "tipo": "wet",
+          "punto": [
+            3.22,
+            2.57
+          ],
+          "area_doc_m2": 6.6,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Sala de estar",
+          "tipo": "habitable",
+          "punto": [
+            6.65,
+            2.57
+          ],
+          "area_doc_m2": 13.2,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Dormitorio 4",
+          "tipo": "habitable",
+          "punto": [
+            2.35,
+            12.1
+          ],
+          "area_doc_m2": 19.32,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Dormitorio 5",
+          "tipo": "habitable",
+          "punto": [
+            6.75,
+            12.1
+          ],
+          "area_doc_m2": 15.84,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Dormitorio principal",
+          "tipo": "habitable",
+          "punto": [
+            2.8,
+            7.2
+          ],
+          "area_doc_m2": 23.56,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Walk-in clóset",
+          "tipo": "servicio",
+          "punto": [
+            1.15,
+            4.55
+          ],
+          "area_doc_m2": 3.92,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Baño principal",
+          "tipo": "wet",
+          "punto": [
+            3.3,
+            4.85
+          ],
+          "area_doc_m2": 6.72,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Pasarela poniente",
+          "tipo": "circulacion",
+          "punto": [
+            6.65,
+            4.69
+          ],
+          "area_doc_m2": 6.0,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Pasarela sur",
+          "tipo": "circulacion",
+          "punto": [
+            4.6,
+            0.68
+          ],
+          "area_doc_m2": 4.32,
+          "_area_verificada": false
+        },
+        {
+          "nombre": "Pasarela norte",
+          "tipo": "circulacion",
+          "punto": [
+            3.8,
+            9.6
+          ],
+          "area_doc_m2": 2.4,
+          "_area_verificada": false
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,673 @@
+{
+  "project": "Vivienda unifamiliar - 2 pisos con patio interior",
+  "source_file": "projects/CasaPatioInterior/plans/casa_rev_h.json",
+  "generated_by": "tools/scripts/json_to_extract.py",
+  "units": "m, m2",
+  "entities": [
+    {
+      "name": "Nivel p1 (altura libre)",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.6,
+      "level_z": 0.0,
+      "_nota": "altura piso a cielo del nivel; no sustituye la medicion recinto por recinto"
+    },
+    {
+      "name": "Nivel p2 (altura libre)",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.5,
+      "level_z": 2.85,
+      "_nota": "altura piso a cielo del nivel; no sustituye la medicion recinto por recinto"
+    },
+    {
+      "name": "Losa z=0.00",
+      "kind": "slab",
+      "tags": [
+        "slab"
+      ],
+      "area": 155.64,
+      "thickness": 0.35,
+      "level_z": 0.0
+    },
+    {
+      "name": "Losa z=2.85",
+      "kind": "slab",
+      "tags": [
+        "slab"
+      ],
+      "area": 105.649,
+      "thickness": 0.25,
+      "level_z": 2.85
+    },
+    {
+      "name": "Escalera 1",
+      "kind": "stair",
+      "tags": [
+        "stair"
+      ],
+      "riser": 0.1676,
+      "tread": 0.28,
+      "steps": 17,
+      "rise_total": 2.8492,
+      "min_width": 0.94,
+      "blondel": 0.6152,
+      "floor_to_floor": 2.85,
+      "rise_deficit": 0.0008
+    },
+    {
+      "name": "window 1 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 2 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "door 3 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "window 4 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.45,
+      "opening_height": 1.35,
+      "sill": 0.95,
+      "head": 2.3
+    },
+    {
+      "name": "window 5 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.2,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 6 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.7,
+      "opening_height": 1.1,
+      "sill": 1.1,
+      "head": 2.2
+    },
+    {
+      "name": "window 7 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.6,
+      "opening_height": 1.35,
+      "sill": 0.95,
+      "head": 2.3
+    },
+    {
+      "name": "window 8 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.8,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 9 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.8,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 10 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "window 11 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "window 12 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 3.1,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "door 13 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 2.7,
+      "opening_height": 2.36,
+      "sill": 0.0,
+      "head": 2.36
+    },
+    {
+      "name": "window 14 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.7,
+      "opening_height": 1.1,
+      "sill": 1.1,
+      "head": 2.2
+    },
+    {
+      "name": "window 15 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.2,
+      "opening_height": 1.8,
+      "sill": 0.55,
+      "head": 2.35
+    },
+    {
+      "name": "window 16 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.6,
+      "opening_height": 2.2,
+      "sill": 0.15,
+      "head": 2.35
+    },
+    {
+      "name": "door 17 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 2.8,
+      "opening_height": 2.35,
+      "sill": 0.0,
+      "head": 2.35
+    },
+    {
+      "name": "window 18 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.6,
+      "opening_height": 2.2,
+      "sill": 0.15,
+      "head": 2.35
+    },
+    {
+      "name": "door 19 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.7,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "window 20 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.6,
+      "opening_height": 2.2,
+      "sill": 0.15,
+      "head": 2.35
+    },
+    {
+      "name": "window 21 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.0,
+      "opening_height": 2.2,
+      "sill": 0.15,
+      "head": 2.35
+    },
+    {
+      "name": "door 22 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 1.6,
+      "opening_height": 2.35,
+      "sill": 0.0,
+      "head": 2.35
+    },
+    {
+      "name": "window 23 (p1)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.4,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "open 24 (p1)",
+      "kind": "window",
+      "tags": [
+        "open"
+      ],
+      "nominal_width": 1.2,
+      "opening_height": 2.3,
+      "sill": 0.0,
+      "head": 2.3
+    },
+    {
+      "name": "door 25 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 26 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 27 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 28 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "open 29 (p1)",
+      "kind": "window",
+      "tags": [
+        "open"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.3,
+      "sill": 0.0,
+      "head": 2.3
+    },
+    {
+      "name": "door 30 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 31 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 32 (p1)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "window 33 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 34 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "window 35 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.4,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 36 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.4,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 37 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.1,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 38 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.6,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 39 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.0,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 40 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "window 41 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 0.8,
+      "sill": 1.4,
+      "head": 2.2
+    },
+    {
+      "name": "window 42 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.6,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 43 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.4,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 44 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.5,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 45 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.2,
+      "opening_height": 1.25,
+      "sill": 0.95,
+      "head": 2.2
+    },
+    {
+      "name": "window 46 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 2.0,
+      "opening_height": 2.05,
+      "sill": 0.15,
+      "head": 2.2
+    },
+    {
+      "name": "window 47 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 1.4,
+      "opening_height": 2.05,
+      "sill": 0.15,
+      "head": 2.2
+    },
+    {
+      "name": "window 48 (p2)",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "nominal_width": 0.7,
+      "opening_height": 2.05,
+      "sill": 0.15,
+      "head": 2.2
+    },
+    {
+      "name": "door 49 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "open 50 (p2)",
+      "kind": "window",
+      "tags": [
+        "open"
+      ],
+      "nominal_width": 1.2,
+      "opening_height": 2.3,
+      "sill": 0.0,
+      "head": 2.3
+    },
+    {
+      "name": "door 51 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 52 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.9,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 53 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 54 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    },
+    {
+      "name": "door 55 (p2)",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "nominal_width": 0.8,
+      "opening_height": 2.1,
+      "sill": 0.0,
+      "head": 2.1
+    }
+  ],
+  "totals": {
+    "slab_area": 261.289,
+    "walls": 45,
+    "openings": 55
+  }
+}
