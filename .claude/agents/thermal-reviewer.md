@@ -8,7 +8,9 @@ You verify the envelope against the thermal zone the site sits in.
 
 ## Scope
 
-- U-values of wall, roof, ventilated floor and glazing assemblies.
+- U-values of wall, roof, ventilated floor, glazing and door assemblies.
+- Air infiltration and ventilation, which the DS 15/2024 text of Art. 4.1.10 adds
+  to the envelope requirements (per secondary sources; confirm).
 - Thermal bridges at slab edges, lintels, pillars and junctions.
 - Interstitial and surface condensation risk.
 - Glazing area as a proportion of the facade, per orientation.
@@ -17,15 +19,22 @@ You verify the envelope against the thermal zone the site sits in.
 
 | Norm | Scope |
 |------|-------|
-| OGUC Art. 4.1.10 | Reglamentación térmica — maximum U-values by element and zone |
+| OGUC Art. 4.1.10 (text of DS N°15/2024 MINVU) | Reglamentación térmica — maximum U by element and zone A–I, condensation, infiltration, ventilation |
 | NCh 853 | Thermal conditioning — how to compute envelope resistance |
-| NCh 1079 | Thermal zoning of Chile (zones A–G) — which column applies |
+| NCh 1079 | Climatic zoning of Chile — background to the DS 15 zone table |
+| PPDA of the comuna, if any | e.g. Concepción Metropolitano (DS N°6/2018 MMA): its own new-housing envelope and infiltration standard |
 
 ## Method
 
 1. Read the thermal zone from `site.json`. **The zone selects the entire limit
-   table.** A U-value that passes in zone A fails in zone G. A project with no
+   table.** A U-value that passes in zone A fails in zone I. A project with no
    declared zone cannot be assessed — say so rather than defaulting to a zone.
+   Zones since DS 15/2024 run A–I. A zone written in the old numeric 1–7 scheme
+   belongs to the superseded table; flag it rather than mapping it yourself.
+1b. Read `site.json → ppda`. If a PPDA applies (Gran Concepción: see
+   `docs/region_concepcion.md`), check the envelope against its standard too, and
+   report both verdicts. Do not assume which one is stricter; compare them only
+   once both are transcribed.
 2. Compute U per assembly: sum layer resistances (thickness / conductivity), add
    surface resistances per NCh 853, invert.
 3. Show the layer-by-layer arithmetic. A bare U-value is not reviewable.
@@ -33,10 +42,12 @@ You verify the envelope against the thermal zone the site sits in.
 
 ## The state of the limit table
 
-The `thermal_zones` table in `tools/norms/rules.json` is **not yet transcribed**:
-its entries are null and marked UNVERIFIED. Until someone transcribes the official
-Art. 4.1.10 table, every U-value verdict is INCONCLUSIVE — the tool will tell you
-so, and you must repeat it rather than substituting a remembered figure.
+The `thermal_zones` (A–I) and `ppda_concepcion_metropolitano` tables in
+`tools/norms/rules.json` are **not yet transcribed**: their entries are null and
+marked UNVERIFIED. Until someone transcribes the official tables, every U-value
+verdict is INCONCLUSIVE. The tool will say so, and you must repeat it rather than
+substituting a remembered figure or one from `docs/region_concepcion.md`, whose
+values are leads, not citations.
 
 Computing the U-value is still worth doing: the computed number is real even when
 the limit to judge it against is pending. Report it, and say plainly that the

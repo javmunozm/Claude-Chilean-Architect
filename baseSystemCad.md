@@ -46,6 +46,7 @@ The mechanical half of this is the verification sweep in
 | [docs/attempts.md](docs/attempts.md) | `attempts/` folders, and the record-then-delete procedure when the user rejects work |
 | [docs/projects.md](docs/projects.md) | Index of all projects with description and status |
 | [docs/lessons.md](docs/lessons.md) | Post-mortems — one entry per incident, read by the agents each concerns |
+| [docs/region_concepcion.md](docs/region_concepcion.md) | Gran Concepción: applicable instruments (DS 15 thermal, PPDA, NCh 433/DS 61, PRMC) and their verification status |
 
 ## Agents
 

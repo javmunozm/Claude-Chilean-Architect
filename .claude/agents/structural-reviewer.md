@@ -18,13 +18,17 @@ Chile is a seismic country and this is the review that reflects that.
 | Norm | Scope |
 |------|-------|
 | NCh 433 | Seismic design of buildings — zone, soil type, R factor, drift limits |
+| DS N°61/2011 MINVU | Modifies NCh 433 — seismic soil classification from Vs30 plus complementary tests |
 | NCh 3171 | Seismic design of non-structural components |
 | NCh 2369 | Seismic design of industrial structures |
 
 ## Method
 
 1. Take the seismic zone and soil type from `site.json`. Both change the design
-   spectrum; neither is guessable from the plan.
+   spectrum; neither is guessable from the plan. The soil type comes from the
+   site's geotechnical study under DS 61. If `soil_type` is null, the spectrum is
+   undetermined, and that is a finding, not a gap to fill with a typical value.
+   For Gran Concepción, see the seismic section of `docs/region_concepcion.md`.
 2. Check wall density and continuity per floor, and whether the lateral system
    aligns vertically. A wall that stops at a storey is a finding.
 3. Assess plan regularity: eccentricity between mass and stiffness centres.

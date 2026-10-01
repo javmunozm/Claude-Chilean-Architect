@@ -2,7 +2,7 @@
   "_meta": {
     "description": "Machine-checkable subset of Chilean building norms. Each rule cites the article it enforces. Values transcribed from the cited article; 'source' records where the number came from. A rule with source 'UNVERIFIED' must be confirmed against the official text before its verdict is trusted.",
     "units": "metres, square metres, persons",
-    "last_reviewed": "2026-09-18"
+    "last_reviewed": "2026-10-01"
   },
   "rules": [
     {
@@ -120,18 +120,41 @@
     {
       "id": "OGUC-4.1.10-envelope-U",
       "norm": "OGUC / NCh 853",
-      "article": "Art. 4.1.10",
+      "article": "Art. 4.1.10 (texto DS N°15/2024)",
       "scope": "envelope",
       "applies_to": [
         "wall",
         "roof",
         "floor",
-        "window"
+        "window",
+        "door"
       ],
       "check": "max_value_by_zone",
       "field": "U_value",
       "threshold_table": "thermal_zones",
-      "message": "Envelope element U-value must not exceed the maximum for the project thermal zone (NCh 1079).",
+      "message": "Envelope element U-value must not exceed the maximum for the project thermal zone A-I (OGUC Art. 4.1.10 as replaced by DS N°15/2024 MINVU, in force 2025-11-28 per secondary sources - confirm). See docs/region_concepcion.md.",
+      "source": "UNVERIFIED"
+    },
+    {
+      "id": "PPDA-CM-vivienda-nueva-U",
+      "norm": "PPDA Concepcion Metropolitano (DS N°6/2018 MMA)",
+      "article": "Art. 25 (estandar vivienda nueva) - numero de articulo segun fuente secundaria",
+      "scope": "envelope",
+      "applies_to": [
+        "wall",
+        "roof",
+        "floor",
+        "window",
+        "door"
+      ],
+      "site_condition": {
+        "field": "ppda",
+        "equals": "Concepcion Metropolitano"
+      },
+      "check": "max_value_by_kind",
+      "field": "U_value",
+      "threshold_table": "ppda_concepcion_metropolitano",
+      "message": "Vivienda nueva en comuna del PPDA Concepcion Metropolitano: U maximo de la envolvente segun el estandar del plan. Aplica solo si site.json declara ppda = \"Concepcion Metropolitano\".",
       "source": "UNVERIFIED"
     },
     {
@@ -206,49 +229,79 @@
     }
   ],
   "thermal_zones": {
-    "_note": "NCh 1079 zones A-G / OGUC Art. 4.1.10 maximum U-values in W/m2K. TRANSCRIBE FROM THE OFFICIAL TABLE BEFORE USE.",
+    "_note": "OGUC Art. 4.1.10 maximum U-values in W/m2K by thermal zone. DS N°15/2024 (MINVU) replaced the old 7-zone table with 9 zones A-I (in force 2025-11-28 per secondary sources). TRANSCRIBE FROM THE OFFICIAL TABLE BEFORE USE. Leads in docs/region_concepcion.md.",
     "_status": "UNVERIFIED",
     "A": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "B": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "C": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "D": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "E": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "F": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
     },
     "G": {
       "roof": null,
       "wall": null,
       "floor": null,
-      "window": null
+      "window": null,
+      "door": null
+    },
+    "H": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null,
+      "door": null
+    },
+    "I": {
+      "roof": null,
+      "wall": null,
+      "floor": null,
+      "window": null,
+      "door": null
     }
+  },
+  "ppda_concepcion_metropolitano": {
+    "_note": "Estandar de U maximo para vivienda nueva del PPDA Concepcion Metropolitano (DS N°6/2018 MMA). Estructura provisoria (un valor por elemento): confirmarla al transcribir; si el decreto tabula por otra variable, ajustar la regla.",
+    "_status": "UNVERIFIED",
+    "roof": null,
+    "wall": null,
+    "floor": null,
+    "window": null,
+    "door": null
   }
 }

@@ -163,6 +163,7 @@ verdict needing computed forces is INCONCLUSIVE with a handoff to a calculista.
 | [docs/attempts.md](docs/attempts.md) | `attempts/`, the record-then-delete procedure |
 | [docs/projects.md](docs/projects.md) | Index of all projects with description and status |
 | [docs/lessons.md](docs/lessons.md) | Post-mortems — one entry per incident, measured causes |
+| [docs/region_concepcion.md](docs/region_concepcion.md) | Gran Concepción: applicable instruments (DS 15 thermal, PPDA, NCh 433/DS 61, PRMC) and their verification status |
 
 `sources/` and `tools/` stay at the repo root, shared across all projects — never
 nested under `projects/`, because a tool copied into a project stops receiving fixes.

@@ -11,19 +11,16 @@
     "Never copy prc_limits from another project: they vary by comuna AND by zone",
     "within a comuna."
   ],
-
   "project": "<ProjectName>",
   "address": null,
   "rol": null,
   "comuna": null,
-
   "prc": {
     "zone": null,
     "permitted_uses": [],
     "source_document": null,
     "source_date": null
   },
-
   "prc_limits": {
     "_note": "Numeric ceilings from the PRC. occupancy_ratio and far feed norm_check.py directly.",
     "occupancy_ratio": null,
@@ -33,30 +30,34 @@
     "setback_side_m": null,
     "setback_rear_m": null
   },
-
+  "prm": {
+    "instrument": null,
+    "zone": null,
+    "source_document": null,
+    "_note": "Metropolitan/intercommunal plan layered over the PRC (Gran Concepcion: PRMC). Sets risk areas, including tsunami flooding. See docs/region_concepcion.md."
+  },
+  "ppda": null,
+  "_ppda_note": "Atmospheric decontamination plan in force in the comuna, if any. Write exactly \"Concepcion Metropolitano\" when the comuna is in that PPDA (DS N°6/2018 MMA), confirmed against the decree: it enables rule PPDA-CM-vivienda-nueva-U in norm_check.py. null = not declared.",
   "thermal_zone": null,
-  "_thermal_zone_note": "NCh 1079 zone A-G for the comuna. Selects the entire U-value limit table; without it no thermal verdict is possible.",
-
+  "_thermal_zone_note": "Thermal zone A-I of the comuna per OGUC Art. 4.1.10 as replaced by DS N°15/2024 MINVU (previously 7 zones). Selects the entire U-value limit table; without it no thermal verdict is possible.",
   "seismic": {
     "zone": null,
     "soil_type": null,
-    "_note": "NCh 433 seismic zone and soil classification. Both change the design spectrum."
+    "_note": "NCh 433 seismic zone (Table 4.1, by comuna) and soil class per DS N°61/2011 MINVU (Vs30 plus complementary tests). Soil class comes from a geotechnical study of the site, never from a map or a neighbouring lot."
   },
-
   "terrain": {
     "area_m2": null,
     "slope_percent": null,
     "orientation": null,
     "topography_source": null
   },
-
   "risk_designations": {
     "flood": null,
     "landslide": null,
     "tsunami": null,
-    "wildfire": null
+    "wildfire": null,
+    "_note": "In Gran Concepcion read the PRMC risk plan at the parcel (tsunami high/medium, flooding, landslide, wildfire). Each value cites the plan sheet as its source."
   },
-
   "sources": [
     {
       "document": "<e.g. Certificado de Informaciones Previas>",

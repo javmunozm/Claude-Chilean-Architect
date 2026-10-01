@@ -3,18 +3,40 @@
 """Genera plantas DXF acotadas y rotuladas desde la especificacion JSON.
 
 Salida en metros, un archivo por nivel. Incluye:
-  - muros con su espesor real segun alineacion
-  - vanos con codigo (P01, V01...) y cuadro de vanos al costado
+  - muros cortados en los vanos, con contorno grueso y relleno (poche)
+  - puertas con hoja y arco de abatimiento; correderas con sus dos hojas
+  - ventanas con lineas de alfeizar y doble linea de vidrio
+  - codigo de vano (P01, V01...) fuera del muro y cuadro de vanos al costado
   - cotas por cada eje de muro, en dos lineas (parcial y total)
   - rotulo de cada recinto con su superficie declarada
+  - escalera con linea de corte: lo que esta sobre el plano de corte, punteado
   - simbolo de norte, cota de nivel y vineta con escala
+  - una presentacion (paperspace) A3 con ventana a la escala pedida
 
-Capas (apagables por separado en AutoCAD / BricsCAD / QCAD):
-    A-MURO  A-VANO  A-LOSA  A-ESCA  A-COTA  A-TEXT  A-RECI  A-SIMB  A-CUAD
+Textos y cotas se dimensionan en MILIMETROS DE PAPEL y se convierten a metros de
+modelo con la escala de impresion (--escala, por defecto 1:100). Antes las
+alturas estaban fijas en 0,14-0,20 m de modelo, que a 1:100 son 1,4-2,0 mm en
+papel: por debajo de lo legible. Todos los textos usan el estilo ARQ (Arial
+TrueType); antes usaban 'Standard' -> txt.shx, que los visores sin esa fuente
+SHX sustituyen por un trazo ilegible.
+
+Capas (apagables por separado en AutoCAD / BricsCAD / QCAD / LibreCAD):
+    A-MURO  A-MURO-RELL  A-VANO  A-LOSA  A-ESCA  A-COTA  A-TEXT  A-RECI
+    A-SIMB  A-CUAD
+
+Campos opcionales por vano en el JSON (si faltan se usa un valor por defecto y
+la planta lo declara en una nota):
+    "operation": "swing" | "sliding" | "double"   (solo puertas)
+    "hinge":     "start" | "end"   jamba de la bisagra (start = coordenada menor)
+    "swing":     +1 | -1           lado hacia el que abre (+1 = hacia +x / +y)
+
+Campo opcional en "meta":
+    "norte": "-y" | "+y"   hacia donde apunta el norte en planta. Por defecto
+                            la convencion del repositorio (+Y sur -> "-y").
 
 Uso:
     python tools/scripts/json_to_dxf.py <planta.json> --outdir <dir> \
-        [--recintos <recintos.json>]
+        [--recintos <recintos.json>] [--escala 100]
 """
 from __future__ import annotations
 
@@ -26,24 +48,70 @@ from pathlib import Path
 
 try:
     import ezdxf
+    from ezdxf import bbox
     from ezdxf.enums import TextEntityAlignment
 except ImportError:
     print("error: falta ezdxf. Instalar con: pip install ezdxf", file=sys.stderr)
     raise SystemExit(2)
 
+try:
+    from shapely.geometry import Point, Polygon, box
+    from shapely.ops import unary_union
+except ImportError:
+    print("error: falta shapely. Instalar con: pip install shapely", file=sys.stderr)
+    raise SystemExit(2)
+
+# Color 7 se dibuja negro sobre fondo blanco y blanco sobre fondo negro: es el
+# unico legible en ambos. El amarillo (2) y el cian (4) de la version anterior
+# eran casi invisibles sobre fondo blanco.
+# (nombre, color ACI, grosor de linea en centesimas de mm, descripcion)
 CAPAS = [
-    ("A-MURO", 7, "muros"),
-    ("A-VANO", 4, "puertas y ventanas"),
-    ("A-LOSA", 8, "contorno de losa"),
-    ("A-ESCA", 3, "escalera"),
-    ("A-COTA", 1, "cotas"),
-    ("A-TEXT", 2, "textos generales"),
-    ("A-RECI", 5, "rotulos de recinto"),
-    ("A-SIMB", 6, "simbolos: norte, niveles"),
-    ("A-CUAD", 2, "cuadro de vanos"),
+    ("A-MURO", 7, 50, "muros cortados: contorno"),
+    ("A-MURO-RELL", 253, 0, "muros cortados: relleno (poche)"),
+    ("A-VANO", 7, 18, "puertas y ventanas"),
+    ("A-LOSA", 8, 13, "contorno de losa"),
+    ("A-ESCA", 7, 18, "escalera"),
+    ("A-COTA", 1, 13, "cotas"),
+    ("A-TEXT", 7, 25, "textos generales"),
+    ("A-RECI", 5, 18, "rotulos de recinto"),
+    ("A-SIMB", 7, 25, "simbolos: norte, niveles"),
+    ("A-CUAD", 7, 13, "cuadro de vanos"),
 ]
 
+FUENTE = "arial.ttf"
+ESTILO = "ARQ"
+SEGMENTADO = "ARQ-SEGM"
+
+# Alturas de texto en mm de papel. 2,5 mm es el minimo usual de rotulacion
+# tecnica impresa; los titulos van mayores.
+MM = {
+    "titulo": 4.0,
+    "subtitulo": 2.5,
+    "recinto": 2.8,
+    "area": 2.2,
+    "vano": 2.2,
+    "cota": 2.2,
+    "cuadro": 2.0,
+    "nota": 2.2,
+    "norte": 4.0,
+    "nivel": 2.5,
+}
+
+# Plano de corte horizontal de la planta, medido desde el NPT del nivel.
+CORTE_PLANTA = 1.20
+PUERTA_CORREDERA_DESDE = 1.20   # ancho sobre el cual una puerta sin "operation" se dibuja corredera
+
 TOL = 1e-6
+
+
+class Papel:
+    """Convierte milimetros de papel a metros de modelo para una escala 1:N."""
+
+    def __init__(self, escala):
+        self.escala = escala
+
+    def __call__(self, mm):
+        return mm * self.escala / 1000.0
 
 
 def wall_polygon(w):
@@ -72,13 +140,26 @@ def wall_polygon(w):
     ]
 
 
-def texto(msp, contenido, punto, altura, capa, centrado=False):
-    t = msp.add_text(contenido, height=altura, dxfattribs={"layer": capa})
-    if centrado:
+def texto(msp, contenido, punto, altura, capa, centrado=False, alin=None):
+    t = msp.add_text(contenido, height=altura,
+                     dxfattribs={"layer": capa, "style": ESTILO})
+    if alin is not None:
+        t.set_placement(punto, align=alin)
+    elif centrado:
         t.set_placement(punto, align=TextEntityAlignment.MIDDLE_CENTER)
     else:
         t.set_placement(punto)
     return t
+
+
+def partir_nombre(nombre, max_chars=12):
+    """Parte un rotulo largo en dos lineas por el espacio mas centrado."""
+    if len(nombre) <= max_chars or " " not in nombre:
+        return [nombre]
+    mitad = len(nombre) / 2.0
+    cortes = [i for i, c in enumerate(nombre) if c == " "]
+    i = min(cortes, key=lambda k: abs(k - mitad))
+    return [nombre[:i], nombre[i + 1:]]
 
 
 def ejes_de_muro(spec, level_id):
@@ -122,47 +203,61 @@ def acotar_eje(msp, valores, base, horizontal, capa="A-COTA"):
     for a, b in zip(valores, valores[1:]):
         if horizontal:
             dim = msp.add_linear_dim(base=(0, base), p1=(a, base), p2=(b, base),
-                                     dxfattribs={"layer": capa})
+                                     dimstyle=ESTILO, dxfattribs={"layer": capa})
         else:
             dim = msp.add_linear_dim(base=(base, 0), p1=(base, a), p2=(base, b),
-                                     angle=90, dxfattribs={"layer": capa})
+                                     angle=90, dimstyle=ESTILO,
+                                     dxfattribs={"layer": capa})
         dim.render()
 
 
-def simbolo_norte(msp, x, y, r=0.9):
+def simbolo_norte(msp, x, y, p, hacia="-y"):
     """Flecha de norte.
 
-    Convencion del repositorio: +X este, +Y sur. Por tanto el NORTE apunta
-    hacia -Y, es decir hacia ABAJO en el dibujo, y la punta de la flecha y la
-    letra N van en esa direccion.
+    Convencion del repositorio: +X este, +Y sur, de modo que el NORTE apunta a
+    -Y (hacia ABAJO en el dibujo). Un proyecto cuyo JSON use otra orientacion
+    lo declara en meta.norte = "+y".
     """
+    r = p(9.0)
+    s = -1.0 if hacia == "-y" else 1.0
     msp.add_circle((x, y), r, dxfattribs={"layer": "A-SIMB"})
-    msp.add_lwpolyline(
-        [(x, y - r * 0.95),                      # punta: hacia -Y = norte
-         (x - r * 0.28, y + r * 0.5),
-         (x, y + r * 0.2),
-         (x + r * 0.28, y + r * 0.5)],
-        close=True, dxfattribs={"layer": "A-SIMB"})
-    texto(msp, "N", (x, y - r - 0.45), 0.30, "A-SIMB", centrado=True)
+    flecha = [(x, y + s * r * 0.95),
+              (x - r * 0.28, y - s * r * 0.5),
+              (x, y - s * r * 0.2),
+              (x + r * 0.28, y - s * r * 0.5)]
+    msp.add_lwpolyline(flecha, close=True, dxfattribs={"layer": "A-SIMB"})
+    relleno = msp.add_hatch(color=7, dxfattribs={"layer": "A-SIMB"})
+    relleno.paths.add_polyline_path([flecha[0], flecha[1], flecha[2]], is_closed=True)
+    texto(msp, "N", (x, y + s * (r + p(4.0))), p(MM["norte"]), "A-SIMB", centrado=True)
 
 
-def simbolo_nivel(msp, x, y, cota):
+def simbolo_nivel(msp, x, y, cota, p):
     """Triangulo de cota de nivel (NPT)."""
-    s = 0.22
+    s = p(2.2)
     msp.add_lwpolyline([(x, y), (x - s, y + s * 1.6), (x + s, y + s * 1.6)],
                        close=True, dxfattribs={"layer": "A-SIMB"})
-    texto(msp, "NPT %+.2f" % cota, (x + s * 1.5, y + s * 0.6), 0.22, "A-SIMB")
+    texto(msp, "NPT %s" % fmt_cota(cota), (x + s * 1.5, y + s * 0.6),
+          p(MM["nivel"]), "A-SIMB")
 
 
-def cuadro_vanos(msp, vanos, x, y):
+def fmt_m(v, dec=2):
+    """Numero con coma decimal, como se rotula en Chile."""
+    return ("%.*f" % (dec, v)).replace(".", ",")
+
+
+def fmt_cota(v):
+    return ("%+.2f" % v).replace(".", ",")
+
+
+def cuadro_vanos(msp, vanos, x, y, p):
     """Tabla de vanos al costado derecho de la planta."""
     if not vanos:
         return
-    h = 0.30           # alto de fila
-    anchos = [1.2, 2.3, 1.5, 1.5, 1.5]
+    h = p(3.6)
+    anchos = [p(v) for v in (11.0, 28.0, 13.0, 13.0, 19.0)]
     encabezados = ["COD", "TIPO", "ANCHO", "ALTO", "ANTEPECHO"]
 
-    texto(msp, "CUADRO DE VANOS", (x, y + h * 1.4), 0.32, "A-CUAD")
+    texto(msp, "CUADRO DE VANOS", (x, y + p(3.0)), p(3.0), "A-CUAD")
 
     filas = [encabezados] + vanos
     total_ancho = sum(anchos)
@@ -170,7 +265,6 @@ def cuadro_vanos(msp, vanos, x, y):
     y_sup = y
     y_inf = y - n * h
 
-    # marco exterior y lineas horizontales
     msp.add_lwpolyline([(x, y_sup), (x + total_ancho, y_sup),
                         (x + total_ancho, y_inf), (x, y_inf)],
                        close=True, dxfattribs={"layer": "A-CUAD"})
@@ -179,146 +273,390 @@ def cuadro_vanos(msp, vanos, x, y):
         msp.add_line((x, yy), (x + total_ancho, yy),
                      dxfattribs={"layer": "A-CUAD"})
 
-    # lineas verticales, una sola vez y de borde a borde
     cx = x
     for a in anchos[:-1]:
         cx += a
         msp.add_line((cx, y_sup), (cx, y_inf), dxfattribs={"layer": "A-CUAD"})
 
-    # textos
     for i, fila in enumerate(filas):
-        yy = y_sup - i * h
+        yy = y_sup - i * h - h / 2.0
         cx = x
         for j, celda in enumerate(fila):
-            texto(msp, str(celda), (cx + 0.08, yy - h * 0.70), 0.15, "A-CUAD")
+            texto(msp, str(celda), (cx + p(1.2), yy), p(MM["cuadro"]), "A-CUAD",
+                  alin=TextEntityAlignment.MIDDLE_LEFT)
             cx += anchos[j]
 
 
-def vineta(msp, spec, level_id, cota, x, y, ancho=6.0):
+def vineta(msp, spec, level_id, cota, x, y, ancho, p, notas):
     """Vineta con titulo, lamina, escala y notas."""
-    alto = 2.6
+    linea = p(4.6)
+    alto = linea * (5 + len(notas)) + p(2.0)
     msp.add_lwpolyline([(x, y), (x + ancho, y), (x + ancho, y + alto), (x, y + alto)],
                        close=True, dxfattribs={"layer": "A-TEXT"})
-    titulo = spec.get("meta", {}).get("titulo", "")
-    sub = spec.get("meta", {}).get("subtitulo", "")
-    rev = spec.get("meta", {}).get("rev", "")
+    meta = spec.get("meta", {})
+    titulo = meta.get("titulo", "")
+    sub = meta.get("subtitulo", "")
+    rev = meta.get("rev", "")
 
-    texto(msp, titulo[:46], (x + 0.15, y + alto - 0.45), 0.24, "A-TEXT")
-    texto(msp, sub[:52], (x + 0.15, y + alto - 0.85), 0.17, "A-TEXT")
-    msp.add_line((x, y + alto - 1.05), (x + ancho, y + alto - 1.05),
-                 dxfattribs={"layer": "A-TEXT"})
-    texto(msp, "PLANTA NIVEL %s   NPT %+.2f m" % (level_id.upper(), cota),
-          (x + 0.15, y + alto - 1.45), 0.22, "A-TEXT")
-    texto(msp, "Escala 1:50 / 1:100   Medidas en METROS",
-          (x + 0.15, y + alto - 1.80), 0.16, "A-TEXT")
-    texto(msp, "Rev. %s   Cotas a cara de muro" % rev,
-          (x + 0.15, y + alto - 2.10), 0.16, "A-TEXT")
-    texto(msp, "VERIFICAR EN OBRA ANTES DE EJECUTAR",
-          (x + 0.15, y + alto - 2.40), 0.16, "A-TEXT")
+    yy = y + alto - linea
+    texto(msp, titulo, (x + p(2.0), yy), p(MM["titulo"]), "A-TEXT")
+    yy -= linea
+    texto(msp, sub, (x + p(2.0), yy), p(MM["subtitulo"]), "A-TEXT")
+    yy -= p(1.6)
+    msp.add_line((x, yy), (x + ancho, yy), dxfattribs={"layer": "A-TEXT"})
+    yy -= linea
+    texto(msp, "PLANTA NIVEL %s   NPT %s m" % (level_id.upper(), fmt_cota(cota)),
+          (x + p(2.0), yy), p(3.0), "A-TEXT")
+    yy -= linea
+    texto(msp, "Escala 1:%d (lamina A3)   Medidas en METROS   Rev. %s"
+          % (p.escala, rev), (x + p(2.0), yy), p(MM["nota"]), "A-TEXT")
+    for nota in notas:
+        yy -= linea
+        texto(msp, nota, (x + p(2.0), yy), p(MM["nota"]), "A-TEXT")
 
 
-def draw_level(spec, level_id, path, recintos=None):
+# ------------------------------------------------------------------ vanos
+
+class Vano:
+    """Geometria local de un vano: eje u a lo largo del muro, v a traves."""
+
+    def __init__(self, o):
+        x0, y0, x1, y1 = o["rect"]
+        self.o = o
+        self.horizontal = (x1 - x0) >= (y1 - y0)
+        if self.horizontal:
+            self.u0, self.u1, self.v0, self.v1 = x0, x1, y0, y1
+        else:
+            self.u0, self.u1, self.v0, self.v1 = y0, y1, x0, x1
+        self.ancho = self.u1 - self.u0
+        self.t = self.v1 - self.v0
+        self.vm = (self.v0 + self.v1) / 2.0
+        self.um = (self.u0 + self.u1) / 2.0
+
+    def xy(self, u, v):
+        return (u, v) if self.horizontal else (v, u)
+
+    def corte(self, holgura=0.02):
+        """Poligono que se resta del muro: atraviesa todo el espesor."""
+        a = self.xy(self.u0, self.v0 - holgura)
+        b = self.xy(self.u1, self.v1 + holgura)
+        return box(min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
+
+    def lado_interior(self, huella):
+        """+1/-1 si exactamente un lado del vano cae dentro de la huella del
+        nivel (vano de fachada); None si ambos o ninguno (vano interior)."""
+        d = self.t / 2.0 + 0.30
+        dentro_mas = huella.contains(Point(self.xy(self.um, self.vm + d)))
+        dentro_menos = huella.contains(Point(self.xy(self.um, self.vm - d)))
+        if dentro_mas and not dentro_menos:
+            return 1
+        if dentro_menos and not dentro_mas:
+            return -1
+        return None
+
+
+def linea(msp, a, b, capa="A-VANO", **kw):
+    attrs = {"layer": capa}
+    attrs.update(kw)
+    msp.add_line(a, b, dxfattribs=attrs)
+
+
+def dibujar_ventana(msp, v):
+    for vv in (v.v0, v.v1):                                   # alfeizar en ambas caras
+        linea(msp, v.xy(v.u0, vv), v.xy(v.u1, vv))
+    for dv in (-0.015, 0.015):                                # vidrio
+        linea(msp, v.xy(v.u0, v.vm + dv), v.xy(v.u1, v.vm + dv), lineweight=13)
+
+
+def dibujar_abertura(msp, v):
+    """Vano sin hoja: dintel sobre el plano de corte, en segmentado."""
+    for vv in (v.v0, v.v1):
+        linea(msp, v.xy(v.u0, vv), v.xy(v.u1, vv), linetype=SEGMENTADO)
+
+
+def dibujar_puerta_abatible(msp, v, bisagra, lado, ancho_hoja=None):
+    """Hoja abierta a 90 grados y arco de barrido."""
+    w = ancho_hoja if ancho_hoja is not None else v.ancho
+    u_h = v.u0 if bisagra == "start" else v.u1
+    u_libre = u_h + w if bisagra == "start" else u_h - w
+    v_cara = v.v1 if lado > 0 else v.v0
+    h = v.xy(u_h, v_cara)
+    abierta = v.xy(u_h, v_cara + lado * w)
+    cerrada = v.xy(u_libre, v_cara)
+    linea(msp, h, abierta, lineweight=25)
+    a1 = math.degrees(math.atan2(cerrada[1] - h[1], cerrada[0] - h[0]))
+    a2 = math.degrees(math.atan2(abierta[1] - h[1], abierta[0] - h[0]))
+    if (a2 - a1) % 360.0 <= 180.0:
+        ini, fin = a1, a2
+    else:
+        ini, fin = a2, a1
+    msp.add_arc(h, w, ini % 360.0, fin % 360.0, dxfattribs={"layer": "A-VANO"})
+
+
+def dibujar_corredera(msp, v):
+    """Dos hojas paralelas que se traslapan en el centro del vano."""
+    e = 0.03
+    tras = 0.05
+    for (ua, ub, dv) in ((v.u0, v.um + tras, -e), (v.um - tras, v.u1, e)):
+        pts = [v.xy(ua, v.vm + dv - e / 2), v.xy(ub, v.vm + dv - e / 2),
+               v.xy(ub, v.vm + dv + e / 2), v.xy(ua, v.vm + dv + e / 2)]
+        msp.add_lwpolyline(pts, close=True, dxfattribs={"layer": "A-VANO"})
+
+
+def dibujar_vano(msp, o, huella, p, n_cod):
+    """Dibuja el vano y su codigo. Devuelve (fila_cuadro, uso_valor_por_defecto)."""
+    v = Vano(o)
+    kind = o["kind"]
+    interior = v.lado_interior(huella)
+    por_defecto = False
+
+    sill = o.get("sill", 0.0) or 0.0
+    head = o.get("head", 0.0) or 0.0
+    alto = head - sill
+
+    if kind == "door":
+        cod = "P%02d" % n_cod["P"]
+        n_cod["P"] += 1
+        op = o.get("operation")
+        if op is None:
+            op = "sliding" if v.ancho > PUERTA_CORREDERA_DESDE else "swing"
+            por_defecto = True
+        if op == "sliding":
+            dibujar_corredera(msp, v)
+            tipo = "Puerta corredera"
+            lado_tag = interior * -1 if interior else 1
+        else:
+            lado = o.get("swing")
+            if lado is None:
+                lado = interior if interior else 1
+                por_defecto = True
+            bisagra = o.get("hinge")
+            if bisagra is None:
+                bisagra = "start"
+                por_defecto = True
+            if op == "double":
+                dibujar_puerta_abatible(msp, v, "start", lado, v.ancho / 2.0)
+                dibujar_puerta_abatible(msp, v, "end", lado, v.ancho / 2.0)
+                tipo = "Puerta doble"
+            else:
+                dibujar_puerta_abatible(msp, v, bisagra, lado)
+                tipo = "Puerta"
+            lado_tag = -lado
+    elif kind == "window":
+        cod = "V%02d" % n_cod["V"]
+        n_cod["V"] += 1
+        dibujar_ventana(msp, v)
+        tipo = "Ventana"
+        lado_tag = -interior if interior else 1
+    else:
+        cod = "A%02d" % n_cod["A"]
+        n_cod["A"] += 1
+        dibujar_abertura(msp, v)
+        tipo = "Vano libre"
+        lado_tag = -interior if interior else 1
+
+    # codigo fuera del muro, del lado opuesto a la hoja (o hacia el exterior)
+    d = v.t / 2.0 + p(3.2)
+    texto(msp, cod, v.xy(v.um, v.vm + lado_tag * d), p(MM["vano"]), "A-VANO",
+          centrado=True)
+    fila = [cod, tipo, fmt_m(v.ancho), fmt_m(alto),
+            fmt_m(sill) if kind == "window" else "-"]
+    return fila, por_defecto
+
+
+# ------------------------------------------------------------------ escalera
+
+def dibujar_escalera(msp, st, zl, p):
+    """Escalera vista desde el nivel zl.
+
+    En el nivel de arranque, los peldanos cuya cara superior queda sobre el
+    plano de corte (NPT + 1,20 m) se dibujan en segmentado: estan por encima del
+    corte. En el nivel de llegada se ve entera, por el vacio, y se rotula BAJA.
+    """
+    hu, ch = st["tread"], st["riser"]
+    base = st["base"]
+    n_alz = sum(f["steps"] for f in st["flights"]) + \
+        sum(1 for f in st["flights"] if f.get("landing"))
+    llegada = base + n_alz * ch
+    if abs(zl - base) < 0.05:
+        sube = True
+    elif abs(zl - llegada) < 0.05:
+        sube = False
+    else:
+        return
+
+    def attrs(z_sup):
+        a = {"layer": "A-ESCA"}
+        if sube and z_sup - base > CORTE_PLANTA:
+            a.update(linetype=SEGMENTADO)
+        return a
+
+    n = 0
+    for fl in st["flights"]:
+        x0, x1 = fl["x"]
+        y = fl["y_start"]
+        d = fl["dir"]
+        for k in range(fl["steps"]):
+            n += 1
+            ya = y + d * k * hu
+            yb = y + d * (k + 1) * hu
+            msp.add_lwpolyline(
+                [(x0, min(ya, yb)), (x1, min(ya, yb)),
+                 (x1, max(ya, yb)), (x0, max(ya, yb))],
+                close=True, dxfattribs=attrs(base + n * ch))
+        if fl.get("landing"):
+            n += 1
+            lx0, ly0, lx1, ly1 = fl["landing"]
+            msp.add_lwpolyline([(lx0, ly0), (lx1, ly0), (lx1, ly1), (lx0, ly1)],
+                               close=True, dxfattribs=attrs(base + n * ch))
+        y_fin = y + d * fl["steps"] * hu
+        xm = (x0 + x1) / 2
+        msp.add_line((xm, y), (xm, y_fin), dxfattribs={"layer": "A-ESCA"})
+        s = p(1.2) * (1 if d > 0 else -1)
+        msp.add_lwpolyline(
+            [(xm, y_fin), (xm - p(1.0), y_fin - s * 1.6), (xm + p(1.0), y_fin - s * 1.6)],
+            close=True, dxfattribs={"layer": "A-ESCA"})
+
+    # rotulo en dos lineas sobre el primer descanso (o junto al arranque)
+    f0 = st["flights"][0]
+    if f0.get("landing"):
+        lx0, ly0, lx1, ly1 = f0["landing"]
+        cx, cy = (lx0 + lx1) / 2.0, (ly0 + ly1) / 2.0
+    else:
+        cx, cy = (f0["x"][0] + f0["x"][1]) / 2.0, f0["y_start"]
+    h = p(MM["vano"])
+    texto(msp, "SUBE" if sube else "BAJA", (cx, cy + h * 0.7), h, "A-ESCA", centrado=True)
+    texto(msp, "%d x %s" % (n_alz, fmt_m(ch, 3)), (cx, cy - h * 0.7), h, "A-ESCA",
+          centrado=True)
+
+
+# ------------------------------------------------------------------ documento
+
+def nuevo_documento(p):
     doc = ezdxf.new("R2010", setup=True)
-    doc.header["$INSUNITS"] = 6  # metros
-    msp = doc.modelspace()
-    for nombre, color, descr in CAPAS:
-        doc.layers.add(nombre, color=color)
+    doc.header["$INSUNITS"] = 6      # metros
+    doc.header["$MEASUREMENT"] = 1   # metrico
+    doc.header["$LWDISPLAY"] = 1     # mostrar grosores de linea
+    for nombre, color, grosor, descr in CAPAS:
+        capa = doc.layers.add(nombre, color=color)
+        if grosor:
+            capa.dxf.lineweight = grosor
+        capa.description = descr
 
-    # estilo de cota legible a escala arquitectonica.
-    # dimlfac=1 es imprescindible: el setup por defecto de ezdxf escala x100 y
+    doc.styles.add(ESTILO, font=FUENTE)
+
+    # Segmentado propio, definido en mm de papel: trazo 3 mm, hueco 1 mm. Los
+    # tipos DASHED de fabrica estan en pulgadas y a esta escala sus huecos
+    # quedaban por debajo de lo que un visor dibuja, y salian continuos.
+    doc.linetypes.add(SEGMENTADO, pattern=[p(4.0), p(3.0), -p(1.0)],
+                      description="Segmentado ARQ __ __ __")
+
+    # Estilo de cota propio, legible a la escala de impresion.
+    # dimlfac=1 es imprescindible: el estilo por defecto de ezdxf escala x100 y
     # las cotas saldrian en centimetros sobre un dibujo que esta en metros.
-    dimstyle = doc.dimstyles.get("EZDXF")
-    dimstyle.dxf.dimlfac = 1.0
-    dimstyle.dxf.dimtxt = 0.18
-    dimstyle.dxf.dimasz = 0.12
-    dimstyle.dxf.dimexe = 0.08
-    dimstyle.dxf.dimexo = 0.06
-    dimstyle.dxf.dimdec = 2
-    dimstyle.dxf.dimgap = 0.05
+    ds = doc.dimstyles.new(ESTILO)
+    ds.dxf.dimtxsty = ESTILO
+    ds.dxf.dimlfac = 1.0
+    ds.dxf.dimscale = 1.0
+    ds.dxf.dimtxt = p(MM["cota"])
+    ds.dxf.dimasz = p(1.8)
+    ds.dxf.dimexe = p(1.2)
+    ds.dxf.dimexo = p(1.0)
+    ds.dxf.dimgap = p(0.8)
+    ds.dxf.dimdec = 2
+    ds.dxf.dimdsep = ord(",")        # coma decimal
+    ds.dxf.dimtad = 1                # texto sobre la linea de cota
+    ds.dxf.dimtih = 0
+    ds.dxf.dimtoh = 0
+    ds.dxf.dimzin = 0                # conservar ceros: 0,70 y no ,7
+    ds.dxf.dimclrd = 1
+    ds.dxf.dimclre = 1
+    ds.dxf.dimclrt = 1
+    ds.set_arrows(blk=ezdxf.ARROWS.architectural_tick)
+    doc.header["$DIMSTYLE"] = ESTILO
+    return doc
+
+
+def presentacion_a3(doc, p, nombre):
+    """Lamina A3 apaisada con una ventana a escala 1:N sobre todo el modelo."""
+    msp = doc.modelspace()
+    ext = bbox.extents(msp)
+    if not ext.has_data:
+        return None
+    ancho_m = ext.size.x
+    alto_m = ext.size.y
+    papel_w, papel_h, margen = 420.0, 297.0, 10.0
+    factor = 1000.0 / p.escala               # mm de papel por metro de modelo
+    vp_w = min(ancho_m * factor + 10.0, papel_w - 2 * margen)
+    vp_h = min(alto_m * factor + 10.0, papel_h - 2 * margen)
+    cabe = ancho_m * factor <= papel_w - 2 * margen and alto_m * factor <= papel_h - 2 * margen
+
+    lay = doc.layouts.new(nombre)
+    lay.page_setup(size=(papel_w, papel_h), margins=(0, 0, 0, 0), units="mm")
+    lay.add_lwpolyline([(margen, margen), (papel_w - margen, margen),
+                        (papel_w - margen, papel_h - margen), (margen, papel_h - margen)],
+                       close=True, dxfattribs={"layer": "A-TEXT", "lineweight": 50})
+    lay.add_viewport(center=(papel_w / 2, papel_h / 2), size=(vp_w, vp_h),
+                     view_center_point=ext.center, view_height=vp_h / factor)
+    if "Layout1" in doc.layouts:          # presentacion vacia que crea ezdxf
+        doc.layouts.delete("Layout1")
+    return cabe
+
+
+def draw_level(spec, level_id, path, recintos=None, escala=100):
+    p = Papel(escala)
+    doc = nuevo_documento(p)
+    msp = doc.modelspace()
 
     niveles = {l["id"]: l["z"] for l in spec["levels"]}
     zl = niveles[level_id]
     bx0, by0, bx1, by1 = spec["bbox"]
 
-    # ---- losa
+    # ---- losa (y huella del nivel, para saber que lado de un vano es exterior)
+    rects_losa = []
     for s in spec.get("slabs", []):
         if abs(s["z"] - zl) > TOL:
             continue
         for x0, y0, x1, y1 in s["rects"]:
             msp.add_lwpolyline([(x0, y0), (x1, y0), (x1, y1), (x0, y1)],
                                close=True, dxfattribs={"layer": "A-LOSA"})
+            rects_losa.append(box(x0, y0, x1, y1))
+    huella = unary_union(rects_losa) if rects_losa else Polygon()
 
-    # ---- muros
-    n_muros = 0
-    for w in spec["walls"]:
-        if w["level"] != level_id:
+    # ---- muros: union de solidos menos los vanos, con contorno y relleno
+    polys = [Polygon(wall_polygon(w)) for w in spec["walls"]
+             if w["level"] == level_id and wall_polygon(w)]
+    vanos = [o for o in spec.get("openings", []) if o["level"] == level_id]
+    muros = unary_union(polys)
+    if vanos:
+        muros = muros.difference(unary_union([Vano(o).corte() for o in vanos]))
+    piezas = getattr(muros, "geoms", [muros])
+    for pz in piezas:
+        if pz.is_empty:
             continue
-        poly = wall_polygon(w)
-        if poly:
-            msp.add_lwpolyline(poly, close=True, dxfattribs={"layer": "A-MURO"})
-            n_muros += 1
+        anillos = [pz.exterior] + list(pz.interiors)
+        relleno = msp.add_hatch(color=253, dxfattribs={"layer": "A-MURO-RELL"})
+        for k, anillo in enumerate(anillos):
+            pts = list(anillo.coords)[:-1]
+            msp.add_lwpolyline(pts, close=True, dxfattribs={"layer": "A-MURO"})
+            relleno.paths.add_polyline_path(
+                pts, is_closed=True,
+                flags=ezdxf.const.BOUNDARY_PATH_EXTERNAL if k == 0
+                else ezdxf.const.BOUNDARY_PATH_DEFAULT)
+    n_muros = len(polys)
 
-    # ---- vanos con codigo
+    # ---- vanos con simbolo y codigo
     vanos_tabla = []
-    n_p = n_v = 0
-    for o in spec.get("openings", []):
-        if o["level"] != level_id:
-            continue
-        x0, y0, x1, y1 = o["rect"]
-        msp.add_lwpolyline([(x0, y0), (x1, y0), (x1, y1), (x0, y1)],
-                           close=True, dxfattribs={"layer": "A-VANO"})
-        ancho = round(max(x1 - x0, y1 - y0), 2)
-        sill = o.get("sill", 0.0) or 0.0
-        head = o.get("head", 0.0) or 0.0
-        alto = round(head - sill, 2)
-
-        if o["kind"] == "door":
-            n_p += 1
-            cod = "P%02d" % n_p
-            tipo = "Puerta"
-        elif o["kind"] == "window":
-            n_v += 1
-            cod = "V%02d" % n_v
-            tipo = "Ventana"
-        else:
-            cod = "A%02d" % (len(vanos_tabla) + 1)
-            tipo = "Abertura"
-
-        texto(msp, cod, ((x0 + x1) / 2, (y0 + y1) / 2), 0.14, "A-VANO", centrado=True)
-        vanos_tabla.append([cod, tipo, "%.2f" % ancho, "%.2f" % alto,
-                            "%.2f" % sill if o["kind"] == "window" else "-"])
+    n_cod = {"P": 1, "V": 1, "A": 1}
+    hay_defecto = False
+    for o in vanos:
+        fila, defecto = dibujar_vano(msp, o, huella, p, n_cod)
+        vanos_tabla.append(fila)
+        hay_defecto = hay_defecto or defecto
 
     # ---- escalera
     for st in spec.get("stairs", []):
-        hu = st["tread"]
-        for fl in st["flights"]:
-            x0, x1 = fl["x"]
-            y = fl["y_start"]
-            d = fl["dir"]
-            for k in range(fl["steps"]):
-                ya = y + d * k * hu
-                yb = y + d * (k + 1) * hu
-                msp.add_lwpolyline(
-                    [(x0, min(ya, yb)), (x1, min(ya, yb)),
-                     (x1, max(ya, yb)), (x0, max(ya, yb))],
-                    close=True, dxfattribs={"layer": "A-ESCA"})
-            if fl.get("landing"):
-                lx0, ly0, lx1, ly1 = fl["landing"]
-                msp.add_lwpolyline([(lx0, ly0), (lx1, ly0), (lx1, ly1), (lx0, ly1)],
-                                   close=True, dxfattribs={"layer": "A-ESCA"})
-            y_fin = y + d * fl["steps"] * hu
-            xm = (x0 + x1) / 2
-            msp.add_line((xm, y), (xm, y_fin), dxfattribs={"layer": "A-ESCA"})
-            # punta de flecha en el sentido de subida
-            s = 0.12 * (1 if d > 0 else -1)
-            msp.add_lwpolyline(
-                [(xm, y_fin), (xm - 0.10, y_fin - s * 1.6), (xm + 0.10, y_fin - s * 1.6)],
-                close=True, dxfattribs={"layer": "A-ESCA"})
-        n_alz = sum(f["steps"] for f in st["flights"]) + \
-            sum(1 for f in st["flights"] if f.get("landing"))
-        texto(msp, "SUBE %d x %.3f" % (n_alz, st["riser"]),
-              (st["flights"][0]["x"][0], st["flights"][0]["y_start"] + 0.25),
-              0.15, "A-ESCA")
+        dibujar_escalera(msp, st, zl, p)
 
     # ---- rotulos de recinto
     n_rec = 0
@@ -327,13 +665,19 @@ def draw_level(spec, level_id, path, recintos=None):
         if lv:
             for r in lv.get("recintos", []):
                 px, py = r["punto"]
-                texto(msp, r["nombre"].upper(), (px, py + 0.16), 0.20,
-                      "A-RECI", centrado=True)
+                lineas = partir_nombre(r["nombre"].upper())
+                hn = p(MM["recinto"])
+                paso = hn * 1.35
                 area = r.get("area_doc_m2")
+                total = len(lineas) + (1 if area is not None else 0)
+                y_top = py + (total - 1) * paso / 2.0
+                for i, ln in enumerate(lineas):
+                    texto(msp, ln, (px, y_top - i * paso), hn, "A-RECI", centrado=True)
                 if area is not None:
                     marca = "" if r.get("_area_verificada") else " (s/doc)"
-                    texto(msp, "%.2f m2%s" % (area, marca), (px, py - 0.18),
-                          0.15, "A-RECI", centrado=True)
+                    texto(msp, "%s m2%s" % (fmt_m(area), marca),
+                          (px, y_top - len(lineas) * paso), p(MM["area"]),
+                          "A-RECI", centrado=True)
                 n_rec += 1
 
     # ---- cotas por eje
@@ -341,28 +685,35 @@ def draw_level(spec, level_id, path, recintos=None):
     xs_f = filtrar_proximos([v for v in xs if bx0 - 0.5 <= v <= bx1 + 0.5])
     ys_f = filtrar_proximos([v for v in ys if by0 - 0.5 <= v <= by1 + 0.5])
 
-    acotar_eje(msp, xs_f, by0 - 1.3, horizontal=True)
-    acotar_eje(msp, ys_f, bx0 - 1.3, horizontal=False)
-    # cota total
-    dim = msp.add_linear_dim(base=(0, by0 - 2.6), p1=(bx0, by0), p2=(bx1, by0),
-                             dxfattribs={"layer": "A-COTA"})
+    sep = p(8.0)
+    acotar_eje(msp, xs_f, by0 - sep, horizontal=True)
+    acotar_eje(msp, ys_f, bx0 - sep, horizontal=False)
+    dim = msp.add_linear_dim(base=(0, by0 - 2 * sep), p1=(bx0, by0), p2=(bx1, by0),
+                             dimstyle=ESTILO, dxfattribs={"layer": "A-COTA"})
     dim.render()
-    dim = msp.add_linear_dim(base=(bx0 - 2.6, 0), p1=(bx0, by0), p2=(bx0, by1),
-                             angle=90, dxfattribs={"layer": "A-COTA"})
+    dim = msp.add_linear_dim(base=(bx0 - 2 * sep, 0), p1=(bx0, by0), p2=(bx0, by1),
+                             angle=90, dimstyle=ESTILO, dxfattribs={"layer": "A-COTA"})
     dim.render()
 
-    # ---- simbolos y textos
-    simbolo_norte(msp, bx1 + 2.2, by1 - 1.0)
-    simbolo_nivel(msp, bx0 + 0.4, by0 + 0.4, zl)
-    cuadro_vanos(msp, vanos_tabla, bx1 + 1.5, by1 - 3.2)
-    vineta(msp, spec, level_id, zl, bx0, by1 + 1.2)
+    # ---- simbolos, cuadro, notas y vineta
+    norte = spec.get("meta", {}).get("norte", "-y")
+    x_cuadro = bx1 + p(15.0)
+    simbolo_norte(msp, x_cuadro + p(12.0), by1 - p(12.0), p, norte)
+    simbolo_nivel(msp, bx0 + p(4.0), by1 + p(3.0), zl, p)
+    cuadro_vanos(msp, vanos_tabla, x_cuadro, by1 - p(32.0), p)
 
+    notas = ["Cotas a cara de muro. VERIFICAR EN OBRA ANTES DE EJECUTAR."]
     if recintos:
-        texto(msp, "(s/doc) = superficie declarada en el documento, no medida",
-              (bx0, by0 - 3.4), 0.16, "A-TEXT")
+        notas.append("(s/doc) = superficie declarada en el documento, no medida.")
+    if hay_defecto:
+        notas.append("Abatimiento/operacion de puertas no definido en el modelo: "
+                     "se dibuja por defecto.")
+    vineta(msp, spec, level_id, zl, bx0 - 2 * sep, by1 + p(10.0),
+           (bx1 - bx0) + 2 * sep, p, notas)
 
+    cabe = presentacion_a3(doc, p, "A3 1-%d" % escala)
     doc.saveas(path)
-    return n_muros, len(vanos_tabla), n_rec
+    return n_muros, len(vanos_tabla), n_rec, cabe
 
 
 def main(argv=None):
@@ -371,6 +722,8 @@ def main(argv=None):
     ap.add_argument("spec")
     ap.add_argument("--outdir", required=True)
     ap.add_argument("--recintos")
+    ap.add_argument("--escala", type=int, default=100,
+                    help="escala de impresion 1:N (por defecto 100)")
     args = ap.parse_args(argv)
 
     spec = json.load(open(args.spec, encoding="utf-8"))
@@ -383,8 +736,10 @@ def main(argv=None):
 
     for lvl in spec["levels"]:
         path = out / ("planta_%s.dxf" % lvl["id"])
-        m, v, r = draw_level(spec, lvl["id"], str(path), recintos)
-        print("%s  (%d muros, %d vanos, %d recintos rotulados)" % (path, m, v, r))
+        m, v, r, cabe = draw_level(spec, lvl["id"], str(path), recintos, args.escala)
+        aviso = "" if cabe else "  AVISO: no cabe en A3 a 1:%d" % args.escala
+        print("%s  (%d muros, %d vanos, %d recintos rotulados)%s"
+              % (path, m, v, r, aviso))
     return 0
 
 

@@ -28,7 +28,7 @@ The master regulation. Most day-to-day architectural compliance lives here.
 | Art. 2.1 | Urban planning, site definitions | `site-analyst` |
 | Art. 4.1 | Habitability — areas, dimensions, heights, ventilation | `program-architect` |
 | Art. 4.1.7 | Universal accessibility | `accessibility-reviewer` |
-| Art. 4.1.10 | Reglamentación térmica — envelope U-values | `thermal-reviewer` |
+| Art. 4.1.10 | Reglamentación térmica — envelope U-values, condensation, infiltration. Text replaced by DS N°15/2024 MINVU (9 zones A–I) | `thermal-reviewer` |
 | Art. 4.2 | Stairs, ramps, circulation elements | `accessibility-reviewer`, `fire-safety-reviewer` |
 | Art. 4.3 | Fire safety — resistance, egress, compartments | `fire-safety-reviewer` |
 
@@ -39,7 +39,8 @@ The master regulation. Most day-to-day architectural compliance lives here.
 | NCh 433 | Seismic design of buildings | `structural-reviewer` |
 | NCh 3171 | Seismic design of non-structural components | `structural-reviewer` |
 | NCh 2369 | Seismic design of industrial structures | `structural-reviewer` |
-| NCh 1079 | Habitability — thermal zoning of Chile (zones A–G) | `site-analyst`, `thermal-reviewer` |
+| DS N°61/2011 MINVU | Modifies NCh 433: seismic soil classification from Vs30 | `structural-reviewer`, `site-analyst` |
+| NCh 1079 | Habitability — climatic zoning of Chile. For the thermal regulation, the zone that applies is the one in the Art. 4.1.10 / DS 15/2024 table (A–I) | `site-analyst`, `thermal-reviewer` |
 | NCh 853 | Thermal conditioning — envelope resistance calculation | `thermal-reviewer` |
 | NCh 935 | Fire resistance classification and test method | `fire-safety-reviewer` |
 | NCh Elec. 4/2003 | Electrical installations, low voltage | `installations-reviewer` |
@@ -51,7 +52,16 @@ The master regulation. Most day-to-day architectural compliance lives here.
 |------------|-------|--------------|
 | Ley 20.422 | Disability rights, universal accessibility | `accessibility-reviewer` |
 | PRC comunal | Zoning, setbacks, height, occupancy, FAR | `site-analyst` |
+| Plan Regulador Metropolitano (e.g. PRMC, Gran Concepción) | Metropolitan land use and risk areas (tsunami, flood, landslide) over the PRC | `site-analyst` |
+| PPDA (e.g. Concepción Metropolitano, DS N°6/2018 MMA) | Air-quality plan; may set its own envelope and infiltration standard for new housing | `thermal-reviewer`, `site-analyst` |
 | Certificado de Informaciones Previas | The binding per-site statement of PRC limits | `site-analyst` |
+
+## Regional registers
+
+Instruments that apply only in a region, and how far each has been verified, are
+listed per region:
+
+- [region_concepcion.md](region_concepcion.md) — Gran Concepción (Región del Biobío)
 
 ## Two kinds of limit
 
@@ -69,10 +79,16 @@ sourced, because the certificate is the citation.
 
 ## Zone-dependent limits
 
-Thermal limits are selected by the NCh 1079 zone (A–G) of the comuna. The zone is
-not a property of the building and cannot be inferred from the plans — it comes
-from `site.json`, written there by `site-analyst`. A U-value that passes in zone A
-fails in zone G, so a missing zone means no thermal verdict at all.
+Thermal limits are selected by the thermal zone of the comuna. Since DS N°15/2024
+MINVU there are nine zones, A–I, replacing the earlier seven (in force 2025-11-28
+per secondary sources; confirm against the decree). The zone is not a property of
+the building and cannot be inferred from the plans. It comes from `site.json`,
+where `site-analyst` writes it. A U-value that passes in zone A fails in zone I,
+so a missing zone means no thermal verdict at all.
+
+A rule can also be gated on a site property: `"site_condition": {"field": "ppda",
+"equals": "Concepcion Metropolitano"}` makes it apply only where `site.json`
+declares that value. Everywhere else it reports SKIP.
 
 Seismic design likewise depends on the NCh 433 seismic zone and soil type, both
 site properties recorded in `site.json`.
@@ -92,7 +108,7 @@ To move a rule from UNVERIFIED to enforceable:
 6. Record the transcription in the project's compliance log.
 
 For the thermal table, also set `thermal_zones._status` away from `"UNVERIFIED"`
-once every zone column is filled.
+once every zone column is filled. The same applies to `ppda_concepcion_metropolitano`.
 
 ## What the automated checker can and cannot do
 

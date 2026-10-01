@@ -143,6 +143,45 @@ def check_max_by_zone(entity, rule, rules_doc, zone):
                   "U=%.3f vs max %.3f (zone %s)" % (value, threshold, zone), value)
 
 
+def check_max_by_kind(entity, rule, rules_doc):
+    """Limit table indexed by element kind only (no zone), e.g. the PPDA standard."""
+    name = entity.get("name", "<unnamed>")
+    if rule["field"] not in entity:
+        return Result(rule, SKIP, name,
+                      "el extract no trae '%s' para esta entidad" % rule["field"])
+    table = rules_doc.get(rule["threshold_table"], {})
+    if table.get("_status") == "UNVERIFIED":
+        return Result(rule, UNVERIFIED, name,
+                      "%s table not transcribed from %s; cannot evaluate"
+                      % (rule["threshold_table"], rule["article"]),
+                      entity.get(rule["field"]))
+    kind = entity.get("kind")
+    threshold = table.get(kind)
+    if threshold is None:
+        return Result(rule, UNVERIFIED, name,
+                      "no limit recorded for kind '%s' in %s" % (kind, rule["threshold_table"]))
+    value = entity[rule["field"]]
+    ok = value <= threshold + 1e-9
+    return Result(rule, PASS if ok else FAIL, name,
+                  "U=%.3f vs max %.3f" % (value, threshold), value)
+
+
+def site_condition_unmet(rule, site):
+    """A rule gated on a site property (e.g. the PPDA zone) applies only when
+    site.json declares that property. Returns the SKIP reason, or None."""
+    cond = rule.get("site_condition")
+    if not cond:
+        return None
+    value = (site or {}).get(cond["field"])
+    if value is None:
+        return ("applies only when site.json declares %s = %r; it is not declared"
+                % (cond["field"], cond["equals"]))
+    if value != cond["equals"]:
+        return ("applies only when site.json declares %s = %r; site has %r"
+                % (cond["field"], cond["equals"], value))
+    return None
+
+
 def apply_site_thresholds(rules_doc, site):
     """PRC limits are per-comuna: pull them from the project's site.json."""
     prc = (site or {}).get("prc_limits", {})
@@ -160,6 +199,10 @@ def run(extract, rules_doc, site=None):
     entities = extract.get("entities", [])
     results = []
     for rule in rules_doc["rules"]:
+        gated = site_condition_unmet(rule, site)
+        if gated:
+            results.append(Result(rule, SKIP, "-", gated))
+            continue
         targets = [e for e in entities if matches(e, rule)]
         if not targets:
             results.append(Result(rule, SKIP, "-",
@@ -173,6 +216,8 @@ def run(extract, rules_doc, site=None):
                 results.append(check_max(entity, rule))
             elif check == "max_value_by_zone":
                 results.append(check_max_by_zone(entity, rule, rules_doc, zone))
+            elif check == "max_value_by_kind":
+                results.append(check_max_by_kind(entity, rule, rules_doc))
             else:
                 results.append(Result(rule, SKIP, entity.get("name", "?"),
                                       "unknown check type '%s'" % check))

@@ -7,30 +7,30 @@
     "NO copiar prc_limits de otro proyecto: varian por comuna Y por zona dentro",
     "de la comuna."
   ],
-
   "project": "CasaPatioInterior",
   "address": null,
   "rol": null,
   "comuna": null,
-
   "_nota_emplazamiento": [
-    "El proyecto se desarrolla para la zona centro-sur de Chile (indicacion del",
-    "usuario). Eso NO basta para verificar: la zona termica NCh 1079 y la zona",
-    "sismica NCh 433 se definen por comuna, no por macrozona.",
+    "2026-10-01: el usuario indica que el proyecto es para el entorno de",
+    "Concepcion (Gran Concepcion, Region del Biobio). La comuna exacta sigue",
+    "sin definir, y la zona termica (DS 15/2024) y la sismica (NCh 433) se fijan",
+    "POR COMUNA: hasta conocerla quedan null.",
+    "",
+    "Si la comuna esta en el PRMC aplican ademas sus areas de riesgo; si esta en",
+    "el PPDA Concepcion Metropolitano, su estandar de vivienda nueva. Registro",
+    "regional y estado de verificacion: docs/region_concepcion.md.",
     "",
     "Los metadatos del archivo original mencionaban Chillan, Region de Nuble,",
     "pero corresponden a la ubicacion geografica del usuario al generar la",
-    "skill, NO al emplazamiento del proyecto. Se descartaron deliberadamente",
-    "para no fijar una zona termica sobre un dato que no es del sitio."
+    "skill, NO al emplazamiento del proyecto. Se descartaron deliberadamente."
   ],
-
   "prc": {
     "zone": null,
     "permitted_uses": [],
     "source_document": null,
     "source_date": null
   },
-
   "prc_limits": {
     "_note": "Topes numericos del PRC. occupancy_ratio y far alimentan norm_check.py.",
     "occupancy_ratio": null,
@@ -40,7 +40,14 @@
     "setback_side_m": null,
     "setback_rear_m": null
   },
-
+  "prm": {
+    "instrument": null,
+    "zone": null,
+    "source_document": null,
+    "_note": "Plan Regulador Metropolitano/Intercomunal que se superpone al PRC (en el Gran Concepcion: PRMC). Fija areas de riesgo, incluida inundacion por tsunami. Ver docs/region_concepcion.md."
+  },
+  "ppda": null,
+  "_ppda_note": "Plan de descontaminacion atmosferica que rige en la comuna, si alguno. Escribir exactamente \"Concepcion Metropolitano\" si la comuna esta en el PPDA (DS N°6/2018 MMA), confirmado contra el decreto: activa la regla PPDA-CM-vivienda-nueva-U de norm_check.py. null = no declarado.",
   "_tope_superficie_declarado": {
     "valor_m2": 260.0,
     "estado": "DECLARADO EN EL DOCUMENTO, SIN FUENTE",
@@ -54,29 +61,26 @@
       "edificada con su certificado de respaldo."
     ]
   },
-
   "thermal_zone": null,
-  "_thermal_zone_note": "Zona NCh 1079 (A-G) de la comuna. Selecciona toda la tabla de U maximos; sin ella no hay veredicto termico posible.",
-
+  "_thermal_zone_note": "Zona termica A-I de la comuna segun OGUC Art. 4.1.10 reemplazado por DS N°15/2024 MINVU (antes 7 zonas). Selecciona toda la tabla de U maximos; sin ella no hay veredicto termico.",
   "seismic": {
     "zone": null,
     "soil_type": null,
-    "_note": "Zona sismica NCh 433 y clasificacion de suelo. Ambas cambian el espectro de diseno."
+    "_note": "Zona sismica NCh 433 (Tabla 4.1 por comuna) y tipo de suelo segun DS N°61/2011 MINVU (Vs30 + ensayos complementarios). El suelo sale de un estudio geotecnico del sitio, nunca de un mapa o de un predio vecino."
   },
-
   "terrain": {
     "area_m2": null,
     "slope_percent": null,
     "orientation": null,
     "topography_source": null
   },
-
   "risk_designations": {
     "flood": null,
     "landslide": null,
     "tsunami": null,
-    "wildfire": null
+    "wildfire": null,
+    "_note": "En el Gran Concepcion leer el plano de riesgos del PRMC en el predio (tsunami nivel alto/medio, inundacion, remocion en masa, incendio). Cada valor cita la lamina como fuente."
   },
-
-  "sources": []
+  "sources": [],
+  "region_reference": "docs/region_concepcion.md"
 }
