@@ -5,7 +5,7 @@ changes, and when a version is nested inside it.
 
 | Project | Description | Comuna | Status | Versions |
 |---------|-------------|--------|--------|----------|
-| CasaPatioInterior | Vivienda unifamiliar 2 pisos con patio interior, 13,00 × 14,00 m (desde `sources/Test`) | por definir | `review` | rev. G (origen), rev. H (`plans/`), v2 (`v2/`) |
+| CasaPatioInterior | Vivienda unifamiliar 2 pisos con patio interior, 13,00 × 14,00 m (desde `sources/Test`) | por definir | `review` | rev. G (origen), rev. H (`plans/`), v2 (`v2/`), v3 (`v2/v3/`) |
 
 ## Status values
 
