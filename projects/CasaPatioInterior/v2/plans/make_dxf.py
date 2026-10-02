@@ -13,7 +13,12 @@ de cota y cada eje coincida con un vértice real de muro cortado (tolerancia 1 m
 cota que no apoya en geometría medida detiene el script.
 
 Unidades del DXF: metros. Escala de lámina 1:50 (alto de texto 0,125 m = 2,5 mm).
-No se dibuja el abatimiento de puertas: el modelo no registra el lado de bisagra.
+Textos en estilo TrueType "ARQ" (Arial): el estilo "Standard" usa txt.shx, que los
+visores sin esa fuente SHX reemplazan por un trazo ilegible.
+
+Puertas: el abatimiento sale de plans/puertas_v2.json (derive_puertas.py ->
+tools/puertas.py). Las puertas "generadas" (recinto sin acceso en el modelo) se
+dibujan cortando el muro, con su código marcado con * y una nota en la viñeta.
 """
 import json
 import math
@@ -31,6 +36,10 @@ DATA = json.loads((V2 / "calcs" / "plan_data.json").read_text(encoding="utf-8"))
 REC = json.loads((V2 / "plans" / "recintos_v2.json").read_text(encoding="utf-8"))
 PUERTAS = {(lv, d["codigo"]): d for lv, ds in json.loads(
     (V2 / "plans" / "puertas_v2.json").read_text(encoding="utf-8"))["niveles"].items() for d in ds}
+# puertas que el modelo no trae y que propuso tools/puertas.py
+GENERADAS = {lv: [dict(d["geometria"], codigo=d["codigo"], tipo="door")
+                  for (lv2, _), d in PUERTAS.items() if lv2 == lv and d.get("generada")]
+             for lv in ("p1", "p2")}
 OUT = V2 / "exports"
 (OUT / "vistas").mkdir(parents=True, exist_ok=True)
 YOFF = 14.0
@@ -109,8 +118,10 @@ def setup_doc():
     }
     for name, (col, lt, lw) in lay.items():
         d.layers.add(name, color=col, linetype=lt, lineweight=int(lw * 100) if lw else -3)
+    d.styles.add("ARQ", font="arial.ttf")
     st = d.dimstyles.new("ARQ")
     st.dxf.dimtxt = TH
+    st.dxf.dimtxsty = "ARQ"
     st.dxf.dimasz = 0.10
     st.dxf.dimexe = 0.08
     st.dxf.dimexo = 0.08
@@ -129,7 +140,7 @@ def setup_doc():
 
 
 def txt(msp, s, pos, h=TH, layer="A-TEXT", align=TextEntityAlignment.MIDDLE_CENTER, rot=0, color=None):
-    t = msp.add_text(s, height=h, rotation=rot, dxfattribs={"layer": layer, "style": "OpenSans" if False else "Standard"})
+    t = msp.add_text(s, height=h, rotation=rot, dxfattribs={"layer": layer, "style": "ARQ"})
     t.set_placement(pos, align=align)
     if isinstance(color, tuple):
         t.rgb = color
@@ -146,6 +157,11 @@ def draw_walls(msp, lv):
             if pg.is_valid and pg.area > 1e-6:
                 polys.append(pg)
     u = unary_union([p.buffer(0.0005) for p in polys]).buffer(-0.0005)
+    for g in GENERADAS[lv]:                      # vano de la puerta generada
+        hx, hy = (g["largo"] / 2, g["espesor_muro"] / 2 + 0.02) if g["horizontal"] \
+            else (g["espesor_muro"] / 2 + 0.02, g["largo"] / 2)
+        u = u.difference(Polygon([(g["cx"] - hx, g["cy"] - hy), (g["cx"] + hx, g["cy"] - hy),
+                                  (g["cx"] + hx, g["cy"] + hy), (g["cx"] - hx, g["cy"] + hy)]))
     geoms = list(u.geoms) if u.geom_type == "MultiPolygon" else [u]
     for g in geoms:
         h = msp.add_hatch(color=9, dxfattribs={"layer": "A-MURO-REL"})
@@ -177,7 +193,11 @@ DOOR_RGB = (0, 120, 0)
 
 def draw_door_symbol(msp, lv, v, box_):
     """Hoja + arco de giro (batiente), dos hojas, o corredera, según puertas_v2.json."""
-    d = PUERTAS[(lv, v["codigo"])]
+    d = PUERTAS.get((lv, v["codigo"]))
+    if d is None:
+        print("AVISO: %s %s sin decisión de abatimiento en puertas_v2.json (correr derive_puertas.py)"
+              % (lv, v["codigo"]))
+        return
     x0, y0, x1, y1 = box_
     if d["tipo"] == "corredera":
         t3 = v["espesor_muro"] / 3
@@ -205,7 +225,7 @@ def draw_door_symbol(msp, lv, v, box_):
 def draw_openings(msp, lv):
     lbls = label_points(lv)
     xmin, ymin, xmax, ymax = DATA["bbox"]
-    for v in DATA["plantas"][lv]["vanos"]:
+    for v in DATA["plantas"][lv]["vanos"] + GENERADAS[lv]:
         cx, cy, L, t = v["cx"], v["cy"], v["largo"], v["espesor_muro"]
         if v["horizontal"]:
             x0, x1, y0, y1 = cx - L / 2, cx + L / 2, cy - t / 2, cy + t / 2
@@ -245,7 +265,9 @@ def draw_openings(msp, lv):
                 if peri:
                     cands = [(cx + off, cy)] if abs(cx - xmax) < 0.3 else [(cx - off, cy)]
             best = max(cands, key=lambda c: min(math.hypot(c[0] - a, c[1] - b) for a, b in lbls))
-            txt(msp, v["codigo"], best, h=0.10, layer="A-TEXT", rot=0 if v["horizontal"] else 90, color=col)
+            gen = v in GENERADAS[lv]
+            txt(msp, v["codigo"] + ("*" if gen else ""), best, h=0.10, layer="A-TEXT",
+                rot=0 if v["horizontal"] else 90, color=(200, 0, 160) if gen else col)
 
 
 def draw_slab_and_stairs(msp, lv):
@@ -395,9 +417,10 @@ def draw_tables(msp, lv, x, ytop):
     msp.add_line((x, y), (x + 8.3, y), dxfattribs={"layer": "A-CUAD"})
     y -= 0.16
     names = {"window": "Ventana", "door": "Puerta", "open": "Paso"}
-    for v in sorted(DATA["plantas"][lv]["vanos"], key=lambda v: (v["tipo"] != "door", v["codigo"])):
+    filas = sorted(DATA["plantas"][lv]["vanos"] + GENERADAS[lv], key=lambda v: (v["tipo"] != "door", v["codigo"]))
+    for i_fila, v in enumerate(filas):
         alto = v["dintel"] - v["antepecho"]
-        code = v["codigo"] if v["tipo"] != "open" else "—"
+        code = v["codigo"] + ("*" if v in GENERADAS[lv] else "") if v["tipo"] != "open" else "—"
         txt(msp, code, (heads[0], y), h=0.09, layer="A-TEXT", align=TextEntityAlignment.LEFT)
         txt(msp, names[v["tipo"]], (heads[1], y), h=0.09, layer="A-TEXT", align=TextEntityAlignment.LEFT)
         txt(msp, "%s × %s" % (fmt(v["largo"]), fmt(alto)), (heads[2], y), h=0.09, layer="A-TEXT",
@@ -409,9 +432,14 @@ def draw_tables(msp, lv, x, ytop):
             ap = ("corredera" if pd["tipo"] == "corredera" else "%s a %s, bisagra %s" % (
                 "2 hojas" if pd["tipo"].startswith("doble") else "abre", pd["abre_hacia"],
                 {"derecha": "der.", "izquierda": "izq.", "ambos lados": "ambos"}[pd["bisagra_mano"]]))
-            txt(msp, ap, (heads[5], y), h=0.075, layer="A-TEXT", align=TextEntityAlignment.LEFT)
+            txt(msp, ap, (heads[5], y), h=0.085, layer="A-TEXT", align=TextEntityAlignment.LEFT)
         y -= 0.155
-        if y < Y0 + 3.4:
+        if y < Y0 + 3.4 and i_fila < len(filas) - 1:
+            print("AVISO %s: el cuadro de vanos no cabe en la lámina; quedan %d filas fuera"
+                  % (lv, len(filas) - 1 - i_fila))
+            txt(msp, "... (%d vanos más: ver plans/puertas_v2.json y calcs/plan_data.json)"
+                % (len(filas) - 1 - i_fila), (heads[0], y), h=0.09, layer="A-TEXT",
+                align=TextEntityAlignment.LEFT, color=1)
             break
     return y
 
@@ -443,6 +471,10 @@ def frame_and_title(msp, lv, titulo, nivel_txt):
         h=0.085, layer="A-TEXT", align=TextEntityAlignment.LEFT)
     txt(msp, "Fecha 2026-10-01   ·   Rev. v2-A", (bx0 + 7.4, by0 + 0.29), h=0.085, layer="A-TEXT",
         align=TextEntityAlignment.LEFT)
+    if GENERADAS[lv]:
+        txt(msp, "* Puerta generada por tools/puertas.py: el recinto no tenía acceso en el modelo",
+            (bx0 + 0.2, by1 + 0.25), h=0.10, layer="A-TEXT", align=TextEntityAlignment.LEFT,
+            color=(200, 0, 160))
 
 
 def build_plan(lv):

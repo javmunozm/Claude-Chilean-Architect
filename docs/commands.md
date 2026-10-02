@@ -98,6 +98,82 @@ Then gate the result:
 python tools/render_check.py projects/<Name> --require png
 ```
 
+## Verify a 3D model: roofs, slits, coincident faces
+
+```bash
+python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
+  --spec projects/<Name>/plans/<plan>.json [--recintos <rooms>.json] \
+  [--desfase-y 14 | --y-directo] [--json]
+```
+
+Measures the OBJ, whatever produced it:
+- **uncovered area** per room, from vertical rays;
+- **rays that escape** horizontally between the highest door head and the ceiling,
+  meaning a slit between wall and roof;
+- **coincident faces**: coplanar overlapping faces with the same orientation
+  (z-fighting);
+- **unpaired roof edges**.
+
+**Exit:** `1` on any uncovered area or escaping ray.
+
+- **Frame flag**, set by the exporter:
+
+  | Exporter | Flag |
+  |----------|------|
+  | FreeCAD v2 `export_obj.py` | `--desfase-y 14` |
+  | Blender `wm.obj_export` | `--desfase-y 0` |
+  | `build3d.py` | `--y-directo` |
+
+- **Triangulated OBJ only.** From Blender, export with
+  `export_triangulated_mesh=True`. A concave n-gon fanned by the reader overlaps
+  itself and is counted as coincident faces.
+- **Without `--recintos`** the interior is the union of the slabs. A covered porch
+  then counts as interior, and its rays "escape" through the open front: 60 false
+  escapes on CasaPatioInterior v0.
+- **Rays are 0.25 m apart**, so a narrower slit can pass between them. A residual
+  coincident area is a defect until located. Look at the views too.
+
+## Control views of an OBJ
+
+```bash
+VISTAS_OBJ=<model.obj> VISTAS_OUT=<folder> \
+  blender --background --python tools/scripts/vistas_obj.py
+```
+
+Writes `3d_noreste.png` and `3d_suroeste.png`: orthographic, Cycles on CPU by default
+(`VISTAS_MOTOR=BLENDER_WORKBENCH` is faster with a GPU). The script assumes the v2
+frame, with north toward −Z of the OBJ. An OBJ from `build3d.py` comes out mirrored,
+which is fine for checking surfaces but not for orientation.
+
+## 3D builders share one roof module
+
+| Builder | Output | Command |
+|---------|--------|---------|
+| `tools/scripts/blender_build.py` | `.blend` | `BUILD_SPEC=<plan.json> BUILD_OUT=<file.blend> blender --background --python tools/scripts/blender_build.py` |
+| `tools/scripts/build3d.py` | `.obj/.mtl` (+ `.html` viewer) | `python tools/scripts/build3d.py <plan.json> --out <path/name>` |
+| `projects/CasaPatioInterior/v2/plans/build_model.py` | `.FCStd` (Arch) | see that project's README |
+
+All three take roofs, gables, closures under roof edges and wall junctions from
+`tools/cubierta.py`. A change to roof or junction logic goes there, and is then
+re-measured on every output with `verificar_modelo3d.py`.
+
+## Doors: hinge, swing and missing doors
+
+```bash
+python tools/puertas.py projects/<Name>/calcs/plan_data.json -o <puertas.json> \
+  [--recintos <recintos.json>]
+```
+
+`tools/scripts/json_to_dxf.py` calls the same module.
+- An opening that carries `operation`, `hinge` or `swing` is honoured. The rest
+  follow rules R1–R8, which are a design convention, not a norm (see
+  `projects/CasaPatioInterior/v2/README.md`).
+- A room with no door from the access or the stair arrival gets a generated one,
+  marked `*`.
+- Unlabeled regions are reported, never given a door.
+
+**Exit:** `1` if a room cannot be reached.
+
 ## Full verification sweep
 
 The sequence to run after any geometry change:

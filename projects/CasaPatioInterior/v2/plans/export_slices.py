@@ -17,6 +17,13 @@ import os
 import sys
 
 import FreeCAD
+
+# freecadcmd en una consola que no es UTF-8 se caia al imprimir "Baño" y se tragaba
+# la excepcion: el script terminaba sin llegar a sus autocomprobaciones.
+try:
+    sys.stdout.reconfigure(errors="replace")
+except Exception:
+    pass
 import Part
 from FreeCAD import Vector as V
 

@@ -24,11 +24,17 @@ Capas (apagables por separado en AutoCAD / BricsCAD / QCAD / LibreCAD):
     A-MURO  A-MURO-RELL  A-VANO  A-LOSA  A-ESCA  A-COTA  A-TEXT  A-RECI
     A-SIMB  A-CUAD
 
-Campos opcionales por vano en el JSON (si faltan se usa un valor por defecto y
-la planta lo declara en una nota):
-    "operation": "swing" | "sliding" | "double"   (solo puertas)
-    "hinge":     "start" | "end"   jamba de la bisagra (start = coordenada menor)
-    "swing":     +1 | -1           lado hacia el que abre (+1 = hacia +x / +y)
+Puertas (tools/puertas.py, compartido con v2/plans/derive_puertas.py):
+  - Si el vano declara cómo abre, eso manda:
+        "operation": "swing" | "sliding" | "double"
+        "hinge":     "start" | "end"   jamba de la bisagra (start = coordenada menor)
+        "swing":     +1 | -1           lado hacia el que abre (+1 = hacia +x / +y)
+  - Si no, se infiere con las reglas de diseño R1-R8 (abre hacia el recinto y no
+    hacia el pasillo, hacia el baño o clóset, bisagra en la esquina, arco libre...).
+  - Un recinto al que no se llega desde el acceso recibe una puerta GENERADA, que
+    se dibuja cortando el muro y con su código marcado con *.
+  Los recintos salen de --recintos: con polígono ("neto"/"bruto"/"pts") se usan
+  tal cual; con solo un punto de rótulo se derivan del espacio libre entre muros.
 
 Campo opcional en "meta":
     "norte": "-y" | "+y"   hacia donde apunta el norte en planta. Por defecto
@@ -60,6 +66,9 @@ try:
 except ImportError:
     print("error: falta shapely. Instalar con: pip install shapely", file=sys.stderr)
     raise SystemExit(2)
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))   # tools/
+import puertas  # noqa: E402
 
 # Color 7 se dibuja negro sobre fondo blanco y blanco sobre fondo negro: es el
 # unico legible en ambos. El amarillo (2) y el cian (4) de la version anterior
@@ -99,7 +108,6 @@ MM = {
 
 # Plano de corte horizontal de la planta, medido desde el NPT del nivel.
 CORTE_PLANTA = 1.20
-PUERTA_CORREDERA_DESDE = 1.20   # ancho sobre el cual una puerta sin "operation" se dibuja corredera
 
 TOL = 1e-6
 
@@ -374,25 +382,6 @@ def dibujar_abertura(msp, v):
         linea(msp, v.xy(v.u0, vv), v.xy(v.u1, vv), linetype=SEGMENTADO)
 
 
-def dibujar_puerta_abatible(msp, v, bisagra, lado, ancho_hoja=None):
-    """Hoja abierta a 90 grados y arco de barrido."""
-    w = ancho_hoja if ancho_hoja is not None else v.ancho
-    u_h = v.u0 if bisagra == "start" else v.u1
-    u_libre = u_h + w if bisagra == "start" else u_h - w
-    v_cara = v.v1 if lado > 0 else v.v0
-    h = v.xy(u_h, v_cara)
-    abierta = v.xy(u_h, v_cara + lado * w)
-    cerrada = v.xy(u_libre, v_cara)
-    linea(msp, h, abierta, lineweight=25)
-    a1 = math.degrees(math.atan2(cerrada[1] - h[1], cerrada[0] - h[0]))
-    a2 = math.degrees(math.atan2(abierta[1] - h[1], abierta[0] - h[0]))
-    if (a2 - a1) % 360.0 <= 180.0:
-        ini, fin = a1, a2
-    else:
-        ini, fin = a2, a1
-    msp.add_arc(h, w, ini % 360.0, fin % 360.0, dxfattribs={"layer": "A-VANO"})
-
-
 def dibujar_corredera(msp, v):
     """Dos hojas paralelas que se traslapan en el centro del vano."""
     e = 0.03
@@ -403,65 +392,134 @@ def dibujar_corredera(msp, v):
         msp.add_lwpolyline(pts, close=True, dxfattribs={"layer": "A-VANO"})
 
 
-def dibujar_vano(msp, o, huella, p, n_cod):
-    """Dibuja el vano y su codigo. Devuelve (fila_cuadro, uso_valor_por_defecto)."""
+def dibujar_hojas(msp, dec):
+    """Hoja(s) abierta(s) a 90 grados y arco(s) de barrido, según tools/puertas.py."""
+    n = dec["normal"]
+    for h in dec["hojas"]:
+        hx, hy = h["bisagra"]
+        r = h["radio"]
+        linea(msp, (hx, hy), (hx + n[0] * r, hy + n[1] * r), lineweight=25)
+        a0, a1 = h["a0_deg"], h["a1_deg"]
+        ini, fin = (a0, a1) if a1 > a0 else (a1, a0)
+        msp.add_arc((hx, hy), r, ini % 360.0, fin % 360.0, dxfattribs={"layer": "A-VANO"})
+
+
+def dibujar_vano(msp, o, cod, dec, huella, p, generada=False):
+    """Dibuja el vano y su código. Devuelve la fila del cuadro de vanos."""
     v = Vano(o)
     kind = o["kind"]
     interior = v.lado_interior(huella)
-    por_defecto = False
-
     sill = o.get("sill", 0.0) or 0.0
     head = o.get("head", 0.0) or 0.0
     alto = head - sill
 
     if kind == "door":
-        cod = "P%02d" % n_cod["P"]
-        n_cod["P"] += 1
-        op = o.get("operation")
-        if op is None:
-            op = "sliding" if v.ancho > PUERTA_CORREDERA_DESDE else "swing"
-            por_defecto = True
-        if op == "sliding":
+        if dec is None or dec["tipo"] == "corredera":
             dibujar_corredera(msp, v)
             tipo = "Puerta corredera"
-            lado_tag = interior * -1 if interior else 1
+            lado_tag = -interior if interior else 1
         else:
-            lado = o.get("swing")
-            if lado is None:
-                lado = interior if interior else 1
-                por_defecto = True
-            bisagra = o.get("hinge")
-            if bisagra is None:
-                bisagra = "start"
-                por_defecto = True
-            if op == "double":
-                dibujar_puerta_abatible(msp, v, "start", lado, v.ancho / 2.0)
-                dibujar_puerta_abatible(msp, v, "end", lado, v.ancho / 2.0)
-                tipo = "Puerta doble"
-            else:
-                dibujar_puerta_abatible(msp, v, bisagra, lado)
-                tipo = "Puerta"
-            lado_tag = -lado
+            dibujar_hojas(msp, dec)
+            tipo = "Puerta doble" if dec["tipo"].startswith("doble") else "Puerta"
+            n = dec["normal"]
+            lado_swing = 1 if (n[1] if v.horizontal else n[0]) > 0 else -1
+            lado_tag = -lado_swing
+        if generada:
+            tipo += " (generada)"
     elif kind == "window":
-        cod = "V%02d" % n_cod["V"]
-        n_cod["V"] += 1
         dibujar_ventana(msp, v)
         tipo = "Ventana"
         lado_tag = -interior if interior else 1
     else:
-        cod = "A%02d" % n_cod["A"]
-        n_cod["A"] += 1
         dibujar_abertura(msp, v)
         tipo = "Vano libre"
         lado_tag = -interior if interior else 1
 
-    # codigo fuera del muro, del lado opuesto a la hoja (o hacia el exterior)
+    # código fuera del muro, del lado opuesto a la hoja (o hacia el exterior)
     d = v.t / 2.0 + p(3.2)
-    texto(msp, cod, v.xy(v.um, v.vm + lado_tag * d), p(MM["vano"]), "A-VANO",
-          centrado=True)
-    fila = [cod, tipo, fmt_m(v.ancho), fmt_m(alto),
+    t = texto(msp, cod + ("*" if generada else ""), v.xy(v.um, v.vm + lado_tag * d),
+              p(MM["vano"]), "A-VANO", centrado=True)
+    if generada:
+        t.dxf.color = 6
+    return [cod + ("*" if generada else ""), tipo, fmt_m(v.ancho), fmt_m(alto),
             fmt_m(sill) if kind == "window" else "-"]
-    return fila, por_defecto
+
+
+def codigos(vanos):
+    """P01.., V01.., A01.. en el orden del JSON (el mismo de la versión anterior)."""
+    n = {"door": 0, "window": 0}
+    out = []
+    for o in vanos:
+        k = o["kind"] if o["kind"] in n else "open"
+        n[k] = n.get(k, 0) + 1
+        out.append((o, "%s%02d" % ({"door": "P", "window": "V"}.get(k, "A"), n[k])))
+    return out
+
+
+def recintos_del_nivel(recintos, level_id, huella, polys_muros):
+    """Recintos con polígono para tools/puertas.py: del archivo o derivados de los muros."""
+    lv = (recintos or {}).get("niveles", {}).get(level_id, {})
+    regs = lv.get("recintos", [])
+    con_poligono = [r for r in regs if r.get("neto") or r.get("bruto") or r.get("pts")]
+    if regs and len(con_poligono) == len(regs):
+        return [{"label": r.get("label") or r.get("nombre"),
+                 "pts": r.get("neto") or r.get("pts") or r.get("bruto"),
+                 "tipo": r.get("tipo")} for r in regs]
+    rotulos = [{"nombre": r.get("nombre") or r.get("label"),
+                "punto": r.get("punto") or r.get("punto_rotulo"), "tipo": r.get("tipo")}
+               for r in regs if (r.get("punto") or r.get("punto_rotulo"))]
+    return puertas.regiones_desde_muros(huella, polys_muros, rotulos)
+
+
+def obstaculos_del_nivel(spec, zl, es_base):
+    """Mobiliario del nivel y peldaños pisables (bajo el plano de corte) en la planta baja."""
+    obs = []
+    for b in spec.get("boxes", []):
+        if zl - 0.1 <= b["z"][0] < zl + 2.0:
+            x0, x1 = b["x"]
+            y0, y1 = b["y"]
+            obs.append([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+    if es_base:
+        for st in spec.get("stairs", []):
+            hu, ch, n = st["tread"], st["riser"], 0
+            for fl in st["flights"]:
+                x0, x1 = fl["x"]
+                for k in range(fl["steps"]):
+                    n += 1
+                    if n * ch < CORTE_PLANTA:
+                        ya = fl["y_start"] + fl["dir"] * k * hu
+                        yb = fl["y_start"] + fl["dir"] * (k + 1) * hu
+                        obs.append([(x0, min(ya, yb)), (x1, min(ya, yb)), (x1, max(ya, yb)), (x0, max(ya, yb))])
+                if fl.get("landing"):
+                    n += 1
+    return obs
+
+
+def llegadas_escalera(spec, zl):
+    """Puntos donde la escalera llega al nivel zl (fin del último tramo)."""
+    pts = []
+    for st in spec.get("stairs", []):
+        n_alz = sum(f["steps"] for f in st["flights"]) + sum(1 for f in st["flights"] if f.get("landing"))
+        if abs(st["base"] + n_alz * st["riser"] - zl) > 0.05:
+            continue
+        f = st["flights"][-1]
+        x0, x1 = f["x"]
+        y_fin = f["y_start"] + f["dir"] * f["steps"] * st["tread"]
+        pts.append(((x0 + x1) / 2, y_fin + f["dir"] * 0.3))
+    return pts
+
+
+def vano_para_puertas(o, cod):
+    v = Vano(o)
+    cx, cy = v.xy(v.um, v.vm)
+    out = {"codigo": cod, "tipo": o["kind"] if o["kind"] in ("door", "window") else "open",
+           "cx": cx, "cy": cy, "horizontal": v.horizontal, "largo": v.ancho,
+           "espesor_muro": v.t, "antepecho": o.get("sill", 0.0) or 0.0,
+           "dintel": o.get("head", 0.0) or 0.0}
+    for k in ("operation", "hinge", "swing"):
+        if k in o:
+            out[k] = o[k]
+    return out
 
 
 # ------------------------------------------------------------------ escalera
@@ -623,13 +681,31 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
             rects_losa.append(box(x0, y0, x1, y1))
     huella = unary_union(rects_losa) if rects_losa else Polygon()
 
-    # ---- muros: union de solidos menos los vanos, con contorno y relleno
+    # ---- puertas: abatimiento indicado o inferido, y puertas que faltan (tools/puertas.py)
     polys = [Polygon(wall_polygon(w)) for w in spec["walls"]
              if w["level"] == level_id and wall_polygon(w)]
     vanos = [o for o in spec.get("openings", []) if o["level"] == level_id]
+    con_cod = codigos(vanos)
+    es_base = abs(zl - min(niveles.values())) < 1e-6
+    recs = recintos_del_nivel(recintos, level_id, huella, [list(p.exterior.coords)[:-1] for p in polys])
+    decs, sin_acceso, residuales = puertas.resolver_nivel(
+        recs, [list(p.exterior.coords)[:-1] for p in polys],
+        [vano_para_puertas(o, c) for o, c in con_cod],
+        obstaculos_del_nivel(spec, zl, es_base), level_id, es_planta_baja=es_base,
+        inicio=llegadas_escalera(spec, zl))
+    dec_por_cod = {d["codigo"]: d for d in decs if not d.get("generada")}
+    generadas = [d for d in decs if d.get("generada")]
+    vanos_gen = []
+    for d in generadas:
+        g = d["geometria"]
+        hx, hy = (g["largo"] / 2, g["espesor_muro"] / 2) if g["horizontal"] else (g["espesor_muro"] / 2, g["largo"] / 2)
+        vanos_gen.append(({"level": level_id, "kind": "door", "sill": 0.0, "head": g["dintel"],
+                           "rect": [g["cx"] - hx, g["cy"] - hy, g["cx"] + hx, g["cy"] + hy]}, d))
+
+    # ---- muros: union de solidos menos los vanos, con contorno y relleno
     muros = unary_union(polys)
-    if vanos:
-        muros = muros.difference(unary_union([Vano(o).corte() for o in vanos]))
+    if vanos or vanos_gen:
+        muros = muros.difference(unary_union([Vano(o).corte() for o in vanos + [o for o, _ in vanos_gen]]))
     piezas = getattr(muros, "geoms", [muros])
     for pz in piezas:
         if pz.is_empty:
@@ -647,12 +723,14 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
 
     # ---- vanos con simbolo y codigo
     vanos_tabla = []
-    n_cod = {"P": 1, "V": 1, "A": 1}
-    hay_defecto = False
-    for o in vanos:
-        fila, defecto = dibujar_vano(msp, o, huella, p, n_cod)
-        vanos_tabla.append(fila)
-        hay_defecto = hay_defecto or defecto
+    hay_inferido = False
+    for o, cod in con_cod:
+        dec = dec_por_cod.get(cod)
+        if dec is not None and not dec.get("regla", "").startswith("indicado"):
+            hay_inferido = True
+        vanos_tabla.append(dibujar_vano(msp, o, cod, dec, huella, p))
+    for o, d in vanos_gen:
+        vanos_tabla.append(dibujar_vano(msp, o, d["codigo"], d, huella, p, generada=True))
 
     # ---- escalera
     for st in spec.get("stairs", []):
@@ -664,8 +742,12 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
         lv = recintos.get("niveles", {}).get(level_id)
         if lv:
             for r in lv.get("recintos", []):
-                px, py = r["punto"]
-                lineas = partir_nombre(r["nombre"].upper())
+                pt = r.get("punto") or r.get("punto_rotulo")
+                nombre = r.get("nombre") or r.get("label")
+                if not pt or not nombre:
+                    continue
+                px, py = pt
+                lineas = partir_nombre(nombre.upper())
                 hn = p(MM["recinto"])
                 paso = hn * 1.35
                 area = r.get("area_doc_m2")
@@ -705,15 +787,22 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
     notas = ["Cotas a cara de muro. VERIFICAR EN OBRA ANTES DE EJECUTAR."]
     if recintos:
         notas.append("(s/doc) = superficie declarada en el documento, no medida.")
-    if hay_defecto:
-        notas.append("Abatimiento/operacion de puertas no definido en el modelo: "
-                     "se dibuja por defecto.")
+    if hay_inferido:
+        notas.append("Abatimiento no indicado en el modelo: inferido con reglas de diseno "
+                     "R1-R8 (tools/puertas.py), no normativo.")
+    if generadas:
+        notas.append("* Puerta generada: el recinto no tenia acceso en el modelo (%s)."
+                     % ", ".join(d["conecta"][0] for d in generadas))
+    if sin_acceso:
+        notas.append("SIN ACCESO POSIBLE: %s" % ", ".join(sin_acceso))
+    for r in residuales:
+        notas.append("AVISO " + r)
     vineta(msp, spec, level_id, zl, bx0 - 2 * sep, by1 + p(10.0),
            (bx1 - bx0) + 2 * sep, p, notas)
 
     cabe = presentacion_a3(doc, p, "A3 1-%d" % escala)
     doc.saveas(path)
-    return n_muros, len(vanos_tabla), n_rec, cabe
+    return n_muros, len(vanos_tabla), n_rec, cabe, decs, sin_acceso, residuales
 
 
 def main(argv=None):
@@ -733,14 +822,27 @@ def main(argv=None):
 
     out = Path(args.outdir)
     out.mkdir(parents=True, exist_ok=True)
+    fallo = False
 
     for lvl in spec["levels"]:
         path = out / ("planta_%s.dxf" % lvl["id"])
-        m, v, r, cabe = draw_level(spec, lvl["id"], str(path), recintos, args.escala)
+        m, v, r, cabe, decs, sin, resid = draw_level(spec, lvl["id"], str(path), recintos, args.escala)
         aviso = "" if cabe else "  AVISO: no cabe en A3 a 1:%d" % args.escala
         print("%s  (%d muros, %d vanos, %d recintos rotulados)%s"
               % (path, m, v, r, aviso))
-    return 0
+        for d in decs:
+            if d["tipo"] == "corredera":
+                print("    %s corredera | %s" % (d["codigo"], d["regla"]))
+            else:
+                print("    %s%s abre hacia %s | %s%s" % (
+                    d["codigo"], "*" if d.get("generada") else "", d["abre_hacia"], d["regla"],
+                    " | ADVERTENCIA" if "advertencia" in d else ""))
+        if sin:
+            print("    SIN ACCESO POSIBLE:", ", ".join(sin))
+            fallo = True
+        for x in resid:
+            print("    AVISO:", x)
+    return 1 if fallo else 0
 
 
 if __name__ == "__main__":

@@ -104,3 +104,19 @@ verdicts on such a room need form-auditor to measure it properly.
 Clear passage depends on frame, stop and opening angle, none of which are in the
 Arch object. The norm rule therefore reports SKIP rather than a false PASS — this
 is intentional, not a gap to be patched by estimating.
+
+### 7. A print with "ñ" can stop a script silently
+
+In a console whose encoding is not UTF-8, printing a Spanish label ("Baño") raises
+`UnicodeEncodeError`. `freecadcmd` swallows it and the script ends before its
+self-checks. Measured 2026-10-02 under the C locale, see [lessons.md](lessons.md).
+Scripts that print labels add, after `import FreeCAD`:
+
+```python
+try:
+    sys.stdout.reconfigure(errors="replace")    # "Baño" prints as "Ba?o" instead of aborting
+except Exception:
+    pass
+```
+
+or run with `PYTHONIOENCODING=utf-8`.

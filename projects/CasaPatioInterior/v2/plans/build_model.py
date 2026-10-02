@@ -16,12 +16,20 @@ levógira y no se puede representar en FreeCAD sin espejar el edificio. Ver READ
 
 Termina con código != 0 si alguna autocomprobación geométrica falla.
 """
+import importlib.util
 import json
 import math
 import os
 import sys
 
 import FreeCAD
+
+# freecadcmd en una consola que no es UTF-8 se caia al imprimir "Baño" y se tragaba
+# la excepcion: el script terminaba sin llegar a sus autocomprobaciones.
+try:
+    sys.stdout.reconfigure(errors="replace")
+except Exception:
+    pass
 import Part
 import Draft
 import Arch
@@ -37,6 +45,14 @@ from v2lib import MM, YOFF, P                           # noqa: E402
 
 SPEC = json.load(open(os.path.join(V2, "..", "plans", "casa_rev_h.json"), encoding="utf-8"))
 REC = json.load(open(os.path.join(V2, "plans", "recintos_v2.json"), encoding="utf-8"))
+
+# Geometría compartida con el constructor de Blender (tools/cubierta.py): encuentros de
+# muros sin traslape, muros que terminan bajo la losa, cubiertas y cierres bajo cubierta.
+_cub_spec = importlib.util.spec_from_file_location(
+    "cubierta", os.path.join(V2, "..", "..", "..", "tools", "cubierta.py"))
+cubierta = importlib.util.module_from_spec(_cub_spec)
+_cub_spec.loader.exec_module(cubierta)
+AJUSTE = cubierta.muros_ajustados(SPEC)
 
 doc = FreeCAD.newDocument("CasaPatioInterior_v2")
 LV = {l["id"]: l["z"] for l in SPEC["levels"]}
@@ -56,13 +72,6 @@ def comp(shape, label, ifc, mat=None):
     if hasattr(holder, "ViewObject") and holder.ViewObject:
         holder.ViewObject.Visibility = False
     return obj
-
-
-def extrude_xz(poly, y0, y1):
-    """Prisma: polígono (x, z) en m extruido a lo largo de Y (m del documento)."""
-    pts = [P(x, y0, z) for x, z in poly]
-    w = Part.makePolygon(pts + [pts[0]])
-    return Part.Face(w).extrude(V(0, (y1 - y0) * MM, 0))
 
 
 def prism_xy(poly, z0, z1):
@@ -98,22 +107,25 @@ def opening_on_wall(fr, rect, tol=0.02):
 
 
 walls = []
-for w in SPEC["walls"]:
+for w, aj in zip(SPEC["walls"], AJUSTE):
     z0 = LV[w["level"]]
     ax, ay, ux, uy, nx, ny, L, o0, o1 = fr = wall_frame(w)
-    base = Draft.makeLine(P(*w["a"], z0), P(*w["b"], z0))
+    # eje recortado en los encuentros y coronación bajo la losa (tools/cubierta.py):
+    # dos muros no ocupan el mismo lugar y el muro no atraviesa la losa
+    wa = dict(w, a=list(aj["a"]), b=list(aj["b"]), top=aj["top"])
+    base = Draft.makeLine(P(*wa["a"], z0), P(*wa["b"], z0))
     # El "Left" de Arch es el lado opuesto al "left" del JSON (verificado por bbox).
     align = "Right" if w.get("align", "center") == "left" else "Center"
-    wall = Arch.makeWall(base, width=w["t"] * MM, height=(w["top"] - z0) * MM, align=align)
+    wall = Arch.makeWall(base, width=w["t"] * MM, height=(wa["top"] - z0) * MM, align=align)
     wall.Label = "Muro %s %02d" % (w["level"], len(walls) + 1)
     wall.IfcType = "Wall"
-    walls.append({"obj": wall, "w": w, "fr": fr, "z0": z0, "ops": []})
+    walls.append({"obj": wall, "w": wa, "fr": fr, "fr_aj": wall_frame(wa), "z0": z0, "ops": []})
 
 doc.recompute()
 
 # geometría esperada de cada muro vs construida
 for e in walls:
-    ax, ay, ux, uy, nx, ny, L, o0, o1 = e["fr"]
+    ax, ay, ux, uy, nx, ny, L, o0, o1 = e["fr_aj"]
     xs = [ax + ux * s + nx * o for s in (0, L) for o in (o0, o1)]
     ys = [ay + uy * s + ny * o for s in (0, L) for o in (o0, o1)]
     bb = e["obj"].Shape.BoundBox
@@ -185,7 +197,7 @@ doc.recompute()
 
 # volumen de cada muro = L*t*H - suma de vanos*t (sin traslape entre vanos)
 for e in walls:
-    ax, ay, ux, uy, nx, ny, L, o0, o1 = e["fr"]
+    ax, ay, ux, uy, nx, ny, L, o0, o1 = e["fr_aj"]
     t = e["w"]["t"]
     H = e["w"]["top"] - e["z0"]
     exp = L * t * H - sum((s1 - s0) * (h1 - h0) * t for s0, s1, h0, h1 in e["ops"])
@@ -227,41 +239,51 @@ for s in SPEC["slabs"]:
     slab.IfcType = "Slab"
     slab_objs[lvl] = slab
 
-# --------------------------------------------------------------- hastiales
-for i, gb in enumerate(SPEC["gables"]):
-    y0 = gb["at"]
-    y1 = y0 + gb["dir"] * gb["t"]
-    comp(extrude_xz(gb["profile"], min(y0, y1), max(y0, y1)), "Hastial %d" % (i + 1), "Wall")
-
 # ---------------------------------------------------------------- cubiertas
+# La geometría sale de tools/cubierta.py, compartida con el constructor de Blender.
+# Antes cada banda era un sólido aparte (25 aristas sin pareja, caras internas entre
+# bandas) y no había nada sobre los muros que dan al patio: el entretecho quedaba
+# abierto (928 rayos escapaban, medido con tools/scripts/verificar_modelo3d.py).
+GEN = cubierta.generar(SPEC)
+for aviso in GEN["avisos"]:
+    problems.append("cubierta (datos): " + aviso)
+
+
+def malla_a_solido(m, label):
+    """Sólido Part desde una malla cerrada de tools/cubierta.py (caras planas)."""
+    caras = []
+    for c in m.caras:
+        pts = [P(*m.verts[i]) for i in c]
+        caras.append(Part.Face(Part.makePolygon(pts + [pts[0]])))
+    solido = Part.makeSolid(Part.makeShell(caras))
+    limpio = solido.removeSplitter()                    # funde caras coplanares
+    if limpio.isValid() and abs(limpio.Volume - solido.Volume) < 1.0:
+        solido = limpio
+    esperado = cubierta.volumen(m) * MM ** 3
+    if not solido.isValid() or len(solido.Solids) != 1 or abs(solido.Volume - esperado) > 1e-6 * esperado + 1.0:
+        problems.append("%s: sólido inválido o volumen %.4f m3 != %.4f m3"
+                        % (label, solido.Volume / MM ** 3, esperado / MM ** 3))
+    return solido
+
+
+# hastiales del JSON, recortados bajo la cara inferior de la cubierta (antes llegaban a
+# la cara superior y coincidían con el faldón: parpadeo sobre el techo)
+for m in GEN["hastiales"]:
+    label = "Hastial %d" % (m.info["hastial"] + 1)
+    comp(malla_a_solido(m, label), label, "Wall")
+
 roof_shapes = []
+for m, r in zip(GEN["cubiertas"], SPEC["roofs"]):
+    label = "Cubierta dos aguas" if r["type"] == "gable" else "Cubierta ala oriente (una agua)"
+    shape = malla_a_solido(m, label)
+    comp(shape, label, "Roof")
+    roof_shapes.append(shape)
 
-
-def gable_z(x, r):
-    a, b = r["x_ref"]
-    rx, ez, rz = r["ridge_x"], r["eave_z"], r["ridge_z"]
-    return ez + (x - a) / (rx - a) * (rz - ez) if x <= rx else ez + (b - x) / (b - rx) * (rz - ez)
-
-
-for r_i, r in enumerate(SPEC["roofs"]):
-    t = r.get("t", 0.2)
-    solids = []
-    if r["type"] == "gable":
-        for y0, y1, x0, x1 in r["bands"]:
-            rx = r["ridge_x"]
-            xs = [x0] + ([rx] if x0 < rx < x1 else []) + [x1]
-            for xa, xb in zip(xs[:-1], xs[1:]):
-                za, zb = gable_z(xa, r), gable_z(xb, r)
-                solids.append(extrude_xz([(xa, za), (xb, zb), (xb, zb - t), (xa, za - t)], y0, y1))
-        label = "Cubierta dos aguas"
-    else:
-        (x0, z0), (x1, z1) = r["from"], r["to"]
-        y0, y1 = r["y"]
-        solids.append(extrude_xz([(x0, z0), (x1, z1), (x1, z1 - t), (x0, z0 - t)], y0, y1))
-        label = "Cubierta ala oriente (una agua)"
-    comp_shape = Part.makeCompound(solids)
-    obj = comp(comp_shape, label, "Roof")
-    roof_shapes.append(comp_shape)
+# cierres del entretecho sobre los muros de fachada que quedan bajo un borde de cubierta
+for m in GEN["cierres"]:
+    w = SPEC["walls"][m.info["muro"]]
+    label = "Cierre bajo cubierta %s %02d" % (w["level"], m.info["muro"] + 1)
+    comp(malla_a_solido(m, label), label, "Wall")
 
 # ------------------------------------------------------------ escalera
 st = SPEC["stairs"][0]

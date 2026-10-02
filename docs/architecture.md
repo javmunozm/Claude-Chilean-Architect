@@ -6,7 +6,8 @@
 ArquiCL/
 ├── baseSystemCad.md   ← index, CORE DIRECTIVE, doc pointers
 ├── docs/              ← this documentation
-├── tools/             ← shared tooling (norm check, render gate, area calc)
+├── tools/             ← shared tooling (norm check, render gate, area calc,
+│                        roof geometry, doors, 3D verification)
 │   └── norms/         ← rules.json: machine-checkable norm thresholds
 ├── sources/           ← input material per subject, each with SOURCES.md
 ├── templates/         ← reusable templates for new projects

@@ -11,6 +11,10 @@ Convención de ejes:
   planta (x, y) en metros  ->  mundo (x, z_altura, y)
   el eje Y del mundo es la altura (convención de three.js)
 
+Cubiertas, hastiales, cierres bajo cubierta y encuentros de muros salen de
+tools/cubierta.py, la misma geometría que usan blender_build.py y el constructor
+FreeCAD de v2. Verificar el OBJ con tools/scripts/verificar_modelo3d.py --y-directo.
+
 Uso:
   python3 build3d.py planta.json --out modelo
 """
@@ -18,6 +22,10 @@ import json
 import math
 import os
 import sys
+
+# tools/ queda un nivel arriba de tools/scripts/: la geometria de cubiertas es compartida
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+import cubierta  # noqa: E402
 
 # --------------------------------------------------------------------- malla
 class Mesh:
@@ -38,34 +46,11 @@ class Mesh:
             return
         p = [(x0, y0, z0), (x1, y0, z0), (x1, y0, z1), (x0, y0, z1),
              (x0, y1, z0), (x1, y1, z0), (x1, y1, z1), (x0, y1, z1)]
-        f = [(0, 3, 2, 1), (4, 5, 6, 7), (0, 1, 5, 4),
-             (2, 3, 7, 6), (1, 2, 6, 5), (3, 0, 4, 7)]
+        # normales hacia afuera (antes quedaban hacia adentro: volumen con signo negativo)
+        f = [(0, 1, 2, 3), (4, 7, 6, 5), (0, 4, 5, 1),
+             (2, 6, 7, 3), (1, 5, 6, 2), (3, 7, 4, 0)]
         for a, b, c, d in f:
             self.quad(mat, p[a], p[b], p[c], p[d])
-
-    def prism(self, mat, poly, axis, at, t, sign=1):
-        """Prisma a partir de un polígono (u, v) extruido en el eje indicado.
-        axis 'y' -> el polígono vive en (x, altura) y se extruye en y de planta."""
-        n = len(poly)
-        a0, a1 = at, at + sign * t
-        lo, hi = min(a0, a1), max(a0, a1)
-
-        def P(u, v, a):
-            return (u, v, a) if axis == "y" else (a, v, u)
-
-        for i in range(1, n - 1):
-            for a, rev in ((lo, False), (hi, True)):
-                tri = [P(poly[0][0], poly[0][1], a),
-                       P(poly[i][0], poly[i][1], a),
-                       P(poly[i + 1][0], poly[i + 1][1], a)]
-                if rev:
-                    tri.reverse()
-                self.tri(mat, *tri)
-        for i in range(n):
-            u0, v0 = poly[i]
-            u1, v1 = poly[(i + 1) % n]
-            self.quad(mat, P(u0, v0, lo), P(u1, v1, lo),
-                      P(u1, v1, hi), P(u0, v0, hi))
 
 
 # ------------------------------------------------------------------- muros
@@ -77,7 +62,8 @@ def wall_rect(a, b, t, align):
     L = math.hypot(dx, dy)
     ux, uy = dx / L, dy / L
     nx, ny = -uy, ux                      # normal a la izquierda del recorrido
-    off0, off1 = (0.0, t) if align == "left" else (-t / 2.0, t / 2.0)
+    # mismas tres alineaciones que cubierta.poligono_muro
+    off0, off1 = {"left": (0.0, t), "right": (-t, 0.0)}.get(align, (-t / 2.0, t / 2.0))
     return (ax, ay, ux, uy, nx, ny, L, off0, off1)
 
 
@@ -150,62 +136,39 @@ def build_wall(mesh, w, z0, z1, openings, mat, mat_glass):
                 za, zb = z0 + h0, min(z0 + h1, z1)
                 if kind == "door":
                     za = z0 + h0 + 0.02
-                A = pt(a + 0.02, ga, za); B = pt(b - 0.02, ga, za)
-                C = pt(b - 0.02, gb, za); D = pt(a + 0.02, gb, za)
-                A2 = pt(a + 0.02, ga, zb); B2 = pt(b - 0.02, ga, zb)
-                C2 = pt(b - 0.02, gb, zb); D2 = pt(a + 0.02, gb, zb)
+                # el vidrio llega a las jambas: con 2 cm de holgura quedaba una
+                # rendija que atravesaba el muro a cada lado del vano
+                A = pt(a, ga, za); B = pt(b, ga, za)
+                C = pt(b, gb, za); D = pt(a, gb, za)
+                A2 = pt(a, ga, zb); B2 = pt(b, ga, zb)
+                C2 = pt(b, gb, zb); D2 = pt(a, gb, zb)
                 mesh.quad(mat_glass, A, A2, B2, B)
                 mesh.quad(mat_glass, D, C, C2, D2)
 
 
 # ----------------------------------------------------------------- cubiertas
-def gable_z(x, r):
-    a, b = r["x_ref"]
-    rx, ez, rz = r["ridge_x"], r["eave_z"], r["ridge_z"]
-    if x <= rx:
-        return ez + (x - a) / (rx - a) * (rz - ez)
-    return ez + (b - x) / (b - rx) * (rz - ez)
+def agregar_malla(mesh, malla, mat):
+    """Agrega una malla cerrada de tools/cubierta.py (planta x, y, z) al modelo.
 
-
-def build_roof(mesh, r, mat):
-    t = r.get("t", 0.20)
-    if r["type"] == "gable":
-        for y0, y1, x0, x1 in r["bands"]:
-            rx = r["ridge_x"]
-            xs = [x0] + ([rx] if x0 < rx < x1 else []) + [x1]
-            for i in range(len(xs) - 1):
-                xa, xb = xs[i], xs[i + 1]
-                za, zb = gable_z(xa, r), gable_z(xb, r)
-                for dz in (0.0, -t):
-                    A = (xa, za + dz, y0); B = (xb, zb + dz, y0)
-                    C = (xb, zb + dz, y1); D = (xa, za + dz, y1)
-                    if dz == 0.0:
-                        mesh.quad(mat, A, D, C, B)
-                    else:
-                        mesh.quad(mat, A, B, C, D)
-                mesh.quad(mat, (xa, za, y0), (xb, zb, y0),
-                          (xb, zb - t, y0), (xa, za - t, y0))
-                mesh.quad(mat, (xa, za, y1), (xa, za - t, y1),
-                          (xb, zb - t, y1), (xb, zb, y1))
-                for xe, ze in ((xa, za), (xb, zb)):
-                    mesh.quad(mat, (xe, ze, y0), (xe, ze - t, y0),
-                              (xe, ze - t, y1), (xe, ze, y1))
-    else:                                    # shed / una sola caída
-        x0, z0 = r["from"]
-        x1, z1 = r["to"]
-        y0, y1 = r["y"]
-        for dz in (0.0, -t):
-            A = (x0, z0 + dz, y0); B = (x1, z1 + dz, y0)
-            C = (x1, z1 + dz, y1); D = (x0, z0 + dz, y1)
-            if dz == 0.0:
-                mesh.quad(mat, A, D, C, B)
-            else:
-                mesh.quad(mat, A, B, C, D)
-        mesh.quad(mat, (x0, z0, y0), (x1, z1, y0), (x1, z1 - t, y0), (x0, z0 - t, y0))
-        mesh.quad(mat, (x0, z0, y1), (x0, z0 - t, y1), (x1, z1 - t, y1), (x1, z1, y1))
-        for xe, ze in ((x0, z0), (x1, z1)):
-            mesh.quad(mat, (xe, ze, y0), (xe, ze - t, y0),
-                      (xe, ze - t, y1), (xe, ze, y1))
+    planta -> mundo es (x, y, z) -> (x, z, y): un espejo, así que cada cara se invierte
+    para que su normal siga apuntando hacia afuera. Las caras de cubierta.py son
+    convexas (celdas de grilla, prismas, hastiales recortados) y se triangulan en
+    abanico; una cara cóncava se rechaza en vez de dejar triángulos superpuestos.
+    """
+    for cara in malla.caras:
+        P = [malla.verts[i] for i in reversed(cara)]
+        n = cubierta._normal(P)
+        for k in range(len(P)):
+            a, b, c = P[k], P[(k + 1) % len(P)], P[(k + 2) % len(P)]
+            e1 = [b[j] - a[j] for j in range(3)]
+            e2 = [c[j] - b[j] for j in range(3)]
+            giro = ((e1[1] * e2[2] - e1[2] * e2[1]) * n[0] + (e1[2] * e2[0] - e1[0] * e2[2]) * n[1]
+                    + (e1[0] * e2[1] - e1[1] * e2[0]) * n[2])
+            if giro < -1e-12:
+                raise ValueError("cara no convexa en %s: %s" % (malla.nombre, P))
+        W = [(x, z, y) for x, y, z in P]
+        for k in range(1, len(W) - 1):
+            mesh.tri(mat, W[0], W[k], W[k + 1])
 
 
 # --------------------------------------------------------------------- build
@@ -231,11 +194,12 @@ def build(spec):
     for o in spec.get("openings", []):
         ops_by_level.setdefault(o["level"], []).append(o)
 
-    for w in spec["walls"]:
+    # eje recortado en los encuentros y coronación bajo la losa: sin caras duplicadas
+    for w, aj in zip(spec["walls"], cubierta.muros_ajustados(spec)):
         L = lv[w["level"]]
         z0 = w.get("base", L["z"])
-        z1 = w["top"]
-        wr = wall_rect(w["a"], w["b"], w["t"], w.get("align", "center"))
+        z1 = aj["top"]
+        wr = wall_rect(aj["a"], aj["b"], w["t"], w.get("align", "center"))
         found = []
         for o in ops_by_level.get(w["level"], []):
             hit = opening_on_wall(wr, o["rect"])
@@ -249,12 +213,17 @@ def build(spec):
         build_wall(m, wr, z0, z1, found,
                    w.get("material", "muro"), "vidrio")
 
-    for gb in spec.get("gables", []):
-        m.prism(gb.get("material", "muro"), gb["profile"], gb["plane"],
-                gb["at"], gb["t"], gb.get("dir", 1))
-
-    for r in spec.get("roofs", []):
-        build_roof(m, r, r.get("material", "cubierta"))
+    # hastiales recortados bajo el faldón, cada cubierta como un sólido cerrado y los
+    # cierres del entretecho sobre los muros que quedan bajo un borde de cubierta
+    gen = cubierta.generar(spec)
+    for aviso in gen["avisos"]:
+        print("  AVISO cubierta (datos): %s" % aviso)
+    for h in gen["hastiales"]:
+        agregar_malla(m, h, h.info.get("material", "muro"))
+    for c, r in zip(gen["cubiertas"], spec.get("roofs", [])):
+        agregar_malla(m, c, r.get("material", "cubierta"))
+    for c in gen["cierres"]:
+        agregar_malla(m, c, "muro")
 
     for st in spec.get("stairs", []):
         z = st["base"]

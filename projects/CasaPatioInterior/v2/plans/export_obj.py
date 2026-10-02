@@ -11,6 +11,13 @@ import sys
 
 import FreeCAD
 
+# freecadcmd en una consola que no es UTF-8 se caia al imprimir "Baño" y se tragaba
+# la excepcion: el script terminaba sin llegar a sus autocomprobaciones.
+try:
+    sys.stdout.reconfigure(errors="replace")
+except Exception:
+    pass
+
 MODEL, OBJ, V2 = os.environ["EXPORT_MODEL"], os.environ["EXPORT_OBJ"], os.environ["V2_DIR"]
 doc = FreeCAD.openDocument(MODEL)
 doc.recompute()

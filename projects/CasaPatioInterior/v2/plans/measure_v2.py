@@ -23,6 +23,13 @@ import sys
 
 import FreeCAD
 
+# freecadcmd en una consola que no es UTF-8 se caia al imprimir "Baño" y se tragaba
+# la excepcion: el script terminaba sin llegar a sus autocomprobaciones.
+try:
+    sys.stdout.reconfigure(errors="replace")
+except Exception:
+    pass
+
 MM = 1000.0
 V2 = os.environ.get("V2_DIR")
 MODEL = os.environ.get("MEASURE_MODEL")
@@ -145,7 +152,9 @@ spc = [e for e in data["entities"] if e["kind"] == "space"]
 data["totals"]["space_area_neta_p1"] = round(sum(e["area"] for e in spc if e["level"] == "p1"
                                                  and e.get("clear_height") is not None), 3)
 data["totals"]["slab_area"] = round(sum(e["area"] for e in data["entities"] if e["kind"] == "slab"), 3)
-data["totals"]["_nota_wall_volume"] = "suma de volúmenes por muro: cuenta dos veces los traslapes de esquina"
+data["totals"]["_nota_wall_volume"] = ("suma de volúmenes de los objetos Wall (muros, hastiales y cierres bajo "
+                                       "cubierta); los muros se recortan en los encuentros (tools/cubierta.py), "
+                                       "así que no hay traslapes contados dos veces")
 data["generated_by"] = "area_calc.extract + v2/plans/measure_v2.py"
 
 with open(OUT, "w", encoding="utf-8") as fh:

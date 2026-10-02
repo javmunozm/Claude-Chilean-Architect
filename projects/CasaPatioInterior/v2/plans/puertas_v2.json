@@ -1,7 +1,8 @@
 {
  "_nota": [
-  "Convención de diseño, no norma. Reglas R1-R7 en el docstring de derive_puertas.py.",
-  "Mano: observador en el lado desde el que se EMPUJA la puerta."
+  "Convención de diseño, no norma (tools/puertas.py, reglas R1-R8).",
+  "Mano: observador en el lado desde el que se EMPUJA la puerta.",
+  "generada=true: el recinto no tenía acceso; la puerta es una propuesta."
  ],
  "niveles": {
   "p1": [
@@ -507,7 +508,7 @@
     ],
     "bisagra_mano": "derecha",
     "distancia_a_esquina": 0.1,
-    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "regla": "R4 abre hacia el recinto, no hacia la circulación; R7: el arco no cabe hacia Dormitorio Principal, abre hacia Pasillo Pasarela Norte",
     "verificacion": {
      "arco_dentro_del_recinto": true,
      "cruces": []
@@ -582,5 +583,7 @@
     }
    }
   ]
- }
+ },
+ "sin_solucion": {},
+ "residuales": {}
 }
