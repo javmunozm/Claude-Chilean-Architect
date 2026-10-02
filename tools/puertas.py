@@ -9,7 +9,7 @@ Hace dos cosas:
 
 1. DECIDE cómo abre cada puerta que el modelo trae. Si el vano declara
    "operation", "hinge" o "swing", eso manda ("indicado en el modelo"). Si no, se
-   infiere con las reglas de diseño R1-R8 (de v2/plans/derive_puertas.py):
+   infiere con las reglas de diseño R1-R9 (de v2/plans/derive_puertas.py):
 
    R1  ancho >= 2,0 m con alto >= 2,3 m  -> corredera de vidrio.
    R2  ancho 1,2-2,0 m                   -> doble hoja, abre hacia el exterior.
@@ -21,11 +21,20 @@ Hace dos cosas:
    R7  el arco (radio = ancho) debe caer dentro del recinto, sin cruzar mobiliario,
        escalera ni otro arco; si no, prueba la otra jamba y luego el otro lado.
    R8  entre dos circulaciones no abre hacia la escalera.
+   R9  baño accesible -> abre hacia afuera del baño (práctica habitual; la exigencia
+       de OGUC 4.1.7 no está transcrita en rules.json: verificar con el texto oficial).
 
-2. GENERA una puerta para cada recinto al que no se llega desde el acceso. Busca el
-   muro que comparte con un recinto accesible, prefiere una circulación, la ubica
-   junto a la esquina para que la bisagra quede contra el muro y la valida con R7.
-   Va marcada "generada": no estaba en el modelo, es una propuesta.
+2. GENERA las puertas que el modelo no trae (política por defecto, POLITICA):
+   - todo recinto tipo dormitorio (nombre con "dormitorio", "pieza", "habitación")
+     lleva puerta PROPIA, aunque se llegue a él por un borde abierto;
+   - todo otro recinto al que no se llega desde el acceso recibe una puerta;
+   - escaleras y circulaciones (pasillo, hall, galería, pasarela...) NO reciben
+     puerta generada: si quedan sin acceso se informa. Para generarlas, pedirlo
+     en la línea de comandos (--puertas-circulacion).
+   Busca el muro que comparte con un recinto accesible, prefiere una circulación,
+   la ubica junto a la esquina para que la bisagra quede contra el muro y la valida
+   con R7. Va marcada "generada": no estaba en el modelo, es una propuesta.
+   Las puertas que el usuario indica en el modelo siempre mandan.
 
 Nada de esto es norma: ningún artículo OGUC sobre puertas está transcrito en
 tools/norms/rules.json. Los anchos por defecto (ANCHOS) son convención de diseño.
@@ -40,6 +49,7 @@ Entrada por nivel (marco cualquiera, metros):
 
 CLI (formato plan_data.json de v2):
     python tools/puertas.py <plan_data.json> -o <puertas.json> [--recintos <recintos.json>]
+        [--puertas-circulacion] [--con-puerta <palabra> ...]
 """
 from __future__ import annotations
 
@@ -61,6 +71,12 @@ ALTO_PUERTA = 2.10              # dintel de las puertas generadas (convención)
 EXT_NOMBRES = ("porche", "patio", "paso", "terraza", "jardín", "jardin", "exterior", "antejardín")
 WET_SERV = ("baño", "bano", "clóset", "closet", "walk-in", "logia", "despensa", "bodega")
 CIRC = ("pasillo", "hall", "escalera", "vestíbulo", "vestibulo", "galería", "galeria", "pasarela")
+DORMITORIOS = ("dormitorio", "pieza", "habitación", "habitacion")
+
+# Qué puertas se generan si el modelo no las trae (ver docstring, punto 2).
+#   obligatorias: palabras de nombre de recinto que exigen puerta propia
+#   circulacion:  si True, también se generan puertas hacia escaleras y circulaciones
+POLITICA = {"obligatorias": DORMITORIOS, "circulacion": False}
 
 
 def es_escalera(nombre):
@@ -155,6 +171,11 @@ def decidir(nivel, v, ocupados, lv=""):
     elif double:
         order = ["A", "B"] if cA == "ext" else ["B", "A"]
         regla = "R2 doble hoja, abre hacia el exterior"
+    elif any(c == "wet" and "accesible" in (n or "").lower() for c, n in ((cA, nameA), (cB, nameB))):
+        acc_a = cA == "wet" and "accesible" in (nameA or "").lower()
+        order = ["B", "A"] if acc_a else ["A", "B"]
+        regla = ("R9 baño accesible: abre hacia afuera del baño (práctica; OGUC 4.1.7 "
+                 "no transcrita, verificar)")
     elif "ext" in (cA, cB):
         ext_side = "A" if cA == "ext" else "B"
         ext_name = nameA if cA == "ext" else nameB
@@ -383,19 +404,74 @@ def prioridad_vecino(nivel, objetivo, vecino):
     return {"circ": 0, "room": 1, "wet": 3, "ext": 5}.get(c_vec, 6)
 
 
-def generar_faltantes(nivel, ocupados, lv="", es_planta_baja=True, prefijo="P", inicio=()):
-    """Propone una puerta por cada recinto inaccesible.
+def tiene_puerta(nivel, nombre, tipos=("door",)):
+    """¿Algún vano de esos tipos (del modelo o ya generado) da a este recinto?"""
+    return any(v["tipo"] in tipos and nombre in nivel.lados(v)[1:] for v in nivel.vanos)
 
-    Devuelve (vanos, decisiones, sin_solucion, residuales): `sin_solucion` son recintos
-    del programa a los que no se pudo dar acceso; `residuales`, espacios sin rótulo y
-    sin acceso (vacíos, ductos, salientes de losa), que solo se informan.
+
+def _candidatos(nivel, nombre, ok, ocupados, prefijo, n_cod, lv):
+    """Mejor posición de puerta para `nombre` en un muro hacia un recinto de `ok`."""
+    mejor = None
+    clase_r = nivel.clase(nombre)
+    ancho = ANCHOS.get(clase_r, 0.80)
+    for vec, p0, p1, t, nrm, u in _tramos_compartidos(nivel, nombre, ok):
+        largo = math.hypot(p1[0] - p0[0], p1[1] - p0[1]) + 0.05
+        if largo < ancho + HOLGURA_ESQUINA:
+            continue
+        prio = prioridad_vecino(nivel, nombre, vec)
+        # posiciones: junto a cada esquina (R6) y cada 0,20 m entre ellas
+        s_max = largo - HOLGURA_ESQUINA - ancho
+        posiciones = {round(HOLGURA_ESQUINA, 3), round(s_max, 3)}
+        k = HOLGURA_ESQUINA + 0.20
+        while k < s_max:
+            posiciones.add(round(k, 3))
+            k += 0.20
+        for s0 in sorted(posiciones):
+            if s0 < 0:
+                continue
+            a = (p0[0] + u[0] * s0, p0[1] + u[1] * s0)
+            b = (a[0] + u[0] * ancho, a[1] + u[1] * ancho)
+            if not _libre_de_vanos(nivel, a, b):
+                continue
+            cxp = (a[0] + b[0]) / 2 + nrm[0] * t / 2
+            cyp = (a[1] + b[1]) / 2 + nrm[1] * t / 2
+            v = {"codigo": "%s%02d" % (prefijo, n_cod), "tipo": "door", "cx": round(cxp, 4),
+                 "cy": round(cyp, 4), "horizontal": abs(u[0]) > abs(u[1]), "largo": ancho,
+                 "espesor_muro": t, "antepecho": 0.0, "dintel": ALTO_PUERTA}
+            prueba = decidir(nivel, v, list(ocupados), lv)
+            ok_arco = prueba.get("verificacion", {}).get("arco_dentro_del_recinto", True) \
+                and not prueba.get("verificacion", {}).get("cruces")
+            forzada = "R7:" in prueba.get("regla", "")      # abre hacia el lado no preferido
+            puntaje = (0 if ok_arco else 1, prio, 1 if forzada else 0,
+                       prueba.get("distancia_a_esquina", 9.9))
+            if mejor is None or puntaje < mejor[0]:
+                mejor = (puntaje, nombre, vec, v)
+    return mejor
+
+
+def generar_faltantes(nivel, ocupados, lv="", es_planta_baja=True, prefijo="P", inicio=(),
+                      politica=None):
+    """Genera las puertas que el modelo no trae, según `politica` (por defecto POLITICA).
+
+    - recinto tipo dormitorio sin puerta propia -> puerta propia;
+    - recinto al que no se llega -> puerta (salvo escaleras y circulaciones, que solo se
+      informan, a menos que politica["circulacion"] sea True).
+    Devuelve (vanos, decisiones, sin_solucion, avisos): `sin_solucion` son recintos del
+    programa a los que no se pudo dar acceso; `avisos`, lo que solo se informa (espacios
+    sin rótulo, circulaciones sin acceso, dormitorios sin muro donde poner su puerta).
     """
+    pol = dict(POLITICA, **(politica or {}))
+    obligatorias = tuple(k.lower() for k in pol["obligatorias"])
+
+    def exige_puerta(n):
+        return nivel.clase(n) != "ext" and any(k in n.lower() for k in obligatorias)
+
     G = grafo(nivel)
     nuevos, decisiones, sin = [], [], []
-    residuales = set()
+    residuales, omitidas, sin_muro = set(), set(), []
     usados = {v["codigo"] for v in nivel.vanos}
     n_cod = 1 + max([int(c[1:]) for c in usados if c[:1] == prefijo and c[1:].isdigit()] or [0])
-    for _ in range(len(nivel.rooms)):
+    for _ in range(2 * len(nivel.rooms)):
         partida = inicio_de(nivel, G, es_planta_baja, inicio)
         if not partida:
             sin.append("(no se sabe desde dónde se entra a este nivel)")
@@ -404,56 +480,38 @@ def generar_faltantes(nivel, ocupados, lv="", es_planta_baja=True, prefijo="P", 
         faltan = [n for n in nivel.rooms if n not in ok and nivel.clase(n) != "ext"]
         # un espacio sin rótulo (vacío, ducto, saliente de losa) no es un recinto del
         # programa: se informa, no se le inventa una puerta
-        for n in [n for n in faltan if n.startswith(SIN_ROTULO)]:
-            residuales.add(n)
+        residuales.update(n for n in faltan if n.startswith(SIN_ROTULO))
         faltan = [n for n in faltan if not n.startswith(SIN_ROTULO)]
-        if not faltan:
+        # escaleras y circulaciones: sin puerta generada salvo que se pida
+        if not pol["circulacion"]:
+            omitidas.update(n for n in faltan if nivel.clase(n) == "circ")
+            faltan = [n for n in faltan if nivel.clase(n) != "circ"]
+        # un vano sin hoja ("open") hacia el dormitorio es una indicación del usuario: se respeta
+        propias = [n for n in nivel.rooms if n in ok and exige_puerta(n)
+                   and not tiene_puerta(nivel, n, ("door", "open")) and n not in sin_muro]
+        objetivos = faltan + propias
+        if not objetivos:
             break
         # primero los recintos principales: un baño o clóset suele quedar servido por
         # la puerta que ya tiene hacia su dormitorio, una vez que el dormitorio tiene acceso
-        principales = [n for n in faltan if nivel.clase(n) in ("room", "circ")]
+        principales = [n for n in objetivos if nivel.clase(n) in ("room", "circ")]
         mejor = None
-        for nombre in (principales or faltan):
-            clase_r = nivel.clase(nombre)
-            ancho = ANCHOS.get(clase_r, 0.80)
-            for vec, p0, p1, t, nrm, u in _tramos_compartidos(nivel, nombre, ok):
-                largo = math.hypot(p1[0] - p0[0], p1[1] - p0[1]) + 0.05
-                if largo < ancho + HOLGURA_ESQUINA:
-                    continue
-                prio = prioridad_vecino(nivel, nombre, vec)
-                # posiciones: junto a cada esquina (R6) y cada 0,20 m entre ellas
-                s_max = largo - HOLGURA_ESQUINA - ancho
-                posiciones = {round(HOLGURA_ESQUINA, 3), round(s_max, 3)}
-                k = HOLGURA_ESQUINA + 0.20
-                while k < s_max:
-                    posiciones.add(round(k, 3))
-                    k += 0.20
-                for s0 in sorted(posiciones):
-                    if s0 < 0:
-                        continue
-                    a = (p0[0] + u[0] * s0, p0[1] + u[1] * s0)
-                    b = (a[0] + u[0] * ancho, a[1] + u[1] * ancho)
-                    if not _libre_de_vanos(nivel, a, b):
-                        continue
-                    cxp = (a[0] + b[0]) / 2 + nrm[0] * t / 2
-                    cyp = (a[1] + b[1]) / 2 + nrm[1] * t / 2
-                    v = {"codigo": "%s%02d" % (prefijo, n_cod), "tipo": "door", "cx": round(cxp, 4),
-                         "cy": round(cyp, 4), "horizontal": abs(u[0]) > abs(u[1]), "largo": ancho,
-                         "espesor_muro": t, "antepecho": 0.0, "dintel": ALTO_PUERTA}
-                    prueba = decidir(nivel, v, list(ocupados), lv)
-                    ok_arco = prueba.get("verificacion", {}).get("arco_dentro_del_recinto", True) \
-                        and not prueba.get("verificacion", {}).get("cruces")
-                    forzada = "R7:" in prueba.get("regla", "")      # abre hacia el lado no preferido
-                    puntaje = (0 if ok_arco else 1, prio, 1 if forzada else 0,
-                               prueba.get("distancia_a_esquina", 9.9))
-                    if mejor is None or puntaje < mejor[0]:
-                        mejor = (puntaje, nombre, vec, v)
+        for grupo in (principales, objetivos):
+            for nombre in grupo:
+                m = _candidatos(nivel, nombre, ok, ocupados, prefijo, n_cod, lv)
+                if m and (mejor is None or m[0] < mejor[0]):
+                    mejor = m
+            if mejor:
+                break
         if mejor is None:
             sin.extend(faltan)
+            sin_muro.extend(propias)
             break
         puntaje, nombre, vec, v = mejor
+        motivo = ("recinto sin acceso: %s" % nombre if nombre in faltan
+                  else "dormitorio sin puerta propia: %s" % nombre)
         dec = decidir(nivel, v, ocupados, lv)
-        dec.update(generada=True, motivo="recinto sin acceso: %s" % nombre, conecta=[nombre, vec],
+        dec.update(generada=True, motivo=motivo, conecta=[nombre, vec],
                    geometria={k: v[k] for k in ("cx", "cy", "horizontal", "largo", "espesor_muro",
                                                  "antepecho", "dintel")})
         if puntaje[0]:
@@ -464,23 +522,35 @@ def generar_faltantes(nivel, ocupados, lv="", es_planta_baja=True, prefijo="P", 
         G.setdefault(nombre, set()).add(vec)
         G.setdefault(vec, set()).add(nombre)
         n_cod += 1
-    resid = ["%s: %.2f m2 sin rotulo y sin acceso (vacio, ducto o saliente de losa?); "
-             "no se genera puerta" % (n, nivel.rooms[n].area) for n in sorted(residuales)]
-    return nuevos, decisiones, sin, resid
+    ok = alcanzables(nivel, G, inicio_de(nivel, G, es_planta_baja, inicio) or [])
+    avisos = ["%s: %.2f m2 sin rotulo y sin acceso (vacio, ducto o saliente de losa?); "
+              "no se genera puerta" % (n, nivel.rooms[n].area) for n in sorted(residuales)]
+    avisos += ["%s: circulacion sin acceso; no se genera puerta (pedirla con "
+               "--puertas-circulacion o indicarla en el modelo)" % n
+               for n in sorted(omitidas) if n not in ok]
+    avisos += ["%s: dormitorio sin puerta propia y sin muro libre hacia un recinto accesible; "
+               "indicar la puerta en el modelo" % n for n in sin_muro]
+    avisos += ["%s: se entra por un vano sin puerta indicado en el modelo; se respeta" % n
+               for n in nivel.rooms if exige_puerta(n) and not tiene_puerta(nivel, n)
+               and tiene_puerta(nivel, n, ("open",))]
+    return nuevos, decisiones, sin, avisos
 
 
-def resolver_nivel(recintos, muros, vanos, obstaculos=(), lv="", es_planta_baja=True, inicio=()):
+def resolver_nivel(recintos, muros, vanos, obstaculos=(), lv="", es_planta_baja=True, inicio=(),
+                   politica=None):
     """Decisiones para las puertas del nivel + puertas generadas para recintos sin acceso.
 
     `inicio`: puntos de llegada de la escalera a este nivel (pisos superiores).
-    Devuelve (decisiones, sin_solucion, residuales).
+    `politica`: qué puertas generar (ver POLITICA).
+    Devuelve (decisiones, sin_solucion, avisos).
     """
     nivel = Nivel(recintos, muros, [dict(v) for v in vanos], obstaculos)
     ocupados = []
     out = []
     for v in sorted((v for v in nivel.vanos if v["tipo"] == "door"), key=lambda v: v["codigo"]):
         out.append(decidir(nivel, v, ocupados, lv))
-    _, generadas, sin, resid = generar_faltantes(nivel, ocupados, lv, es_planta_baja, inicio=inicio)
+    _, generadas, sin, resid = generar_faltantes(nivel, ocupados, lv, es_planta_baja, inicio=inicio,
+                                                 politica=politica)
     return out + generadas, sin, resid
 
 
@@ -514,16 +584,17 @@ def regiones_desde_muros(huella, muros, rotulos=(), area_min=0.3):
 
 # ------------------------------------------------------------------ CLI (plan_data de v2)
 
-def desde_plan_data(data, recintos_doc=None):
+def desde_plan_data(data, recintos_doc=None, politica=None):
     """Aplica resolver_nivel a cada planta de un plan_data.json (formato de v2)."""
     tipos = {}
     if recintos_doc:
         for lv, nv in recintos_doc.get("niveles", {}).items():
             for r in nv.get("recintos", []):
                 tipos[(lv, r.get("label"))] = r.get("tipo")
-    res = {"_nota": ["Convención de diseño, no norma (tools/puertas.py, reglas R1-R8).",
+    res = {"_nota": ["Convención de diseño, no norma (tools/puertas.py, reglas R1-R9).",
                      "Mano: observador en el lado desde el que se EMPUJA la puerta.",
-                     "generada=true: el recinto no tenía acceso; la puerta es una propuesta."],
+                     "generada=true: puerta que el modelo no trae (dormitorio sin puerta propia "
+                     "o recinto sin acceso); es una propuesta."],
            "niveles": {}, "sin_solucion": {}, "residuales": {}}
     orden = sorted(data["plantas"], key=lambda lv: data.get("levels", {}).get(lv, 0))
     for i, lv in enumerate(orden):
@@ -534,7 +605,8 @@ def desde_plan_data(data, recintos_doc=None):
                 for m in pl.get("mobiliario", [])]
         if i == 0:                                       # tramos que se pisan en la planta baja
             obst += [f["pts"] for f in pl.get("escalera", []) if f["z"] < 1.2]
-        decs, sin, resid = resolver_nivel(recs, pl["muros"], pl["vanos"], obst, lv, es_planta_baja=(i == 0))
+        decs, sin, resid = resolver_nivel(recs, pl["muros"], pl["vanos"], obst, lv, es_planta_baja=(i == 0),
+                                          politica=politica)
         res["niveles"][lv] = decs
         if sin:
             res["sin_solucion"][lv] = sin
@@ -543,16 +615,31 @@ def desde_plan_data(data, recintos_doc=None):
     return res
 
 
+def agregar_opciones(ap):
+    """Opciones de línea de comandos de la política de puertas (compartidas por los scripts)."""
+    ap.add_argument("--puertas-circulacion", action="store_true",
+                    help="generar también puertas hacia escaleras y circulaciones sin acceso")
+    ap.add_argument("--con-puerta", action="append", default=[], metavar="PALABRA",
+                    help="recintos cuyo nombre contiene PALABRA llevan puerta propia "
+                         "(se suma a: %s)" % ", ".join(DORMITORIOS))
+
+
+def politica_de_args(args):
+    return {"obligatorias": DORMITORIOS + tuple(args.con_puerta),
+            "circulacion": args.puertas_circulacion}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("plan_data")
     ap.add_argument("-o", "--out", required=True)
     ap.add_argument("--recintos")
+    agregar_opciones(ap)
     args = ap.parse_args(argv)
     data = json.load(open(args.plan_data, encoding="utf-8"))
     rec = json.load(open(args.recintos, encoding="utf-8")) if args.recintos else None
-    res = desde_plan_data(data, rec)
+    res = desde_plan_data(data, rec, politica_de_args(args))
     with open(args.out, "w", encoding="utf-8") as fh:
         json.dump(res, fh, indent=1, ensure_ascii=False)
     for lv, ds in res["niveles"].items():

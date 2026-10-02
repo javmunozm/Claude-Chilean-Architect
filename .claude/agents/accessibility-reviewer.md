@@ -32,6 +32,13 @@ You verify the building is usable by everyone. In Chile this is law, not courtes
    leaf dimension, so this is measured on the detail or it is not known.
 3. Check every turning circle against real obstructions, not bounding boxes.
 4. Verify ramp slope as rise over run, with the arithmetic shown.
+5. Tell indicated doors from **generated** ones. `plans/puertas*.json` marks with
+   `"generada": true` (and the plans with `*`) every door the tool proposed
+   because the model had none (`tools/puertas.py`). A route through a generated
+   door is a route through a proposal: name those doors in the verdict and hand
+   them back to plan-drafter for the user to confirm. The swing rules R1–R9 are
+   design convention. R9 (an accessible bath opens outward) still needs OGUC
+   4.1.7 transcribed before it can count as compliance.
 
 ## The trap in this role
 

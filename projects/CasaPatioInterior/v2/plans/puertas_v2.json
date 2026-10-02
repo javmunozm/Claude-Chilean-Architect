@@ -1,8 +1,8 @@
 {
  "_nota": [
-  "Convención de diseño, no norma (tools/puertas.py, reglas R1-R8).",
+  "Convención de diseño, no norma (tools/puertas.py, reglas R1-R9).",
   "Mano: observador en el lado desde el que se EMPUJA la puerta.",
-  "generada=true: el recinto no tenía acceso; la puerta es una propuesta."
+  "generada=true: puerta que el modelo no trae (dormitorio sin puerta propia o recinto sin acceso); es una propuesta."
  ],
  "niveles": {
   "p1": [

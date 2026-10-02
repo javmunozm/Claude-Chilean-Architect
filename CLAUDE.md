@@ -101,6 +101,10 @@ python tools/norm_check.py projects/<Name>/calcs/model_extract.json \
 # 3. confirm exports are current (MISSING / THIN / STALE)
 python tools/render_check.py projects/<Name>
 
+# 3b. 3D model: no uncovered sector, no slit, no coincident faces, closed roof
+python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
+  --spec <plan>.json --recintos <rooms>.json   # frame flag: docs/commands.md
+
 # 4. open the export and look at it   <- not optional, not automatable
 ```
 

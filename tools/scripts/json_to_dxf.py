@@ -29,10 +29,12 @@ Puertas (tools/puertas.py, compartido con v2/plans/derive_puertas.py):
         "operation": "swing" | "sliding" | "double"
         "hinge":     "start" | "end"   jamba de la bisagra (start = coordenada menor)
         "swing":     +1 | -1           lado hacia el que abre (+1 = hacia +x / +y)
-  - Si no, se infiere con las reglas de diseño R1-R8 (abre hacia el recinto y no
+  - Si no, se infiere con las reglas de diseño R1-R9 (abre hacia el recinto y no
     hacia el pasillo, hacia el baño o clóset, bisagra en la esquina, arco libre...).
-  - Un recinto al que no se llega desde el acceso recibe una puerta GENERADA, que
-    se dibuja cortando el muro y con su código marcado con *.
+  - Si el modelo no las trae, se GENERAN (cortando el muro, código marcado con *):
+    todo dormitorio lleva puerta propia y todo recinto sin acceso recibe una.
+    Escaleras y circulaciones no reciben puerta generada salvo que se pida con
+    --puertas-circulacion; --con-puerta PALABRA suma recintos que exigen puerta.
   Los recintos salen de --recintos: con polígono ("neto"/"bruto"/"pts") se usan
   tal cual; con solo un punto de rótulo se derivan del espacio libre entre muros.
 
@@ -661,7 +663,7 @@ def presentacion_a3(doc, p, nombre):
     return cabe
 
 
-def draw_level(spec, level_id, path, recintos=None, escala=100):
+def draw_level(spec, level_id, path, recintos=None, escala=100, politica=None):
     p = Papel(escala)
     doc = nuevo_documento(p)
     msp = doc.modelspace()
@@ -692,7 +694,7 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
         recs, [list(p.exterior.coords)[:-1] for p in polys],
         [vano_para_puertas(o, c) for o, c in con_cod],
         obstaculos_del_nivel(spec, zl, es_base), level_id, es_planta_baja=es_base,
-        inicio=llegadas_escalera(spec, zl))
+        inicio=llegadas_escalera(spec, zl), politica=politica)
     dec_por_cod = {d["codigo"]: d for d in decs if not d.get("generada")}
     generadas = [d for d in decs if d.get("generada")]
     vanos_gen = []
@@ -789,9 +791,9 @@ def draw_level(spec, level_id, path, recintos=None, escala=100):
         notas.append("(s/doc) = superficie declarada en el documento, no medida.")
     if hay_inferido:
         notas.append("Abatimiento no indicado en el modelo: inferido con reglas de diseno "
-                     "R1-R8 (tools/puertas.py), no normativo.")
+                     "R1-R9 (tools/puertas.py), no normativo.")
     if generadas:
-        notas.append("* Puerta generada: el recinto no tenia acceso en el modelo (%s)."
+        notas.append("* Puerta generada, no indicada en el modelo (%s)."
                      % ", ".join(d["conecta"][0] for d in generadas))
     if sin_acceso:
         notas.append("SIN ACCESO POSIBLE: %s" % ", ".join(sin_acceso))
@@ -813,7 +815,9 @@ def main(argv=None):
     ap.add_argument("--recintos")
     ap.add_argument("--escala", type=int, default=100,
                     help="escala de impresion 1:N (por defecto 100)")
+    puertas.agregar_opciones(ap)
     args = ap.parse_args(argv)
+    politica = puertas.politica_de_args(args)
 
     spec = json.load(open(args.spec, encoding="utf-8"))
     recintos = None
@@ -826,7 +830,8 @@ def main(argv=None):
 
     for lvl in spec["levels"]:
         path = out / ("planta_%s.dxf" % lvl["id"])
-        m, v, r, cabe, decs, sin, resid = draw_level(spec, lvl["id"], str(path), recintos, args.escala)
+        m, v, r, cabe, decs, sin, resid = draw_level(spec, lvl["id"], str(path), recintos, args.escala,
+                                             politica)
         aviso = "" if cabe else "  AVISO: no cabe en A3 a 1:%d" % args.escala
         print("%s  (%d muros, %d vanos, %d recintos rotulados)%s"
               % (path, m, v, r, aviso))

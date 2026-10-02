@@ -6,13 +6,14 @@ Entradas : v2/calcs/plan_data.json  (cortes del FCStd: vanos, recintos netos, mo
 Salida   : v2/plans/puertas_v2.json
 
 La lógica está en tools/puertas.py (compartida con tools/scripts/json_to_dxf.py):
-reglas R1-R8 para el abatimiento cuando el modelo no lo indica, y una puerta
-"generada" para cada recinto al que no se llega desde el acceso. Es CONVENCIÓN DE
-DISEÑO, no norma: ningún artículo OGUC sobre puertas está transcrito en el repo.
+reglas R1-R9 para el abatimiento cuando el modelo no lo indica, y puertas
+"generadas": todo dormitorio lleva puerta propia y todo recinto sin acceso recibe
+una (escaleras y circulaciones solo si se pide). Es CONVENCIÓN DE DISEÑO, no norma.
 
-Uso:  python derive_puertas.py
+Uso:  python derive_puertas.py [--puertas-circulacion] [--con-puerta PALABRA ...]
 Sale con código 1 si queda algún recinto sin acceso posible.
 """
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -26,8 +27,12 @@ REC = json.loads((V2 / "plans" / "recintos_v2.json").read_text(encoding="utf-8")
 OUT = V2 / "plans" / "puertas_v2.json"
 
 
-def main():
-    res = puertas.desde_plan_data(DATA, REC)
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    puertas.agregar_opciones(ap)
+    args = ap.parse_args(argv)
+    res = puertas.desde_plan_data(DATA, REC, puertas.politica_de_args(args))
     OUT.write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
     for lv, ds in res["niveles"].items():
         for d in ds:

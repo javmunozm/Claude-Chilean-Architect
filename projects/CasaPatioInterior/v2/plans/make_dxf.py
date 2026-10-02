@@ -465,7 +465,7 @@ def frame_and_title(msp, lv, titulo, nivel_txt):
         align=TextEntityAlignment.LEFT)
     txt(msp, "Norte según el documento rev. G; no hay levantamiento del sitio", (bx0 + 0.2, by0 + 0.29),
         h=0.085, layer="A-TEXT", align=TextEntityAlignment.LEFT)
-    txt(msp, "Abatimiento y bisagras: patrón de diseño (R1-R8), sin verificación normativa", (bx0 + 7.4, by0 + 0.95),
+    txt(msp, "Abatimiento y bisagras: patrón de diseño (R1-R9), sin verificación normativa", (bx0 + 7.4, by0 + 0.95),
         h=0.085, layer="A-TEXT", align=TextEntityAlignment.LEFT)
     txt(msp, "Sin veredicto normativo: umbrales OGUC sin transcribir (INCONCLUSO)", (bx0 + 7.4, by0 + 0.62),
         h=0.085, layer="A-TEXT", align=TextEntityAlignment.LEFT)

@@ -164,12 +164,19 @@ python tools/puertas.py projects/<Name>/calcs/plan_data.json -o <puertas.json> \
   [--recintos <recintos.json>]
 ```
 
-`tools/scripts/json_to_dxf.py` calls the same module.
-- An opening that carries `operation`, `hinge` or `swing` is honoured. The rest
-  follow rules R1–R8, which are a design convention, not a norm (see
-  `projects/CasaPatioInterior/v2/README.md`).
-- A room with no door from the access or the stair arrival gets a generated one,
-  marked `*`.
+`tools/scripts/json_to_dxf.py` and v2's `derive_puertas.py` call the same module
+and take the same two options.
+- **The user indicates doors first.** An opening that carries `operation`,
+  `hinge` or `swing` is honoured, and so is an indicated opening without a leaf
+  (`open`). The rest follow rules R1–R9, which are a design convention, not a norm
+  (see `projects/CasaPatioInterior/v2/README.md`).
+- **Generated when not indicated**, marked `*`:
+  - every bedroom-type room ("dormitorio", "pieza", "habitación") gets a door of
+    its own;
+  - every other room that cannot be reached gets one.
+- **Stairs and corridors never get a generated door.** An unreachable one is only
+  reported. Add `--puertas-circulacion` to generate them, and
+  `--con-puerta <word>` to make more rooms require a door.
 - Unlabeled regions are reported, never given a door.
 
 **Exit:** `1` if a room cannot be reached.
@@ -190,6 +197,10 @@ python tools/norm_check.py projects/<Name>/calcs/model_extract.json \
 
 # 3. confirm exports are current
 python tools/render_check.py projects/<Name>
+
+# 3b. 3D model: no uncovered sector, no slit, no coincident faces, closed roof
+python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
+  --spec <plan>.json --recintos <rooms>.json   # frame flag: see above
 
 # 4. open the export and look at it   <- not optional, not automatable
 ```

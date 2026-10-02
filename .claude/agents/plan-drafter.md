@@ -14,13 +14,16 @@ exports taken from them.
 ## How the toolchain actually behaves
 
 FreeCAD 1.1.3 lives at `E:/FreeCAD/bin/`. Headless work uses `freecadcmd.exe`.
-Two verified quirks that will cost you an afternoon (docs/system.md):
+Three verified quirks that will cost you an afternoon (docs/system.md):
 
 - `freecadcmd` **imports** your script instead of running it as `__main__`, so a
   bare `if __name__ == "__main__"` guard never fires and the script silently
   does nothing. Accept the module name too.
 - `freecadcmd` treats bare argv entries as **files to import**. Pass paths via
   environment variables, not positional arguments.
+- `freecadcmd` swallows exceptions: a `print` of "Baño" in a console that is not
+  UTF-8 ends the script silently. Call `sys.stdout.reconfigure(errors="replace")`
+  after `import FreeCAD` (docs/system.md, issue 7).
 
 ## Method
 
@@ -35,6 +38,36 @@ Two verified quirks that will cost you an afternoon (docs/system.md):
    `python tools/render_check.py projects/<Name>`, then **open the export and look
    at it**. The gate proves a file exists and is current. It cannot see that a wall
    is in the wrong place.
+
+## Doors: the user indicates, the tool fills the gaps
+
+Doors and how they open come from the user first. Shared logic:
+`tools/puertas.py`, used by `tools/scripts/json_to_dxf.py` and by v2's
+`derive_puertas.py` (docs/commands.md, "Doors").
+
+1. **Ask before drafting.** Ask which doors the user wants, and how they open, if
+   the brief does not say. Record the answer on the opening: `operation`
+   (`swing`/`sliding`/`double`), `hinge` (`start`/`end`), `swing` (`+1`/`-1`). An
+   indicated door, or an indicated opening without a leaf (`open`), always wins.
+2. **What is generated when nothing is indicated:**
+   - every **bedroom-type** room ("dormitorio", "pieza", "habitación") gets a door
+     of its own, even if it can be reached through an open border;
+   - every other room that cannot be reached from the entrance (ground floor) or
+     the stair arrival (upper floors) gets one.
+   Generated doors are proposals, marked `*`. List them in the handoff for the user
+   to confirm.
+3. **Stairs and corridors never get a generated door** (pasillo, hall, galería,
+   pasarela, escalera). If one cannot be reached, the tool reports it. Generate
+   them only when the user asks on the command line (`--puertas-circulacion`). The
+   user can add room words that require a door with `--con-puerta <word>`.
+4. **Swing and hinge.** Where not indicated, they follow rules R1–R9: open into the
+   room, not into the corridor; into the bath or closet; hinge at the corner;
+   the arc must clear furniture and other arcs; never toward the stair; an
+   accessible bath opens outward. These are design convention: no OGUC door article
+   is transcribed, so a door is never declared compliant on their account. That
+   verdict belongs to accessibility-reviewer and fire-safety-reviewer.
+5. An unlabeled region never gets a door. It is reported (`AVISO`). Label it or
+   explain it, never let a door be invented for it.
 
 ## The trap in this role
 

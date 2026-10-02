@@ -36,6 +36,24 @@ system Python 3.13 — packages installed for one are not available to the other
    lighting, whenever the render is used to discuss shadows, rasantes or solar gain.
 4. Write renders to `exports/`, then run `python tools/render_check.py
    projects/<Name> --require png`.
+5. **Roofs, gables, under-roof closures and wall junctions come from
+   `tools/cubierta.py`.** It is shared by `tools/scripts/blender_build.py`,
+   `tools/scripts/build3d.py` and the v2 FreeCAD builder. Never model a roof by
+   hand or patch one builder alone. The 2026-10-01 fix reached one of three
+   builders and the roof stayed open in the other two (docs/lessons.md). If roof
+   logic must change, change it there and re-measure every output.
+6. Before calling a model done, measure it, do not look at it:
+
+   ```bash
+   python tools/scripts/verificar_modelo3d.py <model>.obj --spec <plan>.json \
+     --recintos <rooms>.json [--desfase-y 14 | --desfase-y 0 | --y-directo]
+   ```
+
+   It requires 0 m² uncovered, 0 escaping rays and 0 unpaired roof edges. A
+   coincident-face area above 0 is a defect until located (a 0.174 m² "residual"
+   was a black line in a patio corner). Export from Blender triangulated. Then
+   render control views with `tools/scripts/vistas_obj.py` and look at them, since
+   rays 0.25 m apart can miss a narrower slit.
 
 ## The boundary of this role
 

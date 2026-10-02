@@ -29,7 +29,17 @@ by a drawing; you measure the solid.
    finding even when 9.8 m² still complies.
 3. Cut real sections where a dimension is contested. A clear height is measured
    floor-to-soffit at the worst point, not at the nominal storey height.
-4. Investigate anything with `rectangularity` below 0.95. For non-rectangular
+4. Audit the 3D envelope with `tools/scripts/verificar_modelo3d.py` on the
+   exported OBJ (docs/commands.md). Report its four numbers: uncovered m² per
+   room, escaping rays, coincident-face m² by material pair, and unpaired roof
+   edges. Choose the frame flag from the exporter. Pass `--recintos`: without it a
+   covered porch counts as interior and its rays "escape" through the open front.
+   For overlapping solids, measure the common volume between wall solids (0 m³
+   expected; in CasaPatioInterior v2, removing overlaps at corners and under the
+   slab took `wall_volume` from 81.872 to 77.114 m³). Check
+   signed volume per material before trusting a coincident-face count: inward
+   normals make hidden contacts look visible.
+5. Investigate anything with `rectangularity` below 0.95. For non-rectangular
    spaces `min_width` comes from the bounding box and **overstates** the true
    clear width — measure it properly and correct the record.
 

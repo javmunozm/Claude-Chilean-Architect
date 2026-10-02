@@ -81,6 +81,7 @@ transcrito, así que no se declara cumplimiento.
 | R6 | La bisagra va en la jamba más cercana a la esquina del recinto: la hoja abierta queda contra el muro. |
 | R7 | El arco (radio = ancho libre) debe caer dentro del recinto y no cruzar mobiliario, escalera ni otro arco. Si falla, prueba la otra jamba y luego el otro lado. |
 | R8 | Entre dos circulaciones, nunca abre hacia la escalera (P06 p1). |
+| R9 | Baño accesible → abre hacia afuera del baño. Es práctica habitual; la exigencia de OGUC 4.1.7 no está transcrita, así que debe verificarse con el texto oficial. No hay baño accesible en esta casa. |
 
 Resultado: las 18 puertas cumplen R7 sin cruces. La "mano" se informa para quien empuja la
 puerta (bisagra a su derecha o izquierda). Dos supuestos que conviene confirmar: que las
@@ -89,8 +90,18 @@ living) y que el ventanal de 1,60 m sea de doble hoja.
 
 ### Puertas que faltan
 
-Si a un recinto no se llega desde el acceso (primer piso) ni desde la llegada de la
-escalera (segundo piso), la herramienta **genera** una puerta. La pone en el muro
+Las puertas las indica el usuario en el modelo. Una puerta indicada, o un vano sin hoja
+indicado (`open`), siempre se respeta. Si no hay indicación, la herramienta **genera**:
+
+- una puerta propia para todo recinto tipo dormitorio («dormitorio», «pieza»,
+  «habitación»), aunque se llegue a él por un borde abierto;
+- una puerta para todo otro recinto al que no se llega desde el acceso (primer piso) ni
+  desde la llegada de la escalera (segundo piso).
+
+**Escaleras y circulaciones** (pasillo, hall, galería, pasarela) no reciben puerta
+generada: si quedan sin acceso, se informa. Para generarlas hay que pedirlo en la línea
+de comandos: `derive_puertas.py --puertas-circulacion`. Con `--con-puerta <palabra>` se
+suman recintos que exigen puerta. La herramienta pone la puerta en el muro
 compartido con el vecino más adecuado: a un baño o clóset se entra desde un dormitorio o
 una circulación, y a un recinto, desde una circulación. La ubica junto a la esquina donde
 cabe el arco y le aplica las mismas reglas. En el plano y en el cuadro de vanos lleva

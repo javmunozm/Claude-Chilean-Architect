@@ -100,6 +100,14 @@ Reviewers outrank the program. `program-architect` states intent; the extract fr
 `area_calc.py` states what exists. Where they differ, the extract is what will be
 built, and the difference is itself a finding.
 
+## Shared tools the agents must use
+
+| Tool | Owner | Rule |
+|------|-------|------|
+| `tools/puertas.py` (via `json_to_dxf.py` / `derive_puertas.py`) | `plan-drafter` | The user indicates doors. If not indicated: every bedroom gets its own door and unreachable rooms get one. Stairs and corridors get one only with `--puertas-circulacion`. Swing and hinge follow R1–R9 (convention). Generated doors are proposals (`*`) for the user to confirm, and `accessibility-reviewer` names them. |
+| `tools/cubierta.py` | `3d-modeler` | The only source of roofs, gables, under-roof closures and wall junctions for every 3D builder. |
+| `tools/scripts/verificar_modelo3d.py` | `3d-modeler`, `form-auditor` | Run on every exported OBJ. It requires 0 m² uncovered, 0 escaping rays and 0 open roof edges. A coincident-face area above 0 is a defect until located. |
+
 ## Cross-cutting findings
 
 Some findings belong to two agents. A drain cored through a shear wall is both a
