@@ -9,7 +9,7 @@ scripts de Blender del repositorio):
 
 Escribe <carpeta>/3d_noreste.png y <carpeta>/3d_suroeste.png. Cámara ortográfica
 sobre el centro del modelo. Supone el OBJ con Y arriba y el norte hacia -Z del OBJ
-(lo que escribe v2/plans/export_obj.py): al importarlo, el norte queda hacia +Y.
+(lo que escribe versions/vN/scripts/export_obj.py): al importarlo, el norte queda hacia +Y.
 
 Motor: CYCLES por defecto (funciona sin GPU, también en un servidor). Con GPU,
 VISTAS_MOTOR=BLENDER_WORKBENCH es mucho más rápido.

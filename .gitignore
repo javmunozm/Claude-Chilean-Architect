@@ -2,6 +2,7 @@
 # See docs/attempts.md.
 projects/*/attempts/
 projects/*/*/attempts/
+projects/*/versions/*/attempts/
 
 # FreeCAD backups and lock files
 *.FCStd1

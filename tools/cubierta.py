@@ -5,7 +5,7 @@ Lo usan los dos constructores 3D del repositorio, que antes tenían cada uno su 
 versión (y sus propios errores):
 
     tools/scripts/blender_build.py                     (Blender, proyectos JSON)
-    projects/<P>/v2/plans/build_model.py               (FreeCAD, objetos Arch)
+    projects/<P>/versions/vN/scripts/build_model.py  (FreeCAD, objetos Arch)
 
 No importa bpy, FreeCAD ni shapely: corre dentro de cualquiera de los tres
 intérpretes del repositorio (docs/system.md). Devuelve mallas como listas de vértices

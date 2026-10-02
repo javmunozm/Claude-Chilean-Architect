@@ -3,13 +3,13 @@
 """Puertas en planta: abatimiento y bisagra, y puertas que faltan.
 
 Herramienta compartida (intérprete del sistema: shapely). La usan
-tools/scripts/json_to_dxf.py y projects/<P>/v2/plans/derive_puertas.py.
+tools/scripts/json_to_dxf.py y projects/<P>/versions/vN/scripts/derive_puertas.py.
 
 Hace dos cosas:
 
 1. DECIDE cómo abre cada puerta que el modelo trae. Si el vano declara
    "operation", "hinge" o "swing", eso manda ("indicado en el modelo"). Si no, se
-   infiere con las reglas de diseño R1-R9 (de v2/plans/derive_puertas.py):
+   infiere con las reglas de diseño R1-R9 (de versions/v2/scripts/derive_puertas.py):
 
    R1  ancho >= 2,0 m con alto >= 2,3 m  -> corredera de vidrio.
    R2  ancho 1,2-2,0 m                   -> doble hoja, abre hacia el exterior.

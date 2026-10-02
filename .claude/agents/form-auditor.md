@@ -19,8 +19,8 @@ by a drawing; you measure the solid.
 1. Extract measured geometry:
 
    ```bash
-   AREA_CALC_MODEL=projects/<Name>/plans/<model>.FCStd \
-   AREA_CALC_OUT=projects/<Name>/calcs/model_extract.json \
+   AREA_CALC_MODEL=projects/<Name>/versions/<vN>/exports/model/<model>.FCStd \
+   AREA_CALC_OUT=projects/<Name>/versions/<vN>/calcs/model_extract.json \
      "E:/FreeCAD/bin/freecadcmd.exe" tools/area_calc.py
    ```
 

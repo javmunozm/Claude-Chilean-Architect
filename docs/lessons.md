@@ -306,3 +306,36 @@ poniente" because the hall label lies in the porch.
 **Carry forward:** door rules are only as good as the room labels. A generator that
 invents access for an unlabeled region is fabricating program; report the region
 instead.
+
+---
+
+### 2026-10-03 — Versions nested inside versions
+
+**Concerns:** every agent that creates a version, `docs/versioning.md`, `CLAUDE.md`
+
+**Symptom:** v3 of CasaPatioInterior was created at
+`projects/CasaPatioInterior/v2/v3/`. The user found it confusing: every new version
+would bury the next one a level deeper, and the project root mixed v0's files with the
+folders of later versions.
+
+**Cause:** the rule said to do exactly that. `docs/versioning.md` ("Versions deeper
+than v2: keep nesting `v2/v3/`") had been in the repo since the first commit
+(2026-09-30), and the agent that built v3 followed it. Nothing was misread. The
+rule was wrong for this user. The same audit found two more costs of the old layout:
+- `plans/` mixed generation scripts with the FreeCAD model and with derived JSON;
+- each version carried its own `site.json`. v3's copy came from v2 and lacked the
+  Concepción fields of v0's.
+
+**Fix:** every version in `projects/<P>/versions/vN/`, side by side, each with
+`source/`, `scripts/`, `calcs/` and `exports/{model,drawings,renders}` plus the PDF at
+the root of `exports/`. Lineage is the "descends from" column of the project README.
+There is one `site.json` per project. `render_check.py` finds the model in
+`exports/model/` and does not count it as an export.
+
+Verified after the move: v2 and v3 were regenerated from their new folders. The
+extract, the 18 door decisions and `plan_data` are identical to the previous commit,
+`verificar_modelo3d` passes and the export gate is OK.
+
+**Carry forward:** a documented rule can be followed perfectly and still be the
+problem. When a user objects to a structure, check whether the docs prescribed it
+before blaming the agent. Fix the rule, then the files.

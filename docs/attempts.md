@@ -5,7 +5,7 @@
 Every project has one:
 
 ```
-projects/<Name>/attempts/
+projects/<Name>/versions/<vN>/attempts/
 ├── patio-central/
 ├── escalera-exterior/
 └── techo-mariposa/
@@ -74,7 +74,7 @@ interaction, a tool behaviour, a recurring geometric trap — write it up in
 ### 3. Then delete
 
 ```bash
-rm -rf projects/<Name>/attempts/<slug>/
+rm -rf projects/<Name>/versions/<vN>/attempts/<slug>/
 ```
 
 Only after steps 1 and 2. The record must exist before the evidence goes.

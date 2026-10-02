@@ -1,0 +1,1894 @@
+{
+  "project": "casa_v2",
+  "source_file": "/home/user/Claude-Chilean-Architect/projects/CasaPatioInterior/versions/v2/exports/model/casa_v2.FCStd",
+  "generated_by": "area_calc.extract + v2/scripts/measure_v2.py",
+  "units": "m, m2, m3",
+  "entities": [
+    {
+      "name": "Muro p1 01",
+      "freecad_name": "Wall",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.96,
+      "height": 2.6,
+      "length": 4.4,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 02",
+      "freecad_name": "Wall001",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.676,
+      "height": 2.6,
+      "length": 1.3,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 03",
+      "freecad_name": "Wall002",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.7485,
+      "height": 2.6,
+      "length": 2.4,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 04",
+      "freecad_name": "Wall003",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.78,
+      "height": 2.6,
+      "length": 1.5,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 05",
+      "freecad_name": "Wall004",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.74,
+      "height": 2.6,
+      "length": 2.0,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 06",
+      "freecad_name": "Wall005",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.8676,
+      "height": 2.802,
+      "length": 4.0,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 07",
+      "freecad_name": "Wall006",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 5.4235,
+      "height": 2.802,
+      "length": 13.8,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 08",
+      "freecad_name": "Wall007",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.8551,
+      "height": 2.802,
+      "length": 3.8,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 09",
+      "freecad_name": "Wall008",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.3,
+      "height": 2.85,
+      "length": 3.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 10",
+      "freecad_name": "Wall009",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.2755,
+      "height": 3.562,
+      "length": 4.8,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 11",
+      "freecad_name": "Wall010",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.508,
+      "height": 2.6,
+      "length": 5.1,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 12",
+      "freecad_name": "Wall011",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.556,
+      "height": 2.6,
+      "length": 3.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 13",
+      "freecad_name": "Wall012",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.526,
+      "height": 2.6,
+      "length": 3.5,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 14",
+      "freecad_name": "Wall013",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.146,
+      "height": 2.6,
+      "length": 4.8,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 15",
+      "freecad_name": "Wall014",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.825,
+      "height": 2.6,
+      "length": 7.2,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 16",
+      "freecad_name": "Wall015",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 5.596,
+      "height": 2.6,
+      "length": 13.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 17",
+      "freecad_name": "Wall016",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.214,
+      "height": 2.85,
+      "length": 5.2,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 18",
+      "freecad_name": "Wall017",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 3.472,
+      "height": 2.5,
+      "length": 9.0,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 19",
+      "freecad_name": "Wall018",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.05,
+      "height": 2.5,
+      "length": 5.2,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 20",
+      "freecad_name": "Wall019",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.126,
+      "height": 2.5,
+      "length": 3.4,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 21",
+      "freecad_name": "Wall020",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.98,
+      "height": 2.5,
+      "length": 3.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 22",
+      "freecad_name": "Wall021",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.713,
+      "height": 2.5,
+      "length": 2.0,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 23",
+      "freecad_name": "Wall022",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.47,
+      "height": 2.5,
+      "length": 0.94,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 24",
+      "freecad_name": "Wall023",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.8,
+      "height": 2.5,
+      "length": 1.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 25",
+      "freecad_name": "Wall024",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.425,
+      "height": 2.5,
+      "length": 3.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 26",
+      "freecad_name": "Wall025",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 3.256,
+      "height": 2.5,
+      "length": 8.8,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 27",
+      "freecad_name": "Wall026",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 5.497,
+      "height": 2.5,
+      "length": 13.6,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 28",
+      "freecad_name": "Wall027",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.0025,
+      "height": 2.6,
+      "length": 3.94,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 29",
+      "freecad_name": "Wall028",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.7013,
+      "height": 2.6,
+      "length": 3.54,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 30",
+      "freecad_name": "Wall029",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.3104,
+      "height": 2.6,
+      "length": 4.2,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 31",
+      "freecad_name": "Wall030",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.6864,
+      "height": 2.6,
+      "length": 2.2,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 32",
+      "freecad_name": "Wall031",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.3785,
+      "height": 2.6,
+      "length": 1.94,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 33",
+      "freecad_name": "Wall032",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.9824,
+      "height": 2.6,
+      "length": 7.0,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 34",
+      "freecad_name": "Wall033",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.7301,
+      "height": 2.6,
+      "length": 2.34,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 35",
+      "freecad_name": "Wall034",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.1232,
+      "height": 2.6,
+      "length": 3.6,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p1 36",
+      "freecad_name": "Wall035",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.8208,
+      "height": 2.6,
+      "length": 2.64,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p1 37",
+      "freecad_name": "Wall036",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.0368,
+      "height": 2.6,
+      "length": 2.64,
+      "thickness": 0.2
+    },
+    {
+      "name": "Muro p2 38",
+      "freecad_name": "Wall037",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.2,
+      "height": 2.5,
+      "length": 4.0,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 39",
+      "freecad_name": "Wall038",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 2.424,
+      "height": 2.5,
+      "length": 9.94,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 40",
+      "freecad_name": "Wall039",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.6588,
+      "height": 2.5,
+      "length": 3.54,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 41",
+      "freecad_name": "Wall040",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.3972,
+      "height": 2.5,
+      "length": 2.08,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 42",
+      "freecad_name": "Wall041",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.0752,
+      "height": 2.5,
+      "length": 4.34,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 43",
+      "freecad_name": "Wall042",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.242,
+      "height": 2.5,
+      "length": 4.14,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 44",
+      "freecad_name": "Wall043",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.9584,
+      "height": 2.5,
+      "length": 7.2,
+      "thickness": 0.12
+    },
+    {
+      "name": "Muro p2 45",
+      "freecad_name": "Wall044",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.762,
+      "height": 2.5,
+      "length": 2.54,
+      "thickness": 0.12
+    },
+    {
+      "name": "V01-p1",
+      "freecad_name": "Window",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.8,
+      "height": 1.25,
+      "area": 1.0
+    },
+    {
+      "name": "V02-p1",
+      "freecad_name": "Window001",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.8,
+      "height": 0.8,
+      "area": 0.64
+    },
+    {
+      "name": "P01-p1",
+      "freecad_name": "Window002",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "V03-p1",
+      "freecad_name": "Window003",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.45,
+      "height": 1.35,
+      "area": 0.608
+    },
+    {
+      "name": "V04-p1",
+      "freecad_name": "Window004",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.2,
+      "height": 1.25,
+      "area": 1.5
+    },
+    {
+      "name": "V05-p1",
+      "freecad_name": "Window005",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.7,
+      "height": 1.1,
+      "area": 1.87
+    },
+    {
+      "name": "V06-p1",
+      "freecad_name": "Window006",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.6,
+      "height": 1.35,
+      "area": 2.16
+    },
+    {
+      "name": "V07-p1",
+      "freecad_name": "Window007",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.8,
+      "height": 1.25,
+      "area": 2.25
+    },
+    {
+      "name": "V08-p1",
+      "freecad_name": "Window008",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.8,
+      "height": 1.25,
+      "area": 2.25
+    },
+    {
+      "name": "V09-p1",
+      "freecad_name": "Window009",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.9,
+      "height": 0.8,
+      "area": 0.72
+    },
+    {
+      "name": "V10-p1",
+      "freecad_name": "Window010",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.9,
+      "height": 0.8,
+      "area": 0.72
+    },
+    {
+      "name": "V11-p1",
+      "freecad_name": "Window011",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 3.1,
+      "height": 1.25,
+      "area": 3.875
+    },
+    {
+      "name": "P02-p1",
+      "freecad_name": "Window012",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 2.7,
+      "height": 2.36,
+      "area": 6.372
+    },
+    {
+      "name": "V12-p1",
+      "freecad_name": "Window013",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.7,
+      "height": 1.1,
+      "area": 1.87
+    },
+    {
+      "name": "V13-p1",
+      "freecad_name": "Window014",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.2,
+      "height": 1.8,
+      "area": 3.96
+    },
+    {
+      "name": "V14-p1",
+      "freecad_name": "Window015",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.6,
+      "height": 2.2,
+      "area": 5.72
+    },
+    {
+      "name": "P03-p1",
+      "freecad_name": "Window016",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 2.8,
+      "height": 2.35,
+      "area": 6.58
+    },
+    {
+      "name": "V15-p1",
+      "freecad_name": "Window017",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.6,
+      "height": 2.2,
+      "area": 5.72
+    },
+    {
+      "name": "P04-p1",
+      "freecad_name": "Window018",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.7,
+      "height": 2.1,
+      "area": 1.47
+    },
+    {
+      "name": "V16-p1",
+      "freecad_name": "Window019",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.6,
+      "height": 2.2,
+      "area": 3.52
+    },
+    {
+      "name": "V17-p1",
+      "freecad_name": "Window020",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.0,
+      "height": 2.2,
+      "area": 2.2
+    },
+    {
+      "name": "P05-p1",
+      "freecad_name": "Window021",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 1.6,
+      "height": 2.35,
+      "area": 3.76
+    },
+    {
+      "name": "V18-p1",
+      "freecad_name": "Window022",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.4,
+      "height": 1.25,
+      "area": 1.75
+    },
+    {
+      "name": "P06-p1",
+      "freecad_name": "Window024",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "P07-p1",
+      "freecad_name": "Window025",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "P08-p1",
+      "freecad_name": "Window026",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P09-p1",
+      "freecad_name": "Window027",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P10-p1",
+      "freecad_name": "Window029",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P11-p1",
+      "freecad_name": "Window030",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P12-p1",
+      "freecad_name": "Window031",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "V01-p2",
+      "freecad_name": "Window032",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.8,
+      "height": 1.25,
+      "area": 1.0
+    },
+    {
+      "name": "V02-p2",
+      "freecad_name": "Window033",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.8,
+      "height": 0.8,
+      "area": 0.64
+    },
+    {
+      "name": "V03-p2",
+      "freecad_name": "Window034",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.4,
+      "height": 1.25,
+      "area": 1.75
+    },
+    {
+      "name": "V04-p2",
+      "freecad_name": "Window035",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.4,
+      "height": 1.25,
+      "area": 1.75
+    },
+    {
+      "name": "V05-p2",
+      "freecad_name": "Window036",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.1,
+      "height": 1.25,
+      "area": 1.375
+    },
+    {
+      "name": "V06-p2",
+      "freecad_name": "Window037",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.6,
+      "height": 1.25,
+      "area": 2.0
+    },
+    {
+      "name": "V07-p2",
+      "freecad_name": "Window038",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.0,
+      "height": 1.25,
+      "area": 2.5
+    },
+    {
+      "name": "V08-p2",
+      "freecad_name": "Window039",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.8,
+      "height": 0.8,
+      "area": 0.64
+    },
+    {
+      "name": "V09-p2",
+      "freecad_name": "Window040",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.9,
+      "height": 0.8,
+      "area": 0.72
+    },
+    {
+      "name": "V10-p2",
+      "freecad_name": "Window041",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.6,
+      "height": 1.25,
+      "area": 3.25
+    },
+    {
+      "name": "V11-p2",
+      "freecad_name": "Window042",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.4,
+      "height": 1.25,
+      "area": 1.75
+    },
+    {
+      "name": "V12-p2",
+      "freecad_name": "Window043",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.5,
+      "height": 1.25,
+      "area": 1.875
+    },
+    {
+      "name": "V13-p2",
+      "freecad_name": "Window044",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.2,
+      "height": 1.25,
+      "area": 2.75
+    },
+    {
+      "name": "V14-p2",
+      "freecad_name": "Window045",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 2.0,
+      "height": 2.05,
+      "area": 4.1
+    },
+    {
+      "name": "V15-p2",
+      "freecad_name": "Window046",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 1.4,
+      "height": 2.05,
+      "area": 2.87
+    },
+    {
+      "name": "V16-p2",
+      "freecad_name": "Window047",
+      "kind": "window",
+      "tags": [
+        "window"
+      ],
+      "width": 0.7,
+      "height": 2.05,
+      "area": 1.435
+    },
+    {
+      "name": "P01-p2",
+      "freecad_name": "Window048",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "P02-p2",
+      "freecad_name": "Window050",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "P03-p2",
+      "freecad_name": "Window051",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.9,
+      "height": 2.1,
+      "area": 1.89
+    },
+    {
+      "name": "P04-p2",
+      "freecad_name": "Window052",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P05-p2",
+      "freecad_name": "Window053",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "P06-p2",
+      "freecad_name": "Window054",
+      "kind": "door",
+      "tags": [
+        "door"
+      ],
+      "width": 0.8,
+      "height": 2.1,
+      "area": 1.68
+    },
+    {
+      "name": "Losa p1 (z=0.00, e=0.35)",
+      "freecad_name": "Component",
+      "kind": "slab",
+      "tags": [
+        "slab"
+      ],
+      "volume": 54.474,
+      "area": 155.64,
+      "thickness": 0.35,
+      "level_z": 0.0
+    },
+    {
+      "name": "Losa p2 (z=2.85, e=0.25)",
+      "freecad_name": "Component001",
+      "kind": "slab",
+      "tags": [
+        "slab"
+      ],
+      "volume": 26.4123,
+      "area": 105.649,
+      "thickness": 0.25,
+      "level_z": 2.85
+    },
+    {
+      "name": "Hastial 1",
+      "freecad_name": "Component002",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.3109,
+      "height": 1.53
+    },
+    {
+      "name": "Hastial 2",
+      "freecad_name": "Component003",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 1.3109,
+      "height": 1.53
+    },
+    {
+      "name": "Hastial 3",
+      "freecad_name": "Component004",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.1771,
+      "height": 0.58
+    },
+    {
+      "name": "Hastial 4",
+      "freecad_name": "Component005",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.1771,
+      "height": 0.58
+    },
+    {
+      "name": "Cubierta dos aguas",
+      "freecad_name": "Component006",
+      "kind": "roof",
+      "tags": [
+        "roof"
+      ],
+      "volume": 28.8893
+    },
+    {
+      "name": "Cubierta ala oriente (una agua)",
+      "freecad_name": "Component007",
+      "kind": "roof",
+      "tags": [
+        "roof"
+      ],
+      "volume": 11.9232
+    },
+    {
+      "name": "Cierre bajo cubierta p2 20",
+      "freecad_name": "Component008",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.4387,
+      "height": 1.209
+    },
+    {
+      "name": "Cierre bajo cubierta p2 21",
+      "freecad_name": "Component009",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.8959,
+      "height": 1.28
+    },
+    {
+      "name": "Cierre bajo cubierta p2 22",
+      "freecad_name": "Component010",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.3406,
+      "height": 1.209
+    },
+    {
+      "name": "Cierre bajo cubierta p2 23",
+      "freecad_name": "Component011",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.106,
+      "height": 0.566
+    },
+    {
+      "name": "Cierre bajo cubierta p2 24",
+      "freecad_name": "Component012",
+      "kind": "wall",
+      "tags": [
+        "wall"
+      ],
+      "volume": 0.0807,
+      "height": 0.494
+    },
+    {
+      "name": "Escalera (p1)",
+      "freecad_name": "Space",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.6,
+      "min_width": 1.94,
+      "bbox_x": 1.94,
+      "bbox_y": 3.94,
+      "area": 7.644,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 9.24,
+      "area_bruta": 9.24,
+      "delimitacion": "muros",
+      "clear_height_max": 6.016,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 67
+    },
+    {
+      "name": "Baño 2 (p1)",
+      "freecad_name": "Space001",
+      "kind": "space",
+      "tags": [
+        "wet"
+      ],
+      "clear_height": 2.6,
+      "min_width": 1.84,
+      "bbox_x": 1.94,
+      "bbox_y": 1.84,
+      "area": 3.57,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 4.62,
+      "area_bruta": 4.62,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 38
+    },
+    {
+      "name": "Hall Escalera (p1)",
+      "freecad_name": "Space002",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.6,
+      "min_width": 1.94,
+      "bbox_x": 1.94,
+      "bbox_y": 1.98,
+      "area": 3.841,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 4.62,
+      "area_bruta": 4.62,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 39
+    },
+    {
+      "name": "Hall de Acceso (p1)",
+      "freecad_name": "Space003",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.6,
+      "min_width": 2.4,
+      "bbox_x": 2.4,
+      "bbox_y": 2.5,
+      "area": 6.0,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 6.48,
+      "area_bruta": 6.48,
+      "delimitacion": "inferida",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 54
+    },
+    {
+      "name": "Logia (p1)",
+      "freecad_name": "Space004",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.6,
+      "min_width": 2.0,
+      "bbox_x": 2.0,
+      "bbox_y": 3.94,
+      "area": 7.88,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 9.24,
+      "area_bruta": 9.24,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 67
+    },
+    {
+      "name": "Porche (p1)",
+      "freecad_name": "Space005",
+      "kind": "space",
+      "tags": [],
+      "min_width": 1.5,
+      "bbox_x": 2.4,
+      "bbox_y": 1.5,
+      "area": 3.6,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 3.6,
+      "area_bruta": 3.6,
+      "delimitacion": "inferida",
+      "_nota_altura": "recinto exterior/descubierto: altura referencial 2,60 m, no medida"
+    },
+    {
+      "name": "Espacio Libre (p1)",
+      "freecad_name": "Space006",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.6,
+      "min_width": 2.7,
+      "bbox_x": 2.7,
+      "bbox_y": 5.88,
+      "area": 15.876,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 17.4,
+      "area_bruta": 17.4,
+      "delimitacion": "inferida",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 122
+    },
+    {
+      "name": "Pasillo Galería Poniente (p1)",
+      "freecad_name": "Space007",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.6,
+      "min_width": 1.0,
+      "bbox_x": 1.0,
+      "bbox_y": 5.88,
+      "area": 5.16,
+      "rectangularity": 0.878,
+      "_warning": "non-rectangular space: min_width is taken from the bounding box and may overstate the true clear width - have form-auditor measure it",
+      "level": "p1",
+      "area_doc": 6.0,
+      "area_bruta": 6.0,
+      "delimitacion": "inferida",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 66
+    },
+    {
+      "name": "Pasillo Galería Sur (p1)",
+      "freecad_name": "Space008",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.6,
+      "min_width": 1.0,
+      "bbox_x": 5.1,
+      "bbox_y": 1.0,
+      "area": 4.938,
+      "rectangularity": 0.968,
+      "level": "p1",
+      "area_doc": 6.12,
+      "area_bruta": 6.12,
+      "delimitacion": "inferida",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 56
+    },
+    {
+      "name": "Pasillo Galería Norte (p1)",
+      "freecad_name": "Space009",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.6,
+      "min_width": 0.94,
+      "bbox_x": 3.3,
+      "bbox_y": 0.94,
+      "area": 3.102,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 4.2,
+      "area_bruta": 4.2,
+      "delimitacion": "inferida",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 39
+    },
+    {
+      "name": "Clóset (p1)",
+      "freecad_name": "Space010",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.6,
+      "min_width": 1.08,
+      "bbox_x": 2.34,
+      "bbox_y": 1.08,
+      "area": 2.527,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 3.12,
+      "area_bruta": 3.12,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 30
+    },
+    {
+      "name": "Baño 1 (p1)",
+      "freecad_name": "Space011",
+      "kind": "space",
+      "tags": [
+        "wet"
+      ],
+      "clear_height": 2.6,
+      "min_width": 2.34,
+      "bbox_x": 2.34,
+      "bbox_y": 2.34,
+      "area": 5.476,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 6.76,
+      "area_bruta": 6.76,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 52
+    },
+    {
+      "name": "Dormitorio 1 (p1)",
+      "freecad_name": "Space012",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.6,
+      "min_width": 3.54,
+      "bbox_x": 4.54,
+      "bbox_y": 3.54,
+      "area": 16.072,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 18.24,
+      "area_bruta": 18.24,
+      "delimitacion": "muros",
+      "clear_height_max": 2.6,
+      "clear_height_min_medida": 2.6,
+      "clear_height_muestras": 111
+    },
+    {
+      "name": "Cocina (p1)",
+      "freecad_name": "Space013",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.671,
+      "min_width": 3.6,
+      "bbox_x": 3.6,
+      "bbox_y": 3.64,
+      "area": 13.104,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 15.6,
+      "area_bruta": 15.6,
+      "delimitacion": "muros",
+      "clear_height_max": 3.333,
+      "clear_height_min_medida": 2.671,
+      "clear_height_muestras": 99
+    },
+    {
+      "name": "Comedor (p1)",
+      "freecad_name": "Space014",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.671,
+      "min_width": 3.6,
+      "bbox_x": 3.6,
+      "bbox_y": 3.64,
+      "area": 13.104,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 14.8,
+      "area_bruta": 14.8,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.333,
+      "clear_height_min_medida": 2.671,
+      "clear_height_muestras": 99
+    },
+    {
+      "name": "Living (p1)",
+      "freecad_name": "Space015",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.671,
+      "min_width": 3.6,
+      "bbox_x": 3.6,
+      "bbox_y": 6.2,
+      "area": 22.32,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 25.6,
+      "area_bruta": 25.6,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.333,
+      "clear_height_min_medida": 2.671,
+      "clear_height_muestras": 149
+    },
+    {
+      "name": "Patio Interior (p1)",
+      "freecad_name": "Space016",
+      "kind": "space",
+      "tags": [],
+      "min_width": 3.6,
+      "bbox_x": 5.1,
+      "bbox_y": 3.6,
+      "area": 18.36,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 18.36,
+      "area_bruta": 18.36,
+      "delimitacion": "inferida",
+      "_nota_altura": "recinto exterior/descubierto: altura referencial 2,60 m, no medida"
+    },
+    {
+      "name": "Paso Cubierto (p1)",
+      "freecad_name": "Space017",
+      "kind": "space",
+      "tags": [],
+      "min_width": 1.6,
+      "bbox_x": 1.6,
+      "bbox_y": 3.8,
+      "area": 6.08,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 6.08,
+      "area_bruta": 6.08,
+      "delimitacion": "inferida",
+      "_nota_altura": "recinto exterior/descubierto: altura referencial 2,60 m, no medida"
+    },
+    {
+      "name": "Paso Descubierto (p1)",
+      "freecad_name": "Space018",
+      "kind": "space",
+      "tags": [],
+      "min_width": 1.2,
+      "bbox_x": 1.6,
+      "bbox_y": 1.2,
+      "area": 1.92,
+      "rectangularity": 1.0,
+      "level": "p1",
+      "area_doc": 1.92,
+      "area_bruta": 1.92,
+      "delimitacion": "inferida",
+      "_nota_altura": "recinto exterior/descubierto: altura referencial 2,60 m, no medida"
+    },
+    {
+      "name": "Escalera (p2)",
+      "freecad_name": "Space019",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.516,
+      "min_width": 1.94,
+      "bbox_x": 1.94,
+      "bbox_y": 4.0,
+      "area": 7.76,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 9.24,
+      "area_bruta": 9.24,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.166,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 67
+    },
+    {
+      "name": "Baño 3 (p2)",
+      "freecad_name": "Space020",
+      "kind": "space",
+      "tags": [
+        "wet"
+      ],
+      "clear_height": 3.251,
+      "min_width": 2.08,
+      "bbox_x": 2.08,
+      "bbox_y": 2.74,
+      "area": 5.699,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 6.6,
+      "area_bruta": 6.6,
+      "delimitacion": "muros",
+      "clear_height_max": 3.951,
+      "clear_height_min_medida": 3.251,
+      "clear_height_muestras": 52
+    },
+    {
+      "name": "Sala de Estar (p2)",
+      "freecad_name": "Space021",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.516,
+      "min_width": 3.48,
+      "bbox_x": 4.14,
+      "bbox_y": 3.48,
+      "area": 12.059,
+      "rectangularity": 0.837,
+      "_warning": "non-rectangular space: min_width is taken from the bounding box and may overstate the true clear width - have form-auditor measure it",
+      "level": "p2",
+      "area_doc": 13.2,
+      "area_bruta": 13.2,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.951,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 99
+    },
+    {
+      "name": "Dormitorio 4 (p2)",
+      "freecad_name": "Space022",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.516,
+      "min_width": 3.94,
+      "bbox_x": 4.34,
+      "bbox_y": 3.94,
+      "area": 17.1,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 19.32,
+      "area_bruta": 19.32,
+      "delimitacion": "muros",
+      "clear_height_max": 4.023,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 121
+    },
+    {
+      "name": "Dormitorio 5 (p2)",
+      "freecad_name": "Space023",
+      "kind": "space",
+      "tags": [
+        "habitable"
+      ],
+      "clear_height": 2.516,
+      "min_width": 3.48,
+      "bbox_x": 4.14,
+      "bbox_y": 3.48,
+      "area": 14.407,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 15.84,
+      "area_bruta": 15.84,
+      "delimitacion": "muros",
+      "clear_height_max": 3.951,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 108
+    },
+    {
+      "name": "Pasillo Pasarela Poniente (p2)",
+      "freecad_name": "Space024",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 3.73,
+      "min_width": 0.94,
+      "bbox_x": 0.94,
+      "bbox_y": 5.88,
+      "area": 4.807,
+      "rectangularity": 0.87,
+      "_warning": "non-rectangular space: min_width is taken from the bounding box and may overstate the true clear width - have form-auditor measure it",
+      "level": "p2",
+      "area_doc": 6.0,
+      "area_bruta": 6.0,
+      "delimitacion": "inferida",
+      "clear_height_max": 4.023,
+      "clear_height_min_medida": 3.73,
+      "clear_height_muestras": 66
+    },
+    {
+      "name": "Pasillo Pasarela Sur (p2)",
+      "freecad_name": "Space025",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 2.516,
+      "min_width": 0.94,
+      "bbox_x": 3.4,
+      "bbox_y": 0.94,
+      "area": 3.196,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 4.32,
+      "area_bruta": 4.32,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.687,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 39
+    },
+    {
+      "name": "Pasillo Pasarela Norte (p2)",
+      "freecad_name": "Space026",
+      "kind": "space",
+      "tags": [
+        "corridor",
+        "circulation"
+      ],
+      "clear_height": 3.087,
+      "min_width": 0.94,
+      "bbox_x": 1.8,
+      "bbox_y": 0.94,
+      "area": 1.692,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 2.4,
+      "area_bruta": 2.4,
+      "delimitacion": "inferida",
+      "clear_height_max": 3.687,
+      "clear_height_min_medida": 3.087,
+      "clear_height_muestras": 24
+    },
+    {
+      "name": "Walk-in Clóset (p2)",
+      "freecad_name": "Space027",
+      "kind": "space",
+      "tags": [],
+      "clear_height": 2.516,
+      "min_width": 1.28,
+      "bbox_x": 2.54,
+      "bbox_y": 1.28,
+      "area": 3.251,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 3.92,
+      "area_bruta": 3.92,
+      "delimitacion": "muros",
+      "clear_height_max": 3.38,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 37
+    },
+    {
+      "name": "Baño Principal (p2)",
+      "freecad_name": "Space028",
+      "kind": "space",
+      "tags": [
+        "wet"
+      ],
+      "clear_height": 2.516,
+      "min_width": 2.14,
+      "bbox_x": 2.54,
+      "bbox_y": 2.14,
+      "area": 5.436,
+      "rectangularity": 1.0,
+      "level": "p2",
+      "area_doc": 6.72,
+      "area_bruta": 6.72,
+      "delimitacion": "muros",
+      "clear_height_max": 3.38,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 52
+    },
+    {
+      "name": "Dormitorio Principal (p2)",
+      "freecad_name": "Space029",
+      "kind": "space",
+      "tags": [
+        "habitable",
+        "dormitorio_principal"
+      ],
+      "clear_height": 2.516,
+      "min_width": 3.54,
+      "bbox_x": 5.94,
+      "bbox_y": 3.54,
+      "area": 20.832,
+      "rectangularity": 0.991,
+      "level": "p2",
+      "area_doc": 23.56,
+      "area_bruta": 23.56,
+      "delimitacion": "muros",
+      "clear_height_max": 4.01,
+      "clear_height_min_medida": 2.516,
+      "clear_height_muestras": 140
+    },
+    {
+      "name": "Escalera 1",
+      "freecad_name": "Stairs,Stairs001",
+      "kind": "stair",
+      "tags": [
+        "stair"
+      ],
+      "steps": 17,
+      "riser": 0.1676,
+      "tread": 0.28,
+      "min_width": 0.94,
+      "rise_total": 2.8492,
+      "floor_to_floor": 2.85,
+      "rise_deficit": 0.0008,
+      "blondel": 0.6152,
+      "arrival_gap_to_slab": 0.3,
+      "headroom_min": 1.259,
+      "headroom_muestras": 36,
+      "_nota": "medido sobre las formas FreeCAD; headroom = hueco libre vertical hasta losa/cubierta sobre cada tramo (muestreo 3x3 por elemento)"
+    }
+  ],
+  "totals": {
+    "space_area": 256.813,
+    "window_area": 72.738,
+    "wall_volume": 77.114,
+    "space_area_neta_p1": 130.614,
+    "slab_area": 261.289,
+    "_nota_wall_volume": "suma de volúmenes de los objetos Wall (muros, hastiales y cierres bajo cubierta); los muros se recortan en los encuentros (tools/cubierta.py), así que no hay traslapes contados dos veces"
+  },
+  "levels": {
+    "p1": 0.0,
+    "p2": 2.85
+  }
+}

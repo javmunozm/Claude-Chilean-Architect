@@ -3,7 +3,7 @@
 """Verificación MEDIDA de un modelo 3D exportado a OBJ: techos, rendijas y superficies.
 
 No mira cómo se construyó el modelo: triangula lo que hay en el OBJ y lanza rayos.
-Sirve igual para el OBJ de FreeCAD (v2/plans/export_obj.py) y para el de Blender.
+Sirve igual para el OBJ de FreeCAD (versions/vN/scripts/export_obj.py) y para el de Blender.
 
     python tools/scripts/verificar_modelo3d.py <modelo.obj> --spec <planta.json> \
         [--recintos <recintos.json>] [--desfase-y 14] [--y-directo]

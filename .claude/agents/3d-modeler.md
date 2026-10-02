@@ -25,7 +25,7 @@ system Python 3.13 — packages installed for one are not available to the other
 
 ## Method
 
-1. Take geometry from `plans/` rather than modelling freehand. A 3D model that
+1. Take geometry from the version's `source/` and `exports/model/` rather than modelling freehand. A 3D model that
    drifts from the plans is worse than no model, because it looks authoritative
    while being wrong.
 2. Keep the repo convention: metres, origin at the site NW corner, +X east,

@@ -49,9 +49,12 @@ confident PASS is a worse outcome than an honest gap.
 
 ## Two rules that cost this repo the most
 
-- **A version is never a sibling folder.** Nest it as `projects/<Project>/v2/`.
-  Never delete an old version — v2 may import from `v0/plans/`.
-  See [docs/versioning.md](docs/versioning.md).
+- **Versions live side by side in `projects/<Project>/versions/`** (`v0/`, `v2/`,
+  `v3/`…), never nested in one another and never as sibling projects. Each has its
+  own `scripts/`, `calcs/` and `exports/` (`model/`, `drawings/`, `renders/`, PDF at
+  the root); lineage is the "descends from" column of the project README. One
+  `site.json` per project, at its root. Never delete an old version — v3 may read
+  `../v0/source/`. See [docs/versioning.md](docs/versioning.md).
 - **Never delete an attempt on your own judgment.** Only an explicit rejection from
   the user triggers cleanup, and the lesson gets recorded in the project README
   before the folder goes. "Clean this up" is not a rejection of any specific
@@ -90,19 +93,19 @@ Run after any geometry change:
 
 ```bash
 # 1. measure the model (paths in the environment, not argv)
-AREA_CALC_MODEL=projects/<Name>/plans/model.FCStd \
-AREA_CALC_OUT=projects/<Name>/calcs/model_extract.json \
+AREA_CALC_MODEL=projects/<Name>/versions/<vN>/exports/model/<model>.FCStd \
+AREA_CALC_OUT=projects/<Name>/versions/<vN>/calcs/model_extract.json \
   "E:/FreeCAD/bin/freecadcmd.exe" tools/area_calc.py
 
 # 2. check dimensional rules (exit 1 on FAIL *or* UNVERIFIED)
-python tools/norm_check.py projects/<Name>/calcs/model_extract.json \
+python tools/norm_check.py projects/<Name>/versions/<vN>/calcs/model_extract.json \
   --site projects/<Name>/site.json
 
 # 3. confirm exports are current (MISSING / THIN / STALE)
-python tools/render_check.py projects/<Name>
+python tools/render_check.py projects/<Name>/versions/<vN>
 
 # 3b. 3D model: no uncovered sector, no slit, no coincident faces, closed roof
-python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
+python tools/scripts/verificar_modelo3d.py projects/<Name>/versions/<vN>/exports/model/<model>.obj \
   --spec <plan>.json --recintos <rooms>.json   # frame flag: docs/commands.md
 
 # 4. open the export and look at it   <- not optional, not automatable

@@ -11,8 +11,8 @@ FreeCAD's interpreter; paths go in the **environment**, never in argv (see
 [system.md](system.md), Known issues #2).
 
 ```bash
-AREA_CALC_MODEL=projects/<Name>/plans/<model>.FCStd \
-AREA_CALC_OUT=projects/<Name>/calcs/model_extract.json \
+AREA_CALC_MODEL=projects/<Name>/versions/<vN>/exports/model/<model>.FCStd \
+AREA_CALC_OUT=projects/<Name>/versions/<vN>/calcs/model_extract.json \
   "E:/FreeCAD/bin/freecadcmd.exe" tools/area_calc.py
 ```
 
@@ -30,7 +30,7 @@ invisible to the extractor, and an invisible room is an unchecked room.
 ## Check compliance
 
 ```bash
-python tools/norm_check.py projects/<Name>/calcs/model_extract.json \
+python tools/norm_check.py projects/<Name>/versions/<vN>/calcs/model_extract.json \
   --site projects/<Name>/site.json
 ```
 
@@ -46,8 +46,8 @@ blocked run, not a quiet pass. See [norms.md](norms.md).
 ## Verify exports exist and are current
 
 ```bash
-python tools/render_check.py projects/<Name>
-python tools/render_check.py projects/<Name> --require dxf,pdf,png
+python tools/render_check.py projects/<Name>/versions/<vN>
+python tools/render_check.py projects/<Name>/versions/<vN> --require dxf,pdf,png
 ```
 
 Catches three failure modes mechanically: **MISSING** (no such export), **THIN**
@@ -77,15 +77,15 @@ if __name__ in ("__main__", "export_dxf"):
 ```
 
 ```bash
-MODEL=projects/<Name>/plans/model.FCStd \
-OUT=projects/<Name>/exports/plan.dxf \
+MODEL=projects/<Name>/versions/<vN>/exports/model/<model>.FCStd \
+OUT=projects/<Name>/versions/<vN>/exports/drawings/plan.dxf \
   "E:/FreeCAD/bin/freecadcmd.exe" tools/scripts/export_dxf.py
 ```
 
 ## Render in Blender
 
 ```bash
-blender --background projects/<Name>/model/<file>.blend \
+blender --background projects/<Name>/versions/<vN>/exports/model/<file>.blend \
         --python tools/scripts/render.py
 ```
 
@@ -95,14 +95,14 @@ Python — packages do not cross over.
 Then gate the result:
 
 ```bash
-python tools/render_check.py projects/<Name> --require png
+python tools/render_check.py projects/<Name>/versions/<vN> --require png
 ```
 
 ## Verify a 3D model: roofs, slits, coincident faces
 
 ```bash
-python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
-  --spec projects/<Name>/plans/<plan>.json [--recintos <rooms>.json] \
+python tools/scripts/verificar_modelo3d.py projects/<Name>/versions/<vN>/exports/model/<model>.obj \
+  --spec <plan>.json [--recintos <rooms>.json] \
   [--desfase-y 14 | --y-directo] [--json]
 ```
 
@@ -151,7 +151,7 @@ which is fine for checking surfaces but not for orientation.
 |---------|--------|---------|
 | `tools/scripts/blender_build.py` | `.blend` | `BUILD_SPEC=<plan.json> BUILD_OUT=<file.blend> blender --background --python tools/scripts/blender_build.py` |
 | `tools/scripts/build3d.py` | `.obj/.mtl` (+ `.html` viewer) | `python tools/scripts/build3d.py <plan.json> --out <path/name>` |
-| `projects/CasaPatioInterior/v2/plans/build_model.py` | `.FCStd` (Arch) | see that project's README |
+| `projects/<Name>/versions/<vN>/scripts/build_model.py` | `.FCStd` (Arch) | see that version's README |
 
 All three take roofs, gables, closures under roof edges and wall junctions from
 `tools/cubierta.py`. A change to roof or junction logic goes there, and is then
@@ -160,7 +160,7 @@ re-measured on every output with `verificar_modelo3d.py`.
 ## Doors: hinge, swing and missing doors
 
 ```bash
-python tools/puertas.py projects/<Name>/calcs/plan_data.json -o <puertas.json> \
+python tools/puertas.py projects/<Name>/versions/<vN>/calcs/plan_data.json -o <puertas.json> \
   [--recintos <recintos.json>]
 ```
 
@@ -169,7 +169,7 @@ and take the same two options.
 - **The user indicates doors first.** An opening that carries `operation`,
   `hinge` or `swing` is honoured, and so is an indicated opening without a leaf
   (`open`). The rest follow rules R1–R9, which are a design convention, not a norm
-  (see `projects/CasaPatioInterior/v2/README.md`).
+  (see `projects/CasaPatioInterior/versions/v2/README.md`).
 - **Generated when not indicated**, marked `*`:
   - every bedroom-type room ("dormitorio", "pieza", "habitación") gets a door of
     its own;
@@ -187,19 +187,19 @@ The sequence to run after any geometry change:
 
 ```bash
 # 1. measure the model
-AREA_CALC_MODEL=projects/<Name>/plans/model.FCStd \
-AREA_CALC_OUT=projects/<Name>/calcs/model_extract.json \
+AREA_CALC_MODEL=projects/<Name>/versions/<vN>/exports/model/<model>.FCStd \
+AREA_CALC_OUT=projects/<Name>/versions/<vN>/calcs/model_extract.json \
   "E:/FreeCAD/bin/freecadcmd.exe" tools/area_calc.py
 
 # 2. check the dimensional rules
-python tools/norm_check.py projects/<Name>/calcs/model_extract.json \
+python tools/norm_check.py projects/<Name>/versions/<vN>/calcs/model_extract.json \
   --site projects/<Name>/site.json
 
 # 3. confirm exports are current
-python tools/render_check.py projects/<Name>
+python tools/render_check.py projects/<Name>/versions/<vN>
 
 # 3b. 3D model: no uncovered sector, no slit, no coincident faces, closed roof
-python tools/scripts/verificar_modelo3d.py projects/<Name>/exports/<model>.obj \
+python tools/scripts/verificar_modelo3d.py projects/<Name>/versions/<vN>/exports/model/<model>.obj \
   --spec <plan>.json --recintos <rooms>.json   # frame flag: see above
 
 # 4. open the export and look at it   <- not optional, not automatable

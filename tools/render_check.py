@@ -10,10 +10,14 @@ What it CANNOT do is tell you the plan is architecturally right. It reports
 "an export exists and is current", never "the design is correct". After a green
 run you still have to open the file and look at it.
 
-Usage:
-    python tools/render_check.py projects/<Name>
-    python tools/render_check.py projects/<Name> --require dxf,pdf
-    python tools/render_check.py projects/<Name> --json
+Usage (one version folder at a time):
+    python tools/render_check.py projects/<Name>/versions/<vN>
+    python tools/render_check.py projects/<Name>/versions/<vN> --require dxf,pdf
+    python tools/render_check.py projects/<Name>/versions/<vN> --json
+
+The model (.FCStd / .blend) lives in exports/model/; it is the reference the other
+exports are compared against, not an export itself. plans/ and model/ are still
+searched for projects that predate that layout.
 """
 from __future__ import annotations
 
@@ -49,7 +53,7 @@ def newest(paths):
 
 def collect_models(project):
     models = []
-    for sub in ("plans", "model"):
+    for sub in ("exports/model", "plans", "model"):
         d = project / sub
         if d.is_dir():
             for suffix in MODEL_SUFFIXES:
@@ -62,7 +66,8 @@ def collect_exports(project):
     d = project / "exports"
     if not d.is_dir():
         return []
-    return [p for p in d.rglob("*") if p.is_file() and not p.name.startswith(".")]
+    return [p for p in d.rglob("*") if p.is_file() and not p.name.startswith(".")
+            and p.suffix not in MODEL_SUFFIXES]
 
 
 def check(project, required):
@@ -137,7 +142,7 @@ def report(project, findings, newest_model, exports):
         print("newest model : %s  (modified %s ago)"
               % (newest_model.relative_to(project), age))
     else:
-        print("newest model : none found under plans/ or model/")
+        print("newest model : none found under exports/model/ (or legacy plans/, model/)")
     print("exports found: %d file(s)" % len(exports))
     print()
 

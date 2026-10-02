@@ -24,7 +24,7 @@ Capas (apagables por separado en AutoCAD / BricsCAD / QCAD / LibreCAD):
     A-MURO  A-MURO-RELL  A-VANO  A-LOSA  A-ESCA  A-COTA  A-TEXT  A-RECI
     A-SIMB  A-CUAD
 
-Puertas (tools/puertas.py, compartido con v2/plans/derive_puertas.py):
+Puertas (tools/puertas.py, compartido con versions/vN/scripts/derive_puertas.py):
   - Si el vano declara cómo abre, eso manda:
         "operation": "swing" | "sliding" | "double"
         "hinge":     "start" | "end"   jamba de la bisagra (start = coordenada menor)

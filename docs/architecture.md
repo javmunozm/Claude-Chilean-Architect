@@ -23,14 +23,21 @@ it stops receiving fixes.
 
 ```
 projects/<Name>/
-├── README.md          ← goal, site, program, status, compliance log
-├── site.json          ← PRC limits, thermal zone, seismic zone (machine-read)
-├── plans/             ← FreeCAD .FCStd — plans, sections, elevations
-├── model/             ← Blender .blend — 3D model and render scenes
-├── exports/           ← generated: DXF, PDF, IFC, PNG
-├── specs/             ← EETT, schedules, budgets
-├── calcs/             ← model_extract.json, structural and thermal calcs
-└── attempts/          ← rejected approaches (never committed)
+├── README.md          ← project index: versions table with lineage ("descends from")
+├── site.json          ← PRC limits, thermal zone, seismic zone (machine-read, ONE per project)
+└── versions/
+    └── vN/            ← one folder per version, side by side (docs/versioning.md)
+        ├── README.md  ← goal, program, status, compliance log, descends from
+        ├── source/    ← inputs written by hand or taken from documents
+        ├── scripts/   ← this version's own generation macros (FreeCAD, DXF, OBJ…)
+        ├── calcs/     ← model_extract.json, plan_data, recintos, puertas, calcs
+        ├── exports/   ← everything generated
+        │   ├── <name>.pdf   drawing set
+        │   ├── model/       .FCStd, .blend, .obj/.mtl
+        │   ├── drawings/    construction drawings: DXF + PNG previews
+        │   └── renders/     3D views and renders
+        ├── specs/     ← EETT, schedules, budgets
+        └── attempts/  ← rejected approaches (never committed)
 ```
 
 ### `site.json` is load-bearing
@@ -55,12 +62,12 @@ site.json           the regulatory and physical envelope
 README.md           the dimensioned program, inside those ceilings
     │
     ▼  plan-drafter
-plans/*.FCStd       Arch/BIM geometry
+scripts/ → exports/model/*.FCStd   Arch/BIM geometry
     │
     ├──▼  area_calc.py  →  calcs/model_extract.json  →  norm_check.py
     │
     ▼  3d-modeler
-model/*.blend       3D model
+exports/model/*.blend   3D model
     │
     ▼  (exports)
 exports/            DXF, PDF, IFC, PNG  →  render_check.py

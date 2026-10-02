@@ -57,12 +57,14 @@ One or two sentences: what this project is and what it is for.
 
 ## Versions
 
-| Version | Path | What changed and why |
-|---------|------|----------------------|
-| v0 | `.` | Original |
+This file is `versions/vN/README.md`. **Descends from:** — (v0) / `vM`
 
-> Versions nest inside this project (`v2/`), never as sibling folders. See
-> `docs/versioning.md`.
+| Version | Path | Descends from | What changed and why |
+|---------|------|---------------|----------------------|
+| v0 | `versions/v0/` | — | Original |
+
+> Versions live side by side in `projects/<Name>/versions/`, never nested. The
+> project README carries this table for all versions. See `docs/versioning.md`.
 
 ## Status
 
