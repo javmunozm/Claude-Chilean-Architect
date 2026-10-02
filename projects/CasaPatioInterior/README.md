@@ -179,6 +179,7 @@ python tools/norm_check.py   projects/CasaPatioInterior/calcs/model_extract.json
 | rev. G | `plans/casa_rev_g.json` | Original recibido |
 | rev. H | `plans/casa_rev_h.json` | Corrige escalera a 17 contrahuellas; limpia metadatos de ubicación |
 | rev. H (corr. 2026-10-01) | `plans/casa_rev_h.json` | Bandas 2 y 3 de cubierta: inicio en y = 8,75 y 9,95 (voladizo de 0,25 m sobre el patio, como las bandas 0 y 1). No cambia muros, vanos ni losas: el extract medido es idéntico |
+| v2 | `v2/` | Reconstrucción con objetos Arch en FreeCAD, 29 recintos medidos, DXF/PDF desde el modelo medido, OBJ con normales; detecta 2 problemas de escalera. Ver `v2/README.md` |
 
 ## Estado
 
