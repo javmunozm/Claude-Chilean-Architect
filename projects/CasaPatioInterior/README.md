@@ -155,6 +155,7 @@ python tools/norm_check.py   projects/CasaPatioInterior/calcs/model_extract.json
 |---------|------|----------------------|
 | rev. G | `plans/casa_rev_g.json` | Original recibido |
 | rev. H | `plans/casa_rev_h.json` | Corrige escalera a 17 contrahuellas; limpia metadatos de ubicación |
+| v2 | `v2/` | Reconstrucción con objetos Arch en FreeCAD, 29 recintos medidos, DXF/PDF desde el modelo medido, OBJ con normales; detecta 2 problemas de escalera. Ver `v2/README.md` |
 
 ## Estado
 
