@@ -12,6 +12,28 @@ You turn a verified design into documentation someone can build and price from.
 - Material schedules and quantity take-offs.
 - Itemized budgets (presupuesto), by partida.
 
+## Tools and inputs
+
+```bash
+python projects/<Name>/versions/<vN>/scripts/make_eett.py
+# -> exports/eett_<vN>.md + .pdf (tools/md_pdf.py) and exports/cubicacion_<vN>.csv
+```
+
+Each input arrives from the stage that owns it. Do not re-derive any of them.
+
+| Input | From | Gives |
+|-------|------|-------|
+| `calcs/model_extract.json` | form-auditor / measure | wall, slab and roof volumes; windows, doors, stair |
+| `calcs/aguas_lluvias.json` | drainage-designer | gutter and downpipe lengths, discharges |
+| `source/terminaciones.json` | facade-designer | finish items (proposals until confirmed) |
+| `source/estructura.json`, `calcs/estructura_calc.json` | structural-calculator | system, predimensioned beam, footing scenarios |
+| `exports/drawings/detalles.dxf` | detail-drafter | details D1–D5 that the EETT refers to |
+
+- An item whose definition is still `propuesta` is written as a proposal, never as
+  decided.
+- An item that depends on the calculista or on a study that does not exist is not
+  quantified. Name who supplies it.
+
 ## Method
 
 1. **Take quantities from form-auditor's measured extract, never from the
@@ -22,7 +44,7 @@ You turn a verified design into documentation someone can build and price from.
    instalaciones. Each item states material, standard, execution and finish.
 3. Every specified material cites the norm it must satisfy. "Good quality
    concrete" is not a specification; a grade with its NCh reference is.
-4. Budgets go to `specs/` as CSV or ODS for LibreOffice Calc. Keep unit, quantity,
+4. Budgets go to `exports/cubicacion_<vN>.csv` (CSV for LibreOffice Calc). Keep unit, quantity,
    unit price and total as separate columns so the arithmetic is checkable.
 5. Show the take-off arithmetic. A quantity nobody can re-derive is a quantity
    nobody can check.

@@ -1,0 +1,44 @@
+{
+  "_meta": {
+    "uso": "Parámetros de tools/estructura.py (predimensionamiento). Mismo criterio que rules.json: los valores con source UNVERIFIED son de referencia, escritos sin transcribir desde el texto oficial; permiten calcular y mostrar números, pero ningún veredicto sale CUMPLE mientras no se transcriban y se cambie su source por la cita (norma + artículo/tabla).",
+    "alcance": "Predimensionamiento para anteproyecto. NO es el proyecto de cálculo estructural que exige el permiso de edificación: ese lo firma un ingeniero civil (calculista)."
+  },
+  "pesos": {
+    "albanileria_kN_m3": {"value": 18.0, "source": "UNVERIFIED", "norma": "NCh 1537 (pesos de materiales)"},
+    "hormigon_armado_kN_m3": {"value": 25.0, "source": "UNVERIFIED", "norma": "NCh 1537"},
+    "tabique_liviano_kN_m2": {"value": 0.50, "source": "UNVERIFIED", "norma": "NCh 1537", "nota": "por m2 de tabique (cara)"},
+    "cubierta_kN_m2": {"value": 0.40, "source": "UNVERIFIED", "norma": "NCh 1537", "nota": "estructura de madera + costaneras + plancha, por m2 en planta"},
+    "terminaciones_piso_kN_m2": {"value": 1.0, "source": "UNVERIFIED", "nota": "sobrelosa y pavimento sobre la losa del 2º piso"}
+  },
+  "sobrecargas": {
+    "vivienda_kN_m2": {"value": 2.0, "source": "UNVERIFIED", "norma": "NCh 1537, tabla de sobrecargas de uso"},
+    "cubierta_kN_m2": {"value": 1.0, "source": "UNVERIFIED", "norma": "NCh 1537, techos"},
+    "fraccion_sismica_vivienda": {"value": 0.25, "source": "UNVERIFIED", "norma": "NCh 433, peso sísmico (fracción de la sobrecarga)"}
+  },
+  "sismo": {
+    "A0_g_por_zona": {"value": {"1": 0.20, "2": 0.30, "3": 0.40}, "source": "UNVERIFIED", "norma": "NCh 433, tabla de aceleración efectiva por zona"},
+    "S_por_suelo": {"value": {"A": 0.90, "B": 1.00, "C": 1.05, "D": 1.20, "E": 1.30}, "source": "UNVERIFIED", "norma": "NCh 433 modificada por DS 61, parámetros del suelo"},
+    "I_vivienda": {"value": 1.0, "source": "UNVERIFIED", "norma": "NCh 433, coeficiente de importancia (categoría II)"},
+    "R_albanileria_confinada": {"value": 4.0, "source": "UNVERIFIED", "norma": "NCh 433, tabla de R por sistema estructural"},
+    "Cmax_factor_R4": {"value": 0.35, "source": "UNVERIFIED", "norma": "NCh 433, tabla de Cmax (Cmax = factor · S · A0/g)"},
+    "Cmin_divisor": {"value": 6.0, "source": "UNVERIFIED", "norma": "NCh 433, C mínimo = A0·S/(6g)"}
+  },
+  "albanileria": {
+    "tau_m_MPa": {"value": 0.50, "source": "UNVERIFIED", "norma": "NCh 2123, resistencia básica de corte de la albañilería"},
+    "corte_admisible": {"value": {"a": 0.23, "b": 0.12}, "source": "UNVERIFIED", "norma": "NCh 2123, Va = (a·τm + b·σ0)·A"}
+  },
+  "hormigon": {
+    "fy_MPa": {"value": 420.0, "source": "UNVERIFIED", "norma": "NCh 204, acero A630-420H"},
+    "recubrimiento_util_m": {"value": 0.05, "source": "CONVENCION"},
+    "phi_flexion": {"value": 0.90, "source": "UNVERIFIED", "norma": "NCh 430 (remite a ACI 318), factor de reducción de resistencia en flexión"},
+    "combinacion_ultima": {"value": {"D": 1.2, "L": 1.6}, "source": "UNVERIFIED", "norma": "NCh 3171, combinaciones de carga (1,2 D + 1,6 L)"}
+  },
+  "predimension": {
+    "viga_L_sobre_h": {"value": 12.0, "source": "CONVENCION", "nota": "regla práctica de predimensionamiento, no norma"},
+    "losa_L_sobre_h_continua": {"value": 30.0, "source": "CONVENCION"},
+    "voladizo_L_sobre_h": {"value": 10.0, "source": "CONVENCION"}
+  },
+  "suelo": {
+    "escenarios_sigma_adm_kPa": {"value": [100, 150, 200], "source": "ESCENARIO", "nota": "la tensión admisible real sale del estudio de mecánica de suelos; hasta entonces solo escenarios"}
+  }
+}

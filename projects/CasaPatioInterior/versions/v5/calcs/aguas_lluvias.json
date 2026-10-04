@@ -1,0 +1,417 @@
+{
+ "canales": [
+  {
+   "tipo": "alero",
+   "cubierta": 0,
+   "z": 5.354,
+   "area_m2": 72.52,
+   "n": [
+    -1.0,
+    0.0
+   ],
+   "a": [
+    -0.4,
+    -0.4
+   ],
+   "b": [
+    -0.4,
+    14.4
+   ],
+   "largo": 14.8
+  },
+  {
+   "tipo": "alero",
+   "cubierta": 0,
+   "z": 5.354,
+   "area_m2": 21.805,
+   "n": [
+    1.0,
+    0.0
+   ],
+   "a": [
+    9.4,
+    14.4
+   ],
+   "b": [
+    9.4,
+    9.95
+   ],
+   "largo": 4.45
+  },
+  {
+   "tipo": "alero",
+   "cubierta": 0,
+   "z": 5.979,
+   "area_m2": 3.78,
+   "n": [
+    1.0,
+    0.0
+   ],
+   "a": [
+    7.65,
+    9.95
+   ],
+   "b": [
+    7.65,
+    8.75
+   ],
+   "largo": 1.2
+  },
+  {
+   "tipo": "alero",
+   "cubierta": 0,
+   "z": 6.693,
+   "area_m2": 3.565,
+   "n": [
+    1.0,
+    0.0
+   ],
+   "a": [
+    5.65,
+    8.75
+   ],
+   "b": [
+    5.65,
+    5.65
+   ],
+   "largo": 3.1
+  },
+  {
+   "tipo": "alero",
+   "cubierta": 0,
+   "z": 5.354,
+   "area_m2": 29.645,
+   "n": [
+    1.0,
+    0.0
+   ],
+   "a": [
+    9.4,
+    5.65
+   ],
+   "b": [
+    9.4,
+    -0.4
+   ],
+   "largo": 6.05
+  },
+  {
+   "tipo": "alero",
+   "cubierta": 1,
+   "z": 2.728,
+   "area_m2": 68.08,
+   "n": [
+    1.0,
+    -0.0
+   ],
+   "a": [
+    13.4,
+    -0.4
+   ],
+   "b": [
+    13.4,
+    14.4
+   ],
+   "largo": 14.8
+  },
+  {
+   "tipo": "encuentro",
+   "cubierta": 1,
+   "z": 3.598,
+   "area_m2": 3.329,
+   "n": [
+    -1.0,
+    -0.0
+   ],
+   "a": [
+    8.8,
+    14.0
+   ],
+   "b": [
+    8.8,
+    10.2
+   ],
+   "largo": 3.8,
+   "area_muro_m2": 6.657,
+   "desfase_muro": 0.2
+  },
+  {
+   "tipo": "encuentro",
+   "cubierta": 1,
+   "z": 3.598,
+   "area_m2": 4.73,
+   "n": [
+    -1.0,
+    -0.0
+   ],
+   "a": [
+    8.8,
+    5.4
+   ],
+   "b": [
+    8.8,
+    -0.0
+   ],
+   "largo": 5.4,
+   "area_muro_m2": 9.46,
+   "desfase_muro": 0.2
+  }
+ ],
+ "bajadas": [
+  {
+   "canal": 0,
+   "canal_xy": [
+    -0.4,
+    0.19
+   ],
+   "muro_xy": [
+    -0.06,
+    0.19
+   ],
+   "z_canal": 5.254,
+   "z_suelo": -0.15,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 0,
+   "canal_xy": [
+    -0.4,
+    13.81
+   ],
+   "muro_xy": [
+    -0.06,
+    13.81
+   ],
+   "z_canal": 5.254,
+   "z_suelo": -0.15,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 1,
+   "canal_xy": [
+    9.4,
+    13.81
+   ],
+   "muro_xy": [
+    9.05,
+    13.81
+   ],
+   "z_canal": 5.254,
+   "z_suelo": 3.553,
+   "descarga": "sobre cubierta inferior"
+  },
+  {
+   "canal": 2,
+   "canal_xy": [
+    7.65,
+    9.71
+   ],
+   "muro_xy": [
+    7.45,
+    9.71
+   ],
+   "z_canal": 5.879,
+   "z_suelo": -0.02,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 3,
+   "canal_xy": [
+    5.65,
+    8.51
+   ],
+   "muro_xy": [
+    5.45,
+    8.51
+   ],
+   "z_canal": 6.593,
+   "z_suelo": -0.02,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 4,
+   "canal_xy": [
+    9.4,
+    0.19
+   ],
+   "muro_xy": [
+    9.05,
+    0.19
+   ],
+   "z_canal": 5.254,
+   "z_suelo": 3.553,
+   "descarga": "sobre cubierta inferior"
+  },
+  {
+   "canal": 5,
+   "canal_xy": [
+    13.4,
+    0.19
+   ],
+   "muro_xy": [
+    13.05,
+    0.19
+   ],
+   "z_canal": 2.628,
+   "z_suelo": -0.15,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 5,
+   "canal_xy": [
+    13.4,
+    13.81
+   ],
+   "muro_xy": [
+    13.05,
+    13.81
+   ],
+   "z_canal": 2.628,
+   "z_suelo": -0.15,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 6,
+   "canal_xy": [
+    9.075,
+    14.0
+   ],
+   "muro_xy": [
+    9.075,
+    14.06
+   ],
+   "z_canal": 3.498,
+   "z_suelo": -0.02,
+   "descarga": "a terreno"
+  },
+  {
+   "canal": 7,
+   "canal_xy": [
+    9.075,
+    5.4
+   ],
+   "muro_xy": [
+    9.075,
+    5.46
+   ],
+   "z_canal": 3.498,
+   "z_suelo": -0.15,
+   "descarga": "a terreno"
+  }
+ ],
+ "verificacion": [
+  {
+   "canal": 0,
+   "tipo": "alero",
+   "largo_m": 14.8,
+   "area_m2": 72.52,
+   "bajadas": 2,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 1,
+   "tipo": "alero",
+   "largo_m": 4.45,
+   "area_m2": 21.805,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 2,
+   "tipo": "alero",
+   "largo_m": 1.2,
+   "area_m2": 3.78,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 3,
+   "tipo": "alero",
+   "largo_m": 3.1,
+   "area_m2": 3.565,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 4,
+   "tipo": "alero",
+   "largo_m": 6.05,
+   "area_m2": 29.645,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 5,
+   "tipo": "alero",
+   "largo_m": 14.8,
+   "area_m2": 68.08,
+   "bajadas": 2,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 6,
+   "tipo": "encuentro",
+   "largo_m": 3.8,
+   "area_m2": 3.329,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  },
+  {
+   "canal": 7,
+   "tipo": "encuentro",
+   "largo_m": 5.4,
+   "area_m2": 4.73,
+   "bajadas": 1,
+   "q_por_bajada_l_s": null,
+   "veredicto": "INCONCLUSO (falta rainfall_intensity_mm_h en site.json)"
+  }
+ ],
+ "parametros": {
+  "coef_escorrentia_cubierta": {
+   "value": 1.0,
+   "source": "UNVERIFIED",
+   "nota": "cubierta impermeable: todo lo que cae escurre"
+  },
+  "fraccion_muro_vertical": {
+   "value": 0.5,
+   "source": "UNVERIFIED",
+   "nota": "fracción del área de muro que descarga sobre un canal de encuentro (lluvia con viento)"
+  },
+  "canal_ancho_m": {
+   "value": 0.15,
+   "source": "CONVENCION",
+   "nota": "sección propuesta del canal; se verifica con la intensidad cuando exista"
+  },
+  "canal_alto_m": {
+   "value": 0.1,
+   "source": "CONVENCION"
+  },
+  "bajada_lado_m": {
+   "value": 0.08,
+   "source": "CONVENCION",
+   "nota": "bajada de sección cuadrada 80 mm (o circular equivalente)"
+  },
+  "largo_max_canal_por_bajada_m": {
+   "value": 12.0,
+   "source": "UNVERIFIED",
+   "nota": "sobre este largo, una bajada en cada extremo"
+  },
+  "pendiente_canal": {
+   "value": 0.005,
+   "source": "UNVERIFIED",
+   "nota": "pendiente mínima hacia la bajada"
+  },
+  "capacidad_bajada_l_s": {
+   "value": 1.0,
+   "source": "UNVERIFIED",
+   "nota": "caudal admisible de una bajada de 80 mm; sin fuente transcrita"
+  }
+ }
+}

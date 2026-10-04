@@ -44,6 +44,14 @@ calculation, and this repo has no solver wired in. When a verdict needs computed
 forces, the verdict is INCONCLUSIVE and the handoff says a calculista must run it.
 Saying so is the correct output, not a failure of the review.
 
+The next stage is `structural-calculator`.
+
+- It runs the static-method predimensioning (`tools/estructura.py`): loads, base shear,
+  masonry wall shear, the transfer beam, footings.
+- Hand it the system you accepted, which walls are structural, and every open
+  configuration finding.
+- Its numbers are a predimension. They do not turn your INCONCLUSIVE into a pass.
+
 ## Non-negotiables
 
 - **Cite or stay silent.** Every dimensional, structural or programmatic verdict

@@ -141,21 +141,29 @@ comuna and by zone within a comuna.
 
 ## Agents
 
-Eleven norm-aware subagents in `.claude/agents/`, documented in
+Fifteen norm-aware subagents in `.claude/agents/`, documented in
 [docs/agents.md](docs/agents.md). Handoff order:
 
 ```
 site-analyst → program-architect → plan-drafter → structural-reviewer →
-thermal-reviewer → fire-safety-reviewer → accessibility-reviewer →
-installations-reviewer → 3d-modeler → form-auditor → spec-writer
+structural-calculator → thermal-reviewer → fire-safety-reviewer →
+accessibility-reviewer → installations-reviewer → drainage-designer →
+facade-designer → detail-drafter → 3d-modeler → form-auditor → spec-writer
 ```
 
 Each stage hands off explicitly rather than re-deriving the previous stage's
 decisions. On questions of fact, `form-auditor` outranks renders and drawings, and
 measured extracts outrank the stated program.
 
-`structural-reviewer` reviews configuration only — this repo has **no solver**. A
-verdict needing computed forces is INCONCLUSIVE with a handoff to a calculista.
+`structural-reviewer` reviews configuration only. `structural-calculator` runs a
+static-method **predimensioning** (`tools/estructura.py`), not a structural analysis:
+this repo has **no solver**. Its numbers are a starting point for the calculista, never
+a COMPLIANT verdict, and the permit still needs a calculation signed by a civil
+engineer.
+
+Materials and systems that the source does not define (`source/terminaciones.json`,
+`source/estructura.json`) are **proposals** (`estado: propuesta`) until the user
+confirms them.
 
 ## Documentation
 

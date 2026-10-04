@@ -373,3 +373,41 @@ would. It did not.
 **Carry forward:** a scale written on a sheet is a claim, so measure the page.
 "Plans" for a building means a set: check the deliverable against what an architect
 hands over, and against the source document, not only against the last version.
+
+## 2026-10-04 — A drawing set that stopped at the walls
+
+**Concerns:** `plan-drafter`, `spec-writer`, `structural-reviewer`; new
+`drainage-designer`, `facade-designer`, `structural-calculator`, `detail-drafter`
+
+**Symptom:** the v4 set had plans, a roof plan, elevations and sections, but no
+gutters or downpipes, no finishes, no construction details, no EETT and no structural
+numbers. No agent owned any of them.
+
+**Cause:** the workflow had reviewers for each norm family, but no stage that
+*designs* rain drainage, finishes or details, and no stage that quantifies.
+- `spec-writer` existed but had no measured inputs to write from.
+- `structural-reviewer` correctly stopped at INCONCLUSIVE, with nothing after it.
+
+**Fix (v5):**
+- Four agents and three tools: `tools/aguas_lluvias.py`, `tools/estructura.py` and
+  `tools/md_pdf.py`.
+- Version scripts: `make_details.py`, which crops the model's own sections, and
+  `make_eett.py`, which takes quantities from the measured files.
+- What the source does not define (materials, structural system) is written as a
+  proposal (`estado: propuesta`), never as a decision.
+
+Defects found by looking, not by the scripts, which ran without error each time:
+- A downpipe hanging from an overhang corner.
+- An abutment gutter inside a wall (0.94 m² coincident faces).
+- A downpipe running through an interior room.
+- A transfer beam missing its own weight and the φ factor.
+- Gables and closures miscounted as partitions in the take-off (the extract gives
+  them no thickness).
+- Labels off the sheet.
+
+**Carry forward:**
+- When a request names deliverables the workflow has no owner for, add the stage
+  and its agent; do not stretch an existing reviewer.
+- Hand-check one number of each kind before reporting a calculation.
+- Look at every page.
+

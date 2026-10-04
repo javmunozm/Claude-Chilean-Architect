@@ -12,7 +12,7 @@ ArquiCL/
 ├── sources/           ← input material per subject, each with SOURCES.md
 ├── templates/         ← reusable templates for new projects
 ├── projects/          ← one folder per building or intervention
-└── .claude/agents/    ← the eleven subagent definitions
+└── .claude/agents/    ← the fifteen subagent definitions
 ```
 
 `sources/` and `tools/` stay at the root, shared across all projects. They are
@@ -66,6 +66,14 @@ scripts/ → exports/model/*.FCStd   Arch/BIM geometry
     │
     ├──▼  area_calc.py  →  calcs/model_extract.json  →  norm_check.py
     │
+    ▼  structural-reviewer → structural-calculator
+calcs/estructura_calc.json + exports/memoria_calculo_vN.pdf   (predimensioning)
+    │
+    ▼  thermal / fire / accessibility / installations reviewers
+    │
+    ▼  drainage-designer → facade-designer → detail-drafter
+calcs/aguas_lluvias.json, source/terminaciones.json, exports/drawings/detalles.dxf
+    │
     ▼  3d-modeler
 exports/model/*.blend   3D model
     │
@@ -76,7 +84,7 @@ exports/            DXF, PDF, IFC, PNG  →  render_check.py
                     measured reality, reconciled against intent
     │
     ▼  spec-writer
-specs/              EETT, schedules, budget
+exports/eett_vN.pdf + exports/cubicacion_vN.csv   EETT and quantity take-off
 ```
 
 Geometry flows one way: plans are authored in FreeCAD and consumed by Blender,

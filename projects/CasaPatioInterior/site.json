@@ -48,6 +48,8 @@
   },
   "ppda": null,
   "_ppda_note": "Plan de descontaminacion atmosferica que rige en la comuna, si alguno. Escribir exactamente \"Concepcion Metropolitano\" si la comuna esta en el PPDA (DS N°6/2018 MMA), confirmado contra el decreto: activa la regla PPDA-CM-vivienda-nueva-U de norm_check.py. null = no declarado.",
+  "rainfall_intensity_mm_h": null,
+  "_rainfall_note": "Intensidad de lluvia de diseño (mm/h) de la comuna para el período de retorno que exija la norma de aguas lluvias (RIDAA, DS 50/2002 MOP; sin transcribir). null = tools/aguas_lluvias.py informa INCONCLUSO.",
   "_tope_superficie_declarado": {
     "valor_m2": 260.0,
     "estado": "DECLARADO EN EL DOCUMENTO, SIN FUENTE",

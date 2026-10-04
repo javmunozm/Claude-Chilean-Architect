@@ -38,6 +38,8 @@
   },
   "ppda": null,
   "_ppda_note": "Atmospheric decontamination plan in force in the comuna, if any. Write exactly \"Concepcion Metropolitano\" when the comuna is in that PPDA (DS N°6/2018 MMA), confirmed against the decree: it enables rule PPDA-CM-vivienda-nueva-U in norm_check.py. null = not declared.",
+  "rainfall_intensity_mm_h": null,
+  "_rainfall_note": "Intensidad de lluvia de diseño (mm/h) de la comuna para el período de retorno que exija la norma de aguas lluvias (RIDAA, DS 50/2002 MOP; sin transcribir). null = tools/aguas_lluvias.py informa INCONCLUSO.",
   "thermal_zone": null,
   "_thermal_zone_note": "Thermal zone A-I of the comuna per OGUC Art. 4.1.10 as replaced by DS N°15/2024 MINVU (previously 7 zones). Selects the entire U-value limit table; without it no thermal verdict is possible.",
   "seismic": {

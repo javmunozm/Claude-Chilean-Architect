@@ -1,0 +1,8 @@
+{
+  "_nota": "Datos de la viñeta de las láminas. null = 'por definir' en la lámina; no se inventan. Dirección, rol y comuna se leen de ../../../site.json.",
+  "nombre": "Vivienda unifamiliar 2 pisos con patio interior",
+  "etapa": "anteproyecto",
+  "propietario": null,
+  "arquitecto": null,
+  "arquitecto_registro": null
+}

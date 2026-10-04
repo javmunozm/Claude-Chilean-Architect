@@ -1,0 +1,10 @@
+{
+  "_nota": "PROPUESTA del agente structural-calculator (2026-10-04), NO decisión del usuario ni del calculista: el documento de origen no define el sistema estructural. Solo dice que el muro del eje B entre los ejes 2 y 3 queda apoyado en una viga de 6,00 m 'que debe dimensionar el ingeniero estructural' y que la losa del 2º piso vuela 1,50 m sobre el patio. Cambiar 'estado' a 'confirmada' al aprobarla.",
+  "estado": "propuesta",
+  "sistema": "Muros de albañilería confinada (ladrillo hecho a máquina) de 20 cm con pilares y cadenas de hormigón armado; losa del 2º piso de hormigón armado; estructura de cubierta de madera; tabiques interiores de 12 cm livianos, no estructurales",
+  "muros_estructurales_espesor_min_m": 0.20,
+  "losa_p2": {"material": "hormigón armado", "espesor_m": 0.25},
+  "viga_eje_B": {"descripcion": "Viga de hormigón armado bajo el muro del eje B del 2º piso, entre los ejes 2 y 3", "x": 4.4, "y0": 4.2, "y1": 10.2, "luz_m": 6.0},
+  "voladizo_patio": {"descripcion": "Losa del 2º piso en voladizo sobre el patio, apoyada en el muro de x = 3,90", "luz_m": 1.5},
+  "fundaciones": "Cimiento corrido de hormigón bajo todos los muros estructurales, con sobrecimiento"
+}

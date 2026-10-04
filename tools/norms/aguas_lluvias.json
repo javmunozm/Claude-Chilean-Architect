@@ -1,0 +1,15 @@
+{
+  "_meta": {
+    "uso": "Parámetros de tools/aguas_lluvias.py (canales y bajadas). Mismo criterio que rules.json: un valor con source UNVERIFIED o CONVENCION se usa para dibujar y proponer, pero NINGÚN veredicto hidráulico sale CUMPLE mientras no esté transcrito de su fuente oficial.",
+    "fuente_a_transcribir": "Reglamento de instalaciones domiciliarias de agua potable y alcantarillado (RIDAA, DS 50/2002 MOP) y su manual de normas técnicas; NCh relativas a aguas lluvias domiciliarias. Ninguno transcrito en el repo.",
+    "intensidad": "La intensidad de lluvia de diseño depende de la comuna y del período de retorno: va en site.json (rainfall_intensity_mm_h). Mientras sea null, la verificación hidráulica es INCONCLUSA."
+  },
+  "coef_escorrentia_cubierta": {"value": 1.0, "source": "UNVERIFIED", "nota": "cubierta impermeable: todo lo que cae escurre"},
+  "fraccion_muro_vertical": {"value": 0.5, "source": "UNVERIFIED", "nota": "fracción del área de muro que descarga sobre un canal de encuentro (lluvia con viento)"},
+  "canal_ancho_m": {"value": 0.15, "source": "CONVENCION", "nota": "sección propuesta del canal; se verifica con la intensidad cuando exista"},
+  "canal_alto_m": {"value": 0.10, "source": "CONVENCION"},
+  "bajada_lado_m": {"value": 0.08, "source": "CONVENCION", "nota": "bajada de sección cuadrada 80 mm (o circular equivalente)"},
+  "largo_max_canal_por_bajada_m": {"value": 12.0, "source": "UNVERIFIED", "nota": "sobre este largo, una bajada en cada extremo"},
+  "pendiente_canal": {"value": 0.005, "source": "UNVERIFIED", "nota": "pendiente mínima hacia la bajada"},
+  "capacidad_bajada_l_s": {"value": 1.0, "source": "UNVERIFIED", "nota": "caudal admisible de una bajada de 80 mm; sin fuente transcrita"}
+}

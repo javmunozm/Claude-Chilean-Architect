@@ -5,7 +5,7 @@ changes, and when a version is added to its `versions/` folder.
 
 | Project | Description | Comuna | Status | Versions |
 |---------|-------------|--------|--------|----------|
-| CasaPatioInterior | Vivienda unifamiliar 2 pisos con patio interior, 13,00 × 14,00 m (desde `sources/Test`) | por definir | `review` | `versions/v0` (rev. H; rev. G de origen en `v0/source/`), `versions/v2` (← v0), `versions/v3` (← v2), `versions/v4` (← v3, juego de 5 láminas) |
+| CasaPatioInterior | Vivienda unifamiliar 2 pisos con patio interior, 13,00 × 14,00 m (desde `sources/Test`) | por definir | `review` | `versions/v0` (rev. H; rev. G de origen en `v0/source/`), `versions/v2` (← v0), `versions/v3` (← v2), `versions/v4` (← v3, juego de 5 láminas), `versions/v5` (← v4, + aguas lluvias, terminaciones, detalles, memoria de cálculo, EETT) |
 
 ## Status values
 

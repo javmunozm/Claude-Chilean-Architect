@@ -1,0 +1,33 @@
+{
+  "_nota": [
+    "PROPUESTA del agente facade-designer (2026-10-04), NO decisión del usuario: el documento de origen (rev. G) no especifica materiales ni terminaciones. Cada partida queda 'propuesta' hasta que el usuario o el arquitecto la confirme; al confirmarla, cambiar 'estado' a 'confirmada'.",
+    "Criterio de la propuesta: coherente con los renders (muros claros, cubierta gris oscuro) y con el clima lluvioso de Concepción (zócalo hidrófugo, cubierta metálica prepintada, canales metálicos). Ningún valor térmico se declara aquí: la transmitancia la verifica thermal-reviewer contra OGUC 4.1.10 / DS 15 (sin transcribir).",
+    "Los espesores son los del modelo (muro 0,20 / 0,12, losa 0,25, cubierta 0,22 / 0,18); las capas de terminación se dibujan en los detalles sin cambiar el modelo."
+  ],
+  "partidas": [
+    {"id": 1, "elemento": "Muros exteriores", "zona": "sobre el zócalo, todas las fachadas",
+     "terminacion": "Estuco de mortero de cemento afinado, pintura elastomérica exterior", "color": "blanco hueso",
+     "espesor_mm": 20, "estado": "propuesta"},
+    {"id": 2, "elemento": "Zócalo", "zona": "desde el terreno hasta +0,60 m, todo el perímetro",
+     "terminacion": "Estuco de mortero con hidrófugo, pintura de alto tráfico", "color": "gris medio",
+     "altura_m": 0.60, "espesor_mm": 20, "estado": "propuesta"},
+    {"id": 3, "elemento": "Cubiertas", "zona": "cubierta a dos aguas y cubierta del ala oriente",
+     "terminacion": "Plancha de acero prepintado ondulada o trapezoidal sobre fieltro asfáltico y costaneras", "color": "gris grafito",
+     "estado": "propuesta"},
+    {"id": 4, "elemento": "Aleros y tapacanes", "zona": "bordes de cubierta (voladizo de 0,40 m)",
+     "terminacion": "Tapacán y forro de alero en fibrocemento pintado", "color": "blanco hueso",
+     "estado": "propuesta"},
+    {"id": 5, "elemento": "Canales, bajadas, forros y babetas", "zona": "ver cuadro de aguas lluvias",
+     "terminacion": "Acero prepintado, uniones remachadas y selladas", "color": "gris grafito",
+     "estado": "propuesta"},
+    {"id": 6, "elemento": "Ventanas y puertas exteriores vidriadas", "zona": "todos los vanos de fachada",
+     "terminacion": "Perfil de PVC con doble vidriado hermético (termopanel)", "color": "blanco",
+     "estado": "propuesta"},
+    {"id": 7, "elemento": "Puerta de acceso", "zona": "P01, porche",
+     "terminacion": "Puerta de madera sólida con barniz exterior", "color": "natural",
+     "estado": "propuesta"},
+    {"id": 8, "elemento": "Pavimentos exteriores", "zona": "porche, patio interior, paso",
+     "terminacion": "Baldosa microvibrada antideslizante sobre radier", "color": "gris",
+     "estado": "propuesta"}
+  ]
+}

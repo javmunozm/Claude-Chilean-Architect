@@ -1,6 +1,6 @@
 # The subagents
 
-Eleven agents, defined in `.claude/agents/`. Each owns a domain of Chilean
+Fifteen agents, defined in `.claude/agents/`. Each owns a domain of Chilean
 building regulation or a stage of production, and each is briefed to cite the
 article behind every verdict.
 
@@ -12,13 +12,17 @@ article behind every verdict.
 | `program-architect` | Rooms, areas, circulation, zoning | OGUC Art. 4.1, NCh 1079 |
 | `plan-drafter` | FreeCAD plans, sections, elevations, details | — |
 | `structural-reviewer` | Structural system, seismic verification | NCh 433, 3171, 2369 |
+| `structural-calculator` | Predimensioning: loads, base shear, wall shear, beam, footings | NCh 433, 1537, 2123, 3171, 430, 204 |
 | `thermal-reviewer` | Envelope, insulation, condensation | NCh 853, OGUC 4.1.10 |
 | `fire-safety-reviewer` | Fire resistance, egress, compartments | OGUC Art. 4.3, NCh 935 |
 | `accessibility-reviewer` | Universal accessibility | OGUC 4.1.7, Ley 20.422 |
 | `installations-reviewer` | Electrical, plumbing, gas | NCh Elec. 4/2003, NCh 2485 |
+| `drainage-designer` | Gutters, downpipes, catchment, hydraulic check | RIDAA, DS 50/2002 MOP (not transcribed) |
+| `facade-designer` | Facade finishes, plinth, roofing, materials and colours | OGUC 4.1.10 / DS 15 (via thermal-reviewer) |
+| `detail-drafter` | Construction details at 1:10 / 1:20, cropped from model sections | — |
 | `3d-modeler` | Blender modeling and rendering | — |
 | `form-auditor` | Auditing real 3D form against intent | — |
-| `spec-writer` | EETT, schedules, budgets | — |
+| `spec-writer` | EETT, quantity take-off, budgets | the norms each item cites |
 
 ## Handoff order
 
@@ -31,6 +35,8 @@ plan-drafter            (FreeCAD floor plans, sections, elevations)
       ▼
 structural-reviewer     (structural system, seismic check)
       ▼
+structural-calculator   (predimensioning report for the calculista)
+      ▼
 thermal-reviewer        (envelope, insulation, condensation)
       ▼
 fire-safety-reviewer    (resistance, egress, compartments)
@@ -38,6 +44,12 @@ fire-safety-reviewer    (resistance, egress, compartments)
 accessibility-reviewer  (universal access compliance)
       ▼
 installations-reviewer  (MEP layout and sizing)
+      ▼
+drainage-designer       (gutters and downpipes, in the model and on the roof plan)
+      ▼
+facade-designer         (finishes on the elevations; proposals until confirmed)
+      ▼
+detail-drafter          (detail sheet from model sections + finishes + structure)
       ▼
 3d-modeler              (Blender 3D model and renders)
       ▼
@@ -52,9 +64,18 @@ reviewer because there is nothing to review until geometry exists. spec-writer
 comes last because specifying an uncleared design produces documentation for a
 building that cannot be permitted.
 
-The four reviewers between plan-drafter and 3d-modeler are ordered by how
-expensive their findings are to absorb: a structural change invalidates more
-downstream work than an accessibility fix, so it surfaces first.
+The reviewers after plan-drafter are ordered by how expensive their findings are to
+absorb: a structural change invalidates more downstream work than an accessibility
+fix, so it surfaces first. `structural-calculator` follows `structural-reviewer`
+directly, because a wall-density shortfall is a plan change.
+
+The three design stages that follow the reviewers each feed the next:
+
+- `drainage-designer` fixes the gutters and downpipes;
+- `facade-designer` gives them a material and colour, along with the finishes;
+- `detail-drafter` draws all of it at the junctions.
+
+`spec-writer` then quantifies everything from measured files, not from drawings.
 
 ## Briefing an agent
 
@@ -106,6 +127,9 @@ built, and the difference is itself a finding.
 |------|-------|------|
 | `tools/puertas.py` (via `json_to_dxf.py` / `derive_puertas.py`) | `plan-drafter` | The user indicates doors. If not indicated: every bedroom gets its own door and unreachable rooms get one. Stairs and corridors get one only with `--puertas-circulacion`. Swing and hinge follow R1–R9 (convention). Generated doors are proposals (`*`) for the user to confirm, and `accessibility-reviewer` names them. |
 | `tools/cubierta.py` | `3d-modeler` | The only source of roofs, gables, under-roof closures and wall junctions for every 3D builder. |
+| `tools/aguas_lluvias.py` | `drainage-designer` | Gutters and downpipes come from the roofs and walls of the plan JSON, never drawn by hand. Hydraulic check INCONCLUSIVE while `rainfall_intensity_mm_h` is null. |
+| `tools/estructura.py` | `structural-calculator` | Predimensioning from `model_extract.json`, with parameters in `tools/norms/estructura.json`. Seismic zone or soil null → every scenario is run and the worst is checked; verdict INCONCLUSIVE. |
+| `tools/md_pdf.py` | `structural-calculator`, `spec-writer` | Markdown → A4 PDF through headless Chrome/Edge/Chromium (LibreOffice Writer as fallback). The `.md` stays the source. |
 | `tools/scripts/verificar_modelo3d.py` | `3d-modeler`, `form-auditor` | Run on every exported OBJ. It requires 0 m² uncovered, 0 escaping rays and 0 open roof edges. A coincident-face area above 0 is a defect until located. |
 
 ## Cross-cutting findings

@@ -177,6 +177,32 @@ Check the PDF page size after any change to the sheet code. ezdxf's `finalize()`
 shrinks the figure, which is how v2/v3 shipped "1:50" sheets at ~1:172
 (docs/lessons.md).
 
+## Drainage, finishes, structure, details and EETT (v5 on)
+
+`projects/CasaPatioInterior/versions/v5/` adds these to the drawing set. Order matters:
+each step reads the previous one's output.
+
+```bash
+# gutters and downpipes (system Python; build_model.py reads the JSON into the model)
+python tools/aguas_lluvias.py <plan.json> --site projects/<Name>/site.json -o $P/calcs/aguas_lluvias.json
+
+# structural predimensioning + report (after measuring the model)
+python tools/estructura.py <plan.json> --extract $P/calcs/model_extract.json \
+  --site projects/<Name>/site.json --propuesta $P/source/estructura.json \
+  --recintos $P/calcs/recintos_vN.json -o $P/calcs/estructura_calc.json \
+  --memoria $P/exports/memoria_calculo_vN.md
+python tools/md_pdf.py $P/exports/memoria_calculo_vN.md
+
+# sheets: plans, details (sheet 6), then the other views and the PDF of the set
+python $P/scripts/make_dxf.py && python $P/scripts/make_details.py && python $P/scripts/make_views.py
+
+# EETT + quantity take-off (CSV with empty price columns)
+python $P/scripts/make_eett.py
+```
+
+`tools/md_pdf.py` prints through headless Chrome, Edge or Chromium. A LibreOffice
+install with only `libreoffice-core` has no Writer and cannot convert HTML (measured).
+
 ## Doors: hinge, swing and missing doors
 
 ```bash

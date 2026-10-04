@@ -1,0 +1,314 @@
+{
+ "_nota": "Predimensionamiento (tools/estructura.py). No reemplaza el proyecto de cálculo firmado por un ingeniero civil.",
+ "veredicto": "INCONCLUSO: zona sísmica y suelo del sitio en null (site.json); se muestran escenarios y el más desfavorable",
+ "parametros_no_verificados": [
+  "pesos.albanileria_kN_m3",
+  "pesos.hormigon_armado_kN_m3",
+  "pesos.tabique_liviano_kN_m2",
+  "pesos.cubierta_kN_m2",
+  "pesos.terminaciones_piso_kN_m2",
+  "sobrecargas.vivienda_kN_m2",
+  "sobrecargas.cubierta_kN_m2",
+  "sobrecargas.fraccion_sismica_vivienda",
+  "sismo.A0_g_por_zona",
+  "sismo.S_por_suelo",
+  "sismo.I_vivienda",
+  "sismo.R_albanileria_confinada",
+  "sismo.Cmax_factor_R4",
+  "sismo.Cmin_divisor",
+  "albanileria.tau_m_MPa",
+  "albanileria.corte_admisible",
+  "hormigon.fy_MPa",
+  "hormigon.phi_flexion",
+  "hormigon.combinacion_ultima"
+ ],
+ "propuesta": {
+  "_nota": "PROPUESTA del agente structural-calculator (2026-10-04), NO decisión del usuario ni del calculista: el documento de origen no define el sistema estructural. Solo dice que el muro del eje B entre los ejes 2 y 3 queda apoyado en una viga de 6,00 m 'que debe dimensionar el ingeniero estructural' y que la losa del 2º piso vuela 1,50 m sobre el patio. Cambiar 'estado' a 'confirmada' al aprobarla.",
+  "estado": "propuesta",
+  "sistema": "Muros de albañilería confinada (ladrillo hecho a máquina) de 20 cm con pilares y cadenas de hormigón armado; losa del 2º piso de hormigón armado; estructura de cubierta de madera; tabiques interiores de 12 cm livianos, no estructurales",
+  "muros_estructurales_espesor_min_m": 0.2,
+  "losa_p2": {
+   "material": "hormigón armado",
+   "espesor_m": 0.25
+  },
+  "viga_eje_B": {
+   "descripcion": "Viga de hormigón armado bajo el muro del eje B del 2º piso, entre los ejes 2 y 3",
+   "x": 4.4,
+   "y0": 4.2,
+   "y1": 10.2,
+   "luz_m": 6.0
+  },
+  "voladizo_patio": {
+   "descripcion": "Losa del 2º piso en voladizo sobre el patio, apoyada en el muro de x = 3,90",
+   "luz_m": 1.5
+  },
+  "fundaciones": "Cimiento corrido de hormigón bajo todos los muros estructurales, con sobrecimiento"
+ },
+ "pesos_kN": {
+  "muros_p1": 627.4,
+  "muros_p2": 356.2,
+  "tabiques_p1": 37.4,
+  "tabiques_p2": 47.2,
+  "hastiales_cierres": 87.1,
+  "losa_p2": 660.3,
+  "terminaciones_p2": 105.6,
+  "cubierta": 79.8
+ },
+ "sobrecargas_kN": {
+  "vivienda_p2": 211.3,
+  "cubierta": 199.4
+ },
+ "area_losa_p2_m2": 105.65,
+ "area_cubiertas_m2": 199.39,
+ "sismo": {
+  "P_nivel_p2_kN": 1352.8,
+  "P_nivel_techo_kN": 368.6,
+  "P_total_kN": 1721.4,
+  "z_p2": 2.85,
+  "z_techo": 5.35,
+  "escenarios": [
+   {
+    "zona": "1",
+    "suelo": "A",
+    "C": 0.063,
+    "Q0_kN": 108.4,
+    "corte_p2_kN": 40.2,
+    "corte_p1_kN": 108.4
+   },
+   {
+    "zona": "1",
+    "suelo": "B",
+    "C": 0.07,
+    "Q0_kN": 120.5,
+    "corte_p2_kN": 44.6,
+    "corte_p1_kN": 120.5
+   },
+   {
+    "zona": "1",
+    "suelo": "C",
+    "C": 0.0735,
+    "Q0_kN": 126.5,
+    "corte_p2_kN": 46.9,
+    "corte_p1_kN": 126.5
+   },
+   {
+    "zona": "1",
+    "suelo": "D",
+    "C": 0.084,
+    "Q0_kN": 144.6,
+    "corte_p2_kN": 53.6,
+    "corte_p1_kN": 144.6
+   },
+   {
+    "zona": "1",
+    "suelo": "E",
+    "C": 0.091,
+    "Q0_kN": 156.6,
+    "corte_p2_kN": 58.0,
+    "corte_p1_kN": 156.6
+   },
+   {
+    "zona": "2",
+    "suelo": "A",
+    "C": 0.0945,
+    "Q0_kN": 162.7,
+    "corte_p2_kN": 60.3,
+    "corte_p1_kN": 162.7
+   },
+   {
+    "zona": "2",
+    "suelo": "B",
+    "C": 0.105,
+    "Q0_kN": 180.7,
+    "corte_p2_kN": 67.0,
+    "corte_p1_kN": 180.7
+   },
+   {
+    "zona": "2",
+    "suelo": "C",
+    "C": 0.1103,
+    "Q0_kN": 189.8,
+    "corte_p2_kN": 70.3,
+    "corte_p1_kN": 189.8
+   },
+   {
+    "zona": "2",
+    "suelo": "D",
+    "C": 0.126,
+    "Q0_kN": 216.9,
+    "corte_p2_kN": 80.4,
+    "corte_p1_kN": 216.9
+   },
+   {
+    "zona": "2",
+    "suelo": "E",
+    "C": 0.1365,
+    "Q0_kN": 235.0,
+    "corte_p2_kN": 87.1,
+    "corte_p1_kN": 235.0
+   },
+   {
+    "zona": "3",
+    "suelo": "A",
+    "C": 0.126,
+    "Q0_kN": 216.9,
+    "corte_p2_kN": 80.4,
+    "corte_p1_kN": 216.9
+   },
+   {
+    "zona": "3",
+    "suelo": "B",
+    "C": 0.14,
+    "Q0_kN": 241.0,
+    "corte_p2_kN": 89.3,
+    "corte_p1_kN": 241.0
+   },
+   {
+    "zona": "3",
+    "suelo": "C",
+    "C": 0.147,
+    "Q0_kN": 253.0,
+    "corte_p2_kN": 93.8,
+    "corte_p1_kN": 253.0
+   },
+   {
+    "zona": "3",
+    "suelo": "D",
+    "C": 0.168,
+    "Q0_kN": 289.2,
+    "corte_p2_kN": 107.2,
+    "corte_p1_kN": 289.2
+   },
+   {
+    "zona": "3",
+    "suelo": "E",
+    "C": 0.182,
+    "Q0_kN": 313.3,
+    "corte_p2_kN": 116.1,
+    "corte_p1_kN": 313.3
+   }
+  ],
+  "del_sitio": null,
+  "peor": {
+   "zona": "3",
+   "suelo": "E",
+   "C": 0.182,
+   "Q0_kN": 313.3,
+   "corte_p2_kN": 116.1,
+   "corte_p1_kN": 313.3
+  },
+  "zona_sitio": null,
+  "suelo_sitio": null
+ },
+ "caso_corte": {
+  "zona": "3",
+  "suelo": "E",
+  "C": 0.182,
+  "Q0_kN": 313.3,
+  "corte_p2_kN": 116.1,
+  "corte_p1_kN": 313.3
+ },
+ "muros": [
+  {
+   "nivel": "p1",
+   "dir": "X",
+   "largo_neto_m": 16.55,
+   "area_muros_m2": 3.31,
+   "area_piso_m2": 155.64,
+   "densidad_pct": 2.13,
+   "sigma0_kPa": 174.5,
+   "Va_kN": 450.0,
+   "Q_kN": 313.3,
+   "uso": 0.696
+  },
+  {
+   "nivel": "p1",
+   "dir": "Y",
+   "largo_neto_m": 32.78,
+   "area_muros_m2": 6.556,
+   "area_piso_m2": 155.64,
+   "densidad_pct": 4.21,
+   "sigma0_kPa": 174.5,
+   "Va_kN": 891.2,
+   "Q_kN": 313.3,
+   "uso": 0.352
+  },
+  {
+   "nivel": "p2",
+   "dir": "X",
+   "largo_neto_m": 13.4,
+   "area_muros_m2": 2.68,
+   "area_piso_m2": 105.65,
+   "densidad_pct": 2.54,
+   "sigma0_kPa": 63.2,
+   "Va_kN": 328.5,
+   "Q_kN": 116.1,
+   "uso": 0.353
+  },
+  {
+   "nivel": "p2",
+   "dir": "Y",
+   "largo_neto_m": 15.74,
+   "area_muros_m2": 3.148,
+   "area_piso_m2": 105.65,
+   "densidad_pct": 2.98,
+   "sigma0_kPa": 63.2,
+   "Va_kN": 385.9,
+   "Q_kN": 116.1,
+   "uso": 0.301
+  }
+ ],
+ "viga_eje_B": {
+  "luz_m": 6.0,
+  "muro_sobre_kN_m": 5.67,
+  "ancho_tributario_m": 2.55,
+  "D_kN_m": 25.4,
+  "L_kN_m": 5.1,
+  "wu_kN_m": 38.64,
+  "Mu_kNm": 173.9,
+  "Vu_kN": 115.9,
+  "h_predim_m": 0.5,
+  "b_m": 0.2,
+  "peso_propio_kN_m": 1.25,
+  "As_cm2": 11.36,
+  "nota": "muro del 2º piso sobre la viga (pesado como albañilería: envolvente, la propuesta lo declara tabique de 12 cm) + peso propio del descolgado + losa tributaria; la cubierta que pueda cargar ese muro no se incluyó"
+ },
+ "voladizo_patio": {
+  "luz_m": 1.5,
+  "espesor_m": 0.25,
+  "h_min_m": 0.15,
+  "wu_kN_m2": 11.9,
+  "Mu_kNm_por_m": 13.39,
+  "As_cm2_por_m": 1.97,
+  "espesor_suficiente": true
+ },
+ "losa_p2": {
+  "recinto": "Dormitorio 1",
+  "luz_m": 3.54,
+  "espesor_m": 0.25,
+  "h_min_m": 0.118,
+  "espesor_suficiente": true
+ },
+ "cimientos": {
+  "largo_muros_p1_m": 89.88,
+  "q_media_kN_m": 19.2,
+  "q_max_kN_m": 28.2,
+  "escenarios": [
+   {
+    "sigma_adm_kPa": 100,
+    "b_media_m": 0.19,
+    "b_max_m": 0.28
+   },
+   {
+    "sigma_adm_kPa": 150,
+    "b_media_m": 0.13,
+    "b_max_m": 0.19
+   },
+   {
+    "sigma_adm_kPa": 200,
+    "b_media_m": 0.1,
+    "b_max_m": 0.14
+   }
+  ]
+ }
+}
