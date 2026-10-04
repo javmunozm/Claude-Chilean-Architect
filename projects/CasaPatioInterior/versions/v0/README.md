@@ -97,9 +97,9 @@ primer piso coincide exactamente con el porche de acceso.
 | 6 | Visor 3D HTML dependía de three.js por CDN | menor | **resuelto**: el 3D se construye en Blender (`exports/model/casa_rev_h.blend`) |
 | 7 | Altura bajo cubierta inclinada en p2 no medida | menor | abierto |
 | 8 | Cubierta mal construida en 3D: faldones junto al patio al 152 % y 56 % (no al 35,7 %), cumbrera en +7,32 (no +7,10), entretecho abierto al patio; bandas 2 y 3 del JSON sin voladizo sobre el patio (9,25 y 10,45 en vez de 8,75 y 9,95) | grave | **corregido 2026-10-01**: medido 35,7 % en todos los faldones, cumbrera 7,100, 0 rendijas. Ver `docs/lessons.md`. El OBJ de intercambio sale de otro generador (`build3d.py`) y no había recibido la corrección: 857 rayos escapaban y 29 aristas de cubierta abiertas. **Regenerado 2026-10-02** con la cubierta compartida (`tools/cubierta.py`): 0 y 0 |
-| 9 | **Orientación contradictoria.** La convención del repo (+Y sur) pone el norte hacia y = 0, pero el documento de origen titula «ELEVACIÓN FRONTAL · SUR» a la fachada del porche (y = 0), «POSTERIOR · NORTE» a la de y = 14, y `recintos.json` llama «Galería/Pasarela norte» a lo que está en y alto. La flecha de norte de las plantas, el sol de Blender y los nombres de los renders siguen la convención, y por tanto contradicen al documento | **grave** para asoleamiento y térmica | **abierto**: decidir cuál vale. Si el JSON es +Y norte, basta poner `"norte": "+y"` en `meta` para las plantas |
+| 9 | **Orientación contradictoria.** La convención del repo (+Y sur) pone el norte hacia y = 0, pero el documento de origen titula «ELEVACIÓN FRONTAL · SUR» a la fachada del porche (y = 0), «POSTERIOR · NORTE» a la de y = 14, y `recintos.json` llama «Galería/Pasarela norte» a lo que está en y alto. La flecha de norte de las plantas, el sol de Blender y los nombres de los renders siguen la convención, y por tanto contradicen al documento | **grave** para asoleamiento y térmica | **no aplica: proyecto de prueba** (decisión del usuario, 2026-10-04). Si alguna vez hiciera falta: con el JSON en +Y norte, basta poner `"norte": "+y"` en `meta` para las plantas |
 | 10 | El rótulo «Hall de acceso» (`recintos.json`, punto 5,60; 1,15) cae dentro del porche (y 0–1,50), no en el hall, que empieza en y = 1,70 | menor | abierto: el punto es aproximado por definición; falta la delimitación real |
-| 11 | Renders en `exports/renders/` anteriores a la corrección de cubierta | menor | abierto: regenerar con el comando de abajo (EEVEE) |
+| 11 | Renders en `exports/renders/` anteriores a la corrección de cubierta | menor | **no aplica: proyecto de prueba** (decisión del usuario, 2026-10-04); no se regeneran. Comando de abajo si hiciera falta (EEVEE) |
 | 12 | Superficies coincidentes (franjas negras): 57,5 m² en el `.blend` y 88,0 m² en el OBJ. Además: terreno del `.blend` con cara superior en +0,25 (sobre el piso); vidrio del OBJ separado 2 cm de las jambas, una rendija a cada lado de cada vano | media | **corregido 2026-10-02**: quedan 0,144 m² en ambos, el pavimento del porche dentro de la losa (dato del JSON), tapado por el pavimento exterior. Terreno con cara superior en −0,15; 0 rendijas |
 
 El hallazgo 3 es el más relevante para permisos: el propio documento reconoce
@@ -152,7 +152,7 @@ se regeneraron.** Con los puntos de rótulo aproximados de `recintos.json` (hall
 las reglas eligen recintos equivocados. Medido: P01 queda «abre hacia Cocina + Comedor +
 Galería poniente (sin regla específica)», porque el rótulo del hall cae en el porche. Con
 los recintos medidos de v2 (`../v2/calcs/recintos_v2.json`), las 18 decisiones coinciden
-con las de v2. Falta decidir con cuáles regenerarlos.
+con las de v2. No se regeneran: proyecto de prueba (decisión del usuario, 2026-10-04).
 
 > Las superficies de recinto llevan la marca **(s/doc)**: provienen del cuadro
 > del documento rev. G y **no están medidas** desde la geometría. Ver hallazgo 4.

@@ -40,7 +40,8 @@ versions/vN/
 
 - Comuna, zona térmica y zona sísmica sin definir (`site.json` en null).
 - Umbrales OGUC sin transcribir: `norm_check` da INCONCLUSO.
-- Orientación norte por decidir: v0 usa la convención del repo (+Y sur); v2 y v3, la del
-  documento (+Y norte).
+- Orientación norte: v0 usa la convención del repo (+Y sur); v2 a v5, la del documento
+  (+Y norte). **No aplica: proyecto de prueba** (decisión del usuario, 2026-10-04); no se
+  unifica.
 - Holgura de escalera (1,259 m) y escalera que termina 0,30 m antes de la losa: decisión
   de diseño abierta (ver `versions/v2/README.md`).
