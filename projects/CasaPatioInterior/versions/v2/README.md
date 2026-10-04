@@ -164,6 +164,9 @@ clasifica por nombre) y por eso no activan reglas; el documento no declara su us
 - Sin cortes ni elevaciones DXF (v0 tampoco los tenía) ni planta de cubierta.
 - Las vistas 3D de `exports/renders/` son de control (Cycles, `tools/scripts/vistas_obj.py`), no renders de presentación.
 
+> **PDF fuera de escala.** `planos_v2.pdf` mide 172 x 122 mm aunque la viñeta dice «1:50 (A2)»:
+> impreso queda a ~1:172. Causa y corrección en `../v4/README.md`; los DXF sí están en metros.
+
 ## Archivos
 
 ```

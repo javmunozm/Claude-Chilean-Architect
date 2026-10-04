@@ -15,9 +15,13 @@ propio README, sus scripts, sus cálculos y sus exportaciones (`docs/versioning.
 | v0 | `versions/v0/` | — | rev. H: modelo JSON (corrige la escalera de rev. G a 17 contrahuellas; bandas de cubierta corregidas el 2026-10-01). Planos desde el JSON, 3D en Blender | `review` |
 | v2 | `versions/v2/` | v0 | Reconstrucción con objetos Arch en FreeCAD, 29 recintos medidos, DXF/PDF desde el modelo medido, OBJ con normales; cubierta compartida (`tools/cubierta.py`) y puertas (`tools/puertas.py`). Detecta 2 problemas de escalera | `review` |
 | v3 | `versions/v3/` | v2 | Rehecha el 2026-10-02 desde `sources/Test` con el sistema actualizado. Geometría y puertas idénticas a v2 (medido); cadena completa re-ejecutada y verificada en 3D | `review` |
+| v4 | `versions/v4/` | v3 | Juego de planos completo: 5 láminas A2 a escala real (plantas, cubierta, 4 elevaciones, 2 cortes), viñeta con datos del proyecto, fecha y numeración. Geometría idéntica a v3 (medido) | `review` |
 
 Para comparar cómo cambió el método entre versiones:
-`diff -r versions/v2/scripts versions/v3/scripts`.
+`diff -r versions/v3/scripts versions/v4/scripts`.
+
+**Láminas vigentes:** `versions/v4/exports/planos_v4.pdf`. Los PDF de v2 y v3 no están a
+escala (defecto corregido en v4, ver su README).
 
 ## Estructura de cada versión
 

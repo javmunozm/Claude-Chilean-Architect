@@ -87,6 +87,9 @@ tiene comuna (ver `docs/region_concepcion.md`).
 | 6 | Terreno del OBJ desplazado 1 m respecto del original | ver contraste | menor | abierto, sin investigar |
 | 7 | Sin cortes, elevaciones ni planta de cubierta | — | menor | abierto (v0 y v2 tampoco los tenían) |
 
+> **PDF fuera de escala.** `planos_v3.pdf` mide 172 x 122 mm aunque la viñeta dice «1:50 (A2)»:
+> impreso queda a ~1:172. Causa y corrección en `../v4/README.md`; los DXF sí están en metros.
+
 ## Archivos
 
 ```

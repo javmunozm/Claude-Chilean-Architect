@@ -1,0 +1,589 @@
+{
+ "_nota": [
+  "Convención de diseño, no norma (tools/puertas.py, reglas R1-R9).",
+  "Mano: observador en el lado desde el que se EMPUJA la puerta.",
+  "generada=true: puerta que el modelo no trae (dormitorio sin puerta propia o recinto sin acceso); es una propuesta."
+ ],
+ "niveles": {
+  "p1": [
+   {
+    "codigo": "P01",
+    "nivel": "p1",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Hall de Acceso",
+    "lado_B": "Porche",
+    "tipo": "batiente",
+    "abre_hacia": "Hall de Acceso",
+    "lado": "A",
+    "normal": [
+     0.0,
+     1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       6.1,
+       -12.3
+      ],
+      "radio": 0.9,
+      "a0_deg": -180.0,
+      "a1_deg": -270.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.7,
+    "regla": "R3 acceso: abre hacia el interior",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P02",
+    "nivel": "p1",
+    "ancho": 2.7,
+    "alto": 2.36,
+    "lado_A": null,
+    "lado_B": "Living",
+    "tipo": "corredera",
+    "regla": "R1 ventanal >= 2,0 m: corredera de vidrio"
+   },
+   {
+    "codigo": "P03",
+    "nivel": "p1",
+    "ancho": 2.8,
+    "alto": 2.35,
+    "lado_A": "Patio Interior",
+    "lado_B": "Pasillo Galería Poniente",
+    "tipo": "corredera",
+    "regla": "R1 ventanal >= 2,0 m: corredera de vidrio"
+   },
+   {
+    "codigo": "P04",
+    "nivel": "p1",
+    "ancho": 0.7,
+    "alto": 2.1,
+    "lado_A": "Pasillo Galería Norte",
+    "lado_B": "Patio Interior",
+    "tipo": "batiente",
+    "abre_hacia": "Patio Interior",
+    "lado": "B",
+    "normal": [
+     -0.0,
+     -1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       5.6,
+       -5.0
+      ],
+      "radio": 0.7,
+      "a0_deg": 0.0,
+      "a1_deg": -90.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 1.7,
+    "regla": "R3b puerta a exterior desde circulación: abre hacia el exterior",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P05",
+    "nivel": "p1",
+    "ancho": 1.6,
+    "alto": 2.35,
+    "lado_A": "Living",
+    "lado_B": "Paso Cubierto",
+    "tipo": "doble hoja batiente",
+    "abre_hacia": "Paso Cubierto",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       9.0,
+       -3.7
+      ],
+      "radio": 0.8,
+      "a0_deg": 90.0,
+      "a1_deg": 180.0,
+      "jamba": -1
+     },
+     {
+      "bisagra": [
+       9.0,
+       -2.1
+      ],
+      "radio": 0.8,
+      "a0_deg": -90.0,
+      "a1_deg": -180.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "ambos lados",
+    "distancia_a_esquina": 0.0,
+    "regla": "R2 doble hoja, abre hacia el exterior",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P06",
+    "nivel": "p1",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Hall Escalera",
+    "lado_B": "Escalera",
+    "tipo": "batiente",
+    "abre_hacia": "Hall Escalera",
+    "lado": "A",
+    "normal": [
+     1.0,
+     0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.26,
+       -9.95
+      ],
+      "radio": 0.9,
+      "a0_deg": -90.0,
+      "a1_deg": 0.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "izquierda",
+    "distancia_a_esquina": 0.09,
+    "regla": "R8 no abre hacia la escalera",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P07",
+    "nivel": "p1",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Hall Escalera",
+    "lado_B": "Baño 2",
+    "tipo": "batiente",
+    "abre_hacia": "Baño 2",
+    "lado": "B",
+    "normal": [
+     -0.0,
+     -1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.7,
+       -11.96
+      ],
+      "radio": 0.9,
+      "a0_deg": 0.0,
+      "a1_deg": -90.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.44,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P08",
+    "nivel": "p1",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Logia",
+    "lado_B": "Hall de Acceso",
+    "tipo": "batiente",
+    "abre_hacia": "Logia",
+    "lado": "A",
+    "normal": [
+     1.0,
+     0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       7.0,
+       -10.8
+      ],
+      "radio": 0.8,
+      "a0_deg": -90.0,
+      "a1_deg": 0.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "izquierda",
+    "distancia_a_esquina": 0.94,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P09",
+    "nivel": "p1",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Cocina",
+    "lado_B": "Logia",
+    "tipo": "batiente",
+    "abre_hacia": "Logia",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       9.0,
+       -10.6
+      ],
+      "radio": 0.8,
+      "a0_deg": -90.0,
+      "a1_deg": -180.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.74,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P10",
+    "nivel": "p1",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio 1",
+    "lado_B": "Pasillo Galería Norte",
+    "tipo": "batiente",
+    "abre_hacia": "Dormitorio 1",
+    "lado": "A",
+    "normal": [
+     0.0,
+     1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       6.3,
+       -3.74
+      ],
+      "radio": 0.8,
+      "a0_deg": -180.0,
+      "a1_deg": -270.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.9,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P11",
+    "nivel": "p1",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio 1",
+    "lado_B": "Clóset",
+    "tipo": "batiente",
+    "abre_hacia": "Clóset",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.54,
+       -2.7
+      ],
+      "radio": 0.8,
+      "a0_deg": -90.0,
+      "a1_deg": -180.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.04,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P12",
+    "nivel": "p1",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio 1",
+    "lado_B": "Baño 1",
+    "tipo": "batiente",
+    "abre_hacia": "Baño 1",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.54,
+       -2.0
+      ],
+      "radio": 0.8,
+      "a0_deg": 90.0,
+      "a1_deg": 180.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "izquierda",
+    "distancia_a_esquina": 0.54,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   }
+  ],
+  "p2": [
+   {
+    "codigo": "P01",
+    "nivel": "p2",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Sala de Estar",
+    "lado_B": "Baño 3",
+    "tipo": "batiente",
+    "abre_hacia": "Baño 3",
+    "lado": "B",
+    "normal": [
+     -0.0,
+     -1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.7,
+       -11.06
+      ],
+      "radio": 0.9,
+      "a0_deg": 0.0,
+      "a1_deg": -90.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.44,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P02",
+    "nivel": "p2",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Pasillo Pasarela Poniente",
+    "lado_B": "Dormitorio 5",
+    "tipo": "batiente",
+    "abre_hacia": "Dormitorio 5",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       4.34,
+       -6.4
+      ],
+      "radio": 0.9,
+      "a0_deg": 90.0,
+      "a1_deg": 180.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "izquierda",
+    "distancia_a_esquina": 0.94,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P03",
+    "nivel": "p2",
+    "ancho": 0.9,
+    "alto": 2.1,
+    "lado_A": "Pasillo Pasarela Sur",
+    "lado_B": "Dormitorio 4",
+    "tipo": "batiente",
+    "abre_hacia": "Dormitorio 4",
+    "lado": "B",
+    "normal": [
+     -0.0,
+     -1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       5.0,
+       -9.86
+      ],
+      "radio": 0.9,
+      "a0_deg": 0.0,
+      "a1_deg": -90.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.54,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P04",
+    "nivel": "p2",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio Principal",
+    "lado_B": "Pasillo Pasarela Norte",
+    "tipo": "batiente",
+    "abre_hacia": "Pasillo Pasarela Norte",
+    "lado": "B",
+    "normal": [
+     -0.0,
+     -1.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       5.5,
+       -3.86
+      ],
+      "radio": 0.8,
+      "a0_deg": 0.0,
+      "a1_deg": -90.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.1,
+    "regla": "R4 abre hacia el recinto, no hacia la circulación; R7: el arco no cabe hacia Dormitorio Principal, abre hacia Pasillo Pasarela Norte",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P05",
+    "nivel": "p2",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio Principal",
+    "lado_B": "Walk-in Clóset",
+    "tipo": "batiente",
+    "abre_hacia": "Walk-in Clóset",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.74,
+       -2.6
+      ],
+      "radio": 0.8,
+      "a0_deg": -90.0,
+      "a1_deg": -180.0,
+      "jamba": 1
+     }
+    ],
+    "bisagra_mano": "derecha",
+    "distancia_a_esquina": 0.14,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   },
+   {
+    "codigo": "P06",
+    "nivel": "p2",
+    "ancho": 0.8,
+    "alto": 2.1,
+    "lado_A": "Dormitorio Principal",
+    "lado_B": "Baño Principal",
+    "tipo": "batiente",
+    "abre_hacia": "Baño Principal",
+    "lado": "B",
+    "normal": [
+     -1.0,
+     -0.0
+    ],
+    "hojas": [
+     {
+      "bisagra": [
+       2.74,
+       -1.8
+      ],
+      "radio": 0.8,
+      "a0_deg": 90.0,
+      "a1_deg": 180.0,
+      "jamba": -1
+     }
+    ],
+    "bisagra_mano": "izquierda",
+    "distancia_a_esquina": 0.54,
+    "regla": "R5 abre hacia el baño/clóset",
+    "verificacion": {
+     "arco_dentro_del_recinto": true,
+     "cruces": []
+    }
+   }
+  ]
+ },
+ "sin_solucion": {},
+ "residuales": {}
+}

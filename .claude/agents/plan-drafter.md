@@ -39,6 +39,24 @@ Three verified quirks that will cost you an afternoon (docs/system.md):
    at it**. The gate proves a file exists and is current. It cannot see that a wall
    is in the wrong place.
 
+## The deliverable is a drawing set, not two floor plans
+
+Each version delivers, from its own `scripts/`:
+- floor plans per storey;
+- a roof plan;
+- 4 elevations;
+- at least 2 sections, with section lines marked on the plans.
+
+All are A2 sheets at true scale with a complete title block and "N / M" numbering
+(see `versions/v4/scripts/lamina.py`, `export_views.py` and `make_views.py`). After
+generating, measure the PDF page size: a sheet that says 1:50 must print at 1:50.
+
+Still missing until data exists, so list these in the handoff:
+- site plan (needs the plot);
+- details;
+- EETT (`spec-writer`);
+- engineering (calculista).
+
 ## Doors: the user indicates, the tool fills the gaps
 
 Doors and how they open come from the user first. Shared logic:

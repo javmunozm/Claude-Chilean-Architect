@@ -339,3 +339,37 @@ extract, the 18 door decisions and `plan_data` are identical to the previous com
 **Carry forward:** a documented rule can be followed perfectly and still be the
 problem. When a user objects to a structure, check whether the docs prescribed it
 before blaming the agent. Fix the rule, then the files.
+
+---
+
+### 2026-10-04 — The drawing set had two floor plans, and its PDF was not to scale
+
+**Concerns:** `plan-drafter`, `spec-writer`, every `make_dxf.py`
+
+**Symptom:** the user asked whether the system delivers the drawings an architect
+would. It did not.
+
+**Cause:** measured on v2/v3:
+- **Two sheets only**, the two floor plans. There were no roof plan, elevations,
+  sections, site plan, details or EETT. The source document (rev. G) itself had a roof
+  drawing and two elevations, so the system delivered less than its input.
+- **PDF not to scale.** Pages measured 172 x 122 mm against a title block saying
+  "1:50 (A2)". `ezdxf`'s `finalize()` shrinks the matplotlib figure to ~6.8 x 4.8 in
+  after drawing; the PDF was saved at that size.
+- **Title block incomplete.** The date was hard-coded and there was no sheet number,
+  no owner and no architect.
+
+**Fix (v4):**
+- `export_views.py` rotates the FreeCAD model so each view looks down +Z, then
+  projects it with `TechDraw.projectEx` (hidden lines removed). That direction was
+  measured to return (u, v) = (X, Y); other directions swap or mirror axes. This gives
+  a roof plan, 4 elevations and 2 sections cut by a half-space with poché from
+  `Shape.slice`.
+- `lamina.py` restores the paper size after drawing and writes the title block from
+  `source/proyecto.json` and `site.json` (null prints "por definir"), with today's
+  date and "N / 5".
+- Measured: 5 pages of 594.0 x 420.0 mm.
+
+**Carry forward:** a scale written on a sheet is a claim, so measure the page.
+"Plans" for a building means a set: check the deliverable against what an architect
+hands over, and against the source document, not only against the last version.

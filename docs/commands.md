@@ -157,6 +157,26 @@ All three take roofs, gables, closures under roof edges and wall junctions from
 `tools/cubierta.py`. A change to roof or junction logic goes there, and is then
 re-measured on every output with `verificar_modelo3d.py`.
 
+## The drawing set: plans, roof plan, elevations, sections
+
+From `projects/CasaPatioInterior/versions/v4/` on, a version's `scripts/` produce a
+set of A2 sheets at true scale:
+- `lamina.py`: frame, title block (from `source/proyecto.json` and `site.json`),
+  sheet number, date, PDF at paper size, DXF paper-space layout;
+- `export_views.py` (FreeCAD): roof plan, 4 elevations and 2 sections, with hidden
+  lines removed;
+- `make_dxf.py`: the floor plans;
+- `make_views.py`: the remaining sheets, then the PDF of the whole set.
+
+```bash
+V2_DIR=$PWD/$P VIEWS_MODEL=$M VIEWS_OUT=$PWD/$P/calcs/views_data.json "$F" $P/scripts/export_views.py
+python $P/scripts/make_dxf.py && python $P/scripts/make_views.py
+```
+
+Check the PDF page size after any change to the sheet code. ezdxf's `finalize()`
+shrinks the figure, which is how v2/v3 shipped "1:50" sheets at ~1:172
+(docs/lessons.md).
+
 ## Doors: hinge, swing and missing doors
 
 ```bash
